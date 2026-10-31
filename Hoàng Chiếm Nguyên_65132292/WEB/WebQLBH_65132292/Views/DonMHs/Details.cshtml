@@ -1,0 +1,93 @@
+@model DbQLBH_65132292.Models.ViewModels.DonMHDetailsViewModel
+
+@{
+    ViewData["Title"] = "Chi tiet don mua";
+}
+
+<section class="inventory-page detail-page">
+    <div class="inventory-header page-header page-header-split">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title page-title">Chi tiet don mua @Model.MaDMH</h1>
+            <p class="inventory-subtitle">Nha cung cap: @Model.TenNCC (Ma @Model.MaNCC) - Ngay mua:
+                @Model.NgayMua.ToString("dd/MM/yyyy")</p>
+            </div>
+            <div class="inventory-toolbar">
+                <a asp-action="Edit" asp-route-id="@Model.MaDMH" class="inventory-add-btn">Sua header</a>
+                <a asp-action="Index" class="btn btn-outline-secondary">Danh sach</a>
+            </div>
+        </div>
+
+        <div class="inventory-card p-3 p-md-4 mb-4">
+            <h2 class="h5 mb-3">Them mat hang</h2>
+            <form asp-action="AddLine" method="post" class="row g-3 align-items-end">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="maDMH" value="@Model.MaDMH" />
+                <div class="col-12 col-md-6">
+                    <label class="form-label">San pham</label>
+                    <select name="maSP" class="form-select" asp-items="ViewBag.SanPhamOptions">
+                        <option value="">-- Chon san pham --</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <label class="form-label">So luong</label>
+                    <input type="number" name="slm" min="1" class="form-control" value="1" />
+                </div>
+                <div class="col-6 col-md-2">
+                    <label class="form-label">Don gia mua</label>
+                    <input type="number" name="dgm" min="0" step="1000" class="form-control" value="0" />
+                </div>
+                <div class="col-12 col-md-2 d-flex align-items-end">
+                    <button type="submit" class="inventory-add-btn w-100 justify-content-center">Them</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="inventory-card">
+            <div class="inventory-table-wrap table-responsive">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 130px;">Ma SP</th>
+                            <th>Ten san pham</th>
+                            <th style="width: 120px;">So luong</th>
+                            <th style="width: 150px;">Don gia mua</th>
+                            <th style="width: 150px;">Thanh tien</th>
+                            <th style="width: 120px; text-align: right;">Xoa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.ChiTiet.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">Don mua chua co mat hang.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.ChiTiet)
+                            {
+                                <tr>
+                                    <td><span class="inventory-code">@item.MaSP</span></td>
+                                    <td><span class="inventory-name">@item.TenSP</span></td>
+                                    <td><span class="inventory-value">@item.SLM</span></td>
+                                    <td><span class="inventory-value">@item.DGM.ToString("N0")</span></td>
+                                    <td><span class="inventory-value">@item.ThanhTien.ToString("N0")</span></td>
+                                    <td style="text-align: right;">
+                                        <form asp-action="RemoveLine" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="maDMH" value="@Model.MaDMH" />
+                                            <input type="hidden" name="maSP" value="@item.MaSP" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Xoa</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="inventory-footer">
+                <p class="inventory-stats">Tong gia tri don mua: <strong>@Model.TongTien.ToString("N0")</strong></p>
+            </div>
+        </div>
+    </section>

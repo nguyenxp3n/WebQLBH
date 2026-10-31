@@ -1,0 +1,108 @@
+@model DbQLBH_65132292.Models.ViewModels.LoginViewModel
+@{
+    Layout = null;
+    var returnUrl = ViewData["ReturnUrl"]?.ToString();
+}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dang nhap - QL Ban Hang</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+            body {
+                min-height: 100vh;
+                margin: 0;
+                display: grid;
+                place-items: center;
+                background: linear-gradient(145deg, #edf2f7, #dfe7ec);
+                font-family: "Be Vietnam Pro", sans-serif;
+            }
+
+            .login-card {
+                width: min(420px, calc(100vw - 32px));
+                background: #f2f5f7;
+                border-radius: 14px;
+                padding: 24px;
+                box-shadow: 10px 10px 22px rgba(148, 158, 163, 0.25), -10px -10px 22px rgba(255, 255, 255, 0.92);
+            }
+
+            .login-title {
+                margin: 0 0 8px;
+                font-size: 26px;
+                font-weight: 700;
+                color: #173049;
+            }
+
+            .login-subtitle {
+                margin-bottom: 18px;
+                color: #5f7187;
+                font-size: 14px;
+            }
+
+            .form-control {
+                min-height: 42px;
+                border: 0;
+                background: #edf1ef;
+                box-shadow: inset 2px 2px 6px rgba(151, 163, 168, 0.28), inset -2px -2px 6px rgba(255, 255, 255, 0.95);
+            }
+
+            .form-control:focus {
+                box-shadow: inset 2px 2px 6px rgba(151, 163, 168, 0.28), inset -2px -2px 6px rgba(255, 255, 255, 0.95), 0 0 0 3px rgba(0, 102, 102, 0.18);
+            }
+
+            .btn-login {
+                width: 100%;
+                min-height: 42px;
+                border: 0;
+                border-radius: 10px;
+                background: linear-gradient(145deg, #007d80, #005f62);
+                color: #f4ffff;
+                font-weight: 700;
+            }
+    </style>
+</head>
+
+<body>
+    <main class="login-card">
+        <h1 class="login-title">Dang nhap Admin</h1>
+        <p class="login-subtitle">Nhap tai khoan de truy cap he thong quan tri.</p>
+
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            @if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+            }
+
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label">Ten dang nhap</label>
+                <input asp-for="Username" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Username" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Mat khau</label>
+                <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label">Ghi nho dang nhap</label>
+            </div>
+
+            <button type="submit" class="btn btn-login">Dang nhap</button>
+        </form>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+
+</html>

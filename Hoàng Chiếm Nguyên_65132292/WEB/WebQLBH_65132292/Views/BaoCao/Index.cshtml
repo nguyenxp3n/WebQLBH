@@ -1,0 +1,252 @@
+@model DbQLBH_65132292.Models.BaoCaoTongQuanViewModel
+
+@{
+    ViewData["Title"] = "Bao cao tong quan";
+}
+
+<section class="inventory-page bao-cao-page">
+    <div class="inventory-header">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title">Bao cao tong quan</h1>
+            <p class="inventory-subtitle">Thong ke nhanh danh muc san pham tu du lieu he thong hien tai.</p>
+        </div>
+        <div class="inventory-toolbar">
+            <a asp-action="Index" class="inventory-add-btn">
+                <span>Lam moi du lieu</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong nhom san pham</p>
+                <p class="bao-cao-kpi-value">@Model.TongNhomSP</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong loai san pham</p>
+                <p class="bao-cao-kpi-value">@Model.TongLoaiSP</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong san pham</p>
+                <p class="bao-cao-kpi-value">@Model.TongSanPham</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Gia trung binh</p>
+                <p class="bao-cao-kpi-value">@Model.GiaTrungBinh.ToString("N0") đ</p>
+            </article>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-xl-7">
+            <div class="inventory-card">
+                <div class="bao-cao-card-header">
+                    <h2 class="bao-cao-card-title">Thong ke theo nhom</h2>
+                    <p class="bao-cao-card-subtitle">So loai va so san pham trong tung nhom</p>
+                </div>
+                <div class="inventory-table-wrap table-responsive">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">Ma NSP</th>
+                                <th>Ten nhom</th>
+                                <th style="width: 160px;">So loai</th>
+                                <th style="width: 180px;">So san pham</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.NhomThongKe.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Chua co du lieu nhom san pham.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var item in Model.NhomThongKe)
+                                {
+                                    <tr>
+                                        <td><span class="inventory-code">@item.MaNSP</span></td>
+                                        <td><span class="inventory-name">@item.TenNSP</span></td>
+                                        <td><span class="inventory-value">@item.SoLoaiSP</span></td>
+                                        <td><span class="inventory-value">@item.SoSanPham</span></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-5">
+            <div class="inventory-card bao-cao-card-side">
+                <div class="bao-cao-card-header">
+                    <h2 class="bao-cao-card-title">Top 5 gia cao nhat</h2>
+                    <p class="bao-cao-card-subtitle">Sap xep theo don gia giam dan</p>
+                </div>
+
+                <div class="bao-cao-price-range">
+                    <div>
+                        <p class="bao-cao-mini-label">Gia thap nhat</p>
+                        <p class="bao-cao-mini-value">@Model.GiaThapNhat.ToString("N0") đ</p>
+                    </div>
+                    <div>
+                        <p class="bao-cao-mini-label">Gia cao nhat</p>
+                        <p class="bao-cao-mini-value">@Model.GiaCaoNhat.ToString("N0") đ</p>
+                    </div>
+                </div>
+
+                <div class="bao-cao-top-list">
+                    @if (Model.TopSanPhamGiaCao.Count == 0)
+                    {
+                        <p class="text-muted mb-0">Chua co du lieu san pham.</p>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.TopSanPhamGiaCao)
+                        {
+                            <article class="bao-cao-top-item">
+                                <div>
+                                    <p class="bao-cao-top-name">@item.TenSP</p>
+                                    <p class="bao-cao-top-code">@item.MaSP - LSP @item.MaLSP</p>
+                                </div>
+                                <p class="bao-cao-top-price">@item.DonGia.ToString("N0") đ</p>
+                            </article>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .bao-cao-page .inventory-header {
+        align-items: center;
+    }
+
+    .bao-cao-kpi {
+        border: 1px solid rgba(234, 239, 241, 0.8);
+        border-radius: 14px;
+        background: #ffffff;
+        box-shadow: 0 8px 20px rgba(43, 52, 55, 0.05);
+        padding: 18px 20px;
+        height: 100%;
+    }
+
+    .bao-cao-kpi-label {
+        margin: 0;
+        color: #586064;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .bao-cao-kpi-value {
+        margin: 10px 0 0;
+        color: #2b3437;
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .bao-cao-card-header {
+        padding: 20px 24px 10px;
+    }
+
+    .bao-cao-card-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 800;
+        color: #2b3437;
+    }
+
+    .bao-cao-card-subtitle {
+        margin: 6px 0 0;
+        color: #586064;
+        font-size: 14px;
+    }
+
+    .bao-cao-card-side {
+        padding-bottom: 20px;
+    }
+
+    .bao-cao-price-range {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 24px 20px;
+    }
+
+    .bao-cao-mini-label {
+        margin: 0;
+        color: #586064;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .bao-cao-mini-value {
+        margin: 4px 0 0;
+        color: #2b3437;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .bao-cao-top-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 0 16px;
+    }
+
+    .bao-cao-top-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        border-radius: 12px;
+        background: #f9fbff;
+        border: 1px solid #e8edf5;
+        padding: 12px;
+        margin: 0;
+    }
+
+    .bao-cao-top-name {
+        margin: 0;
+        color: #2b3437;
+        font-weight: 700;
+    }
+
+    .bao-cao-top-code {
+        margin: 2px 0 0;
+        color: #586064;
+        font-size: 12px;
+    }
+
+    .bao-cao-top-price {
+        margin: 0;
+        color: #4d44e3;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    @@media (max-width: 768px) {
+        .bao-cao-kpi-value {
+            font-size: 26px;
+        }
+
+        .bao-cao-price-range {
+            flex-direction: column;
+        }
+    }
+</style>

@@ -1,0 +1,128 @@
+@model DbQLBH_65132292.Models.ViewModels.DonMuaTraCuuViewModel
+
+@{
+    ViewData["Title"] = "Tra cuu don mua";
+}
+
+<section class="inventory-page">
+    <div class="inventory-header">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title">Tra cuu don mua</h1>
+            <p class="inventory-subtitle">Tim theo ma don, nha cung cap va khoang ngay mua.</p>
+        </div>
+    </div>
+
+    <div class="inventory-card p-3 p-md-4 mb-4">
+        <form method="get" asp-action="DonMua" class="row g-3">
+            <input type="hidden" name="page" value="1" />
+            <input type="hidden" name="pageSize" value="@Model.PageSize" />
+            <div class="col-12 col-md-6 col-xl-5">
+                <label class="form-label">Tu khoa</label>
+                <input type="text" name="tuKhoa" value="@Model.TuKhoa" class="form-control"
+                       placeholder="Ma don, ten NCC..." />
+            </div>
+            <div class="col-6 col-md-3 col-xl-2">
+                <label class="form-label">Tu ngay</label>
+                <input type="date" name="tuNgay" value="@(Model.TuNgay?.ToString("yyyy-MM-dd"))" class="form-control" />
+            </div>
+            <div class="col-6 col-md-3 col-xl-2">
+                <label class="form-label">Den ngay</label>
+                <input type="date" name="denNgay" value="@(Model.DenNgay?.ToString("yyyy-MM-dd"))"
+                       class="form-control" />
+            </div>
+            <div class="col-6 col-md-3 col-xl-1 d-flex align-items-end">
+                <button class="inventory-add-btn w-100 justify-content-center" type="submit">Loc</button>
+            </div>
+            <div class="col-6 col-md-3 col-xl-2 d-flex align-items-end">
+                <a class="btn btn-outline-secondary w-100" asp-action="DonMua" asp-controller="GiaoDich">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="inventory-card">
+        <div class="inventory-table-wrap table-responsive">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th style="width: 130px;">Ma DMH</th>
+                        <th style="width: 130px;">Ngay mua</th>
+                        <th style="width: 120px;">Ma NCC</th>
+                        <th>Nha cung cap</th>
+                        <th style="width: 120px;">So mat hang</th>
+                        <th style="width: 150px;">Tong tien</th>
+                        <th style="width: 120px; text-align: right;">Chi tiet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.KetQua.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Khong co du lieu phu hop.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.KetQua)
+                        {
+                            <tr>
+                                <td><span class="inventory-code">@item.MaDMH</span></td>
+                                <td><span class="inventory-value">@item.NgayMua.ToString("dd/MM/yyyy")</span></td>
+                                <td><span class="inventory-value">@item.MaNCC</span></td>
+                                <td><span class="inventory-name">@item.TenNCC</span></td>
+                                <td><span class="inventory-value">@item.SoMatHang</span></td>
+                                <td><span class="inventory-value">@item.TongTien.ToString("N0") đ</span></td>
+                                <td style="text-align: right;">
+                                    <a class="btn btn-sm btn-outline-primary" asp-action="DonMuaChiTiet"
+                                       asp-controller="GiaoDich" asp-route-maDMH="@item.MaDMH">Xem</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            var startPage = Math.Max(1, Model.Page - 2);
+            var endPage = Math.Min(Model.TotalPages, startPage + 4);
+            startPage = Math.Max(1, endPage - 4);
+
+            <div class="px-3 px-md-4 pt-3 d-flex justify-content-center">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.Page <= 1 ? "disabled" : string.Empty)">
+                        <a class="page-link" asp-action="DonMua" asp-route-tuKhoa="@Model.TuKhoa"
+                           asp-route-tuNgay="@(Model.TuNgay?.ToString("yyyy-MM-dd"))"
+                           asp-route-denNgay="@(Model.DenNgay?.ToString("yyyy-MM-dd"))" asp-route-page="@(Model.Page - 1)"
+                           asp-route-pageSize="@Model.PageSize">Truoc</a>
+                    </li>
+
+                    @for (var p = startPage; p <= endPage; p++)
+                    {
+                        <li class="page-item @(p == Model.Page ? "active" : string.Empty)">
+                            <a class="page-link" asp-action="DonMua" asp-route-tuKhoa="@Model.TuKhoa"
+                               asp-route-tuNgay="@(Model.TuNgay?.ToString("yyyy-MM-dd"))"
+                               asp-route-denNgay="@(Model.DenNgay?.ToString("yyyy-MM-dd"))" asp-route-page="@p"
+                               asp-route-pageSize="@Model.PageSize">@p</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : string.Empty)">
+                        <a class="page-link" asp-action="DonMua" asp-route-tuKhoa="@Model.TuKhoa"
+                           asp-route-tuNgay="@(Model.TuNgay?.ToString("yyyy-MM-dd"))"
+                           asp-route-denNgay="@(Model.DenNgay?.ToString("yyyy-MM-dd"))" asp-route-page="@(Model.Page + 1)"
+                           asp-route-pageSize="@Model.PageSize">Sau</a>
+                    </li>
+                </ul>
+            </div>
+        }
+
+        <div class="inventory-footer">
+            <p class="inventory-stats">
+                Tong ket qua: <strong>@Model.TotalItems</strong>
+                | Trang <strong>@Model.Page/@Math.Max(Model.TotalPages, 1)</strong>
+            </p>
+            <a class="btn btn-outline-secondary btn-sm" asp-action="Index" asp-controller="GiaoDich">Ve tong quan giao dich</a>
+        </div>
+    </div>
+</section>

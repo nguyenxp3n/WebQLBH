@@ -1,0 +1,23 @@
+@model DbQLBH_65132292.Models.DonMH
+
+@{
+    ViewData["Title"] = "Xoa don mua";
+}
+
+<h1>Xoa don mua</h1>
+<h3>Ban co chac chan muon xoa don mua @Model.MaDMH?</h3>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Ngay mua</dt>
+        <dd class="col-sm-9">@Model.NgayMua.ToString("dd/MM/yyyy")</dd>
+        <dt class="col-sm-3">Ma NCC</dt>
+        <dd class="col-sm-9">@Model.MaNCC</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="MaDMH" />
+        <button type="submit" class="btn btn-danger">Xoa</button>
+        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Huy</a>
+    </form>
+</div>

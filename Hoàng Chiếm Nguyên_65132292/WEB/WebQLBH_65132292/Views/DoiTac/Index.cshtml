@@ -1,0 +1,49 @@
+@model DbQLBH_65132292.Models.ViewModels.DoiTacDashboardViewModel
+
+@{
+    ViewData["Title"] = "Doi tac";
+}
+
+<section class="inventory-page doi-tac-page">
+    <div class="inventory-header">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title">Tong quan doi tac</h1>
+            <p class="inventory-subtitle">Thong ke nhanh khach hang va nha cung cap hien co.</p>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong khach hang</p>
+                <p class="bao-cao-kpi-value">@Model.TongKhachHang</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong nha cung cap</p>
+                <p class="bao-cao-kpi-value">@Model.TongNhaCungCap</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tinh co khach hang</p>
+                <p class="bao-cao-kpi-value">@Model.SoTinhCoKhachHang</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tinh co nha cung cap</p>
+                <p class="bao-cao-kpi-value">@Model.SoTinhCoNhaCungCap</p>
+            </article>
+        </div>
+    </div>
+
+    <div class="inventory-card p-4">
+        <h2 class="h4 mb-3">Tac vu</h2>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="inventory-add-btn" href="/doi-tac/khach-hang">Tra cuu khach hang</a>
+            <a class="inventory-add-btn" href="/doi-tac/nha-cung-cap">Tra cuu nha cung cap</a>
+        </div>
+    </div>
+</section>

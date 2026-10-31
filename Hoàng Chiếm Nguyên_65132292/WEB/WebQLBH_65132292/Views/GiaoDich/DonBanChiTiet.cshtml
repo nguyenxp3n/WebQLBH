@@ -1,0 +1,60 @@
+@model DbQLBH_65132292.Models.ViewModels.DonBanChiTietViewModel
+
+@{
+    ViewData["Title"] = "Chi tiet don ban";
+}
+
+<section class="inventory-page">
+    <div class="inventory-header">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title">Chi tiet don ban @Model.MaDBH</h1>
+            <p class="inventory-subtitle">Khach hang: @Model.TenKH (Ma @Model.MaKH) - Ngay ban:
+                @Model.NgayBan.ToString("dd/MM/yyyy")</p>
+                <p class="inventory-subtitle">Dia chi giao hang: @Model.DiaChiGiaoHang</p>
+            </div>
+            <div class="inventory-toolbar">
+                <a class="btn btn-outline-secondary" href="/giao-dich/don-ban">Quay lai danh sach</a>
+            </div>
+        </div>
+
+        <div class="inventory-card">
+            <div class="inventory-table-wrap table-responsive">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 140px;">Ma SP</th>
+                            <th>Ten san pham</th>
+                            <th style="width: 120px;">So luong</th>
+                            <th style="width: 150px;">Don gia ban</th>
+                            <th style="width: 150px;">Thanh tien</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ChiTiet.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Don ban chua co mat hang.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.ChiTiet)
+                            {
+                                <tr>
+                                    <td><span class="inventory-code">@item.MaSP</span></td>
+                                    <td><span class="inventory-name">@item.TenSP</span></td>
+                                    <td><span class="inventory-value">@item.SoLuong</span></td>
+                                    <td><span class="inventory-value">@item.DonGiaBan.ToString("N0") đ</span></td>
+                                    <td><span class="inventory-value">@item.ThanhTien.ToString("N0") đ</span></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="inventory-footer">
+                <p class="inventory-stats">Tong gia tri don ban: <strong>@Model.TongTien.ToString("N0") đ</strong></p>
+                <a class="btn btn-sm btn-outline-primary" href="/xuat-du-lieu/don-ban-csv">Tai CSV don ban</a>
+            </div>
+        </div>
+    </section>

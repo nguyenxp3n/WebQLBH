@@ -1,0 +1,95 @@
+@model DbQLBH_65132292.Models.DonBH
+
+@{
+    ViewData["Title"] = "Sua don ban";
+    var maTinh = ViewBag.MaTinh as string;
+}
+
+<h1>Sua don ban</h1>
+<hr />
+<div class="row">
+    <div class="col-md-7 col-lg-6">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MaDBH" />
+            <div class="mb-3">
+                <label asp-for="NgayBan" class="form-label"></label>
+                <input asp-for="NgayBan" type="date" class="form-control" />
+                <span asp-validation-for="NgayBan" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="MaKH" class="form-label">Khach hang</label>
+                <select asp-for="MaKH" class="form-select" asp-items="ViewBag.KhachHangOptions">
+                    <option value="">-- Chon khach hang --</option>
+                </select>
+                <span asp-validation-for="MaKH" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DCGH" class="form-label"></label>
+                <input asp-for="DCGH" class="form-control" />
+                <p class="admin-form-hint">Nhap dia chi giao hang ngan gon, de doc. Khong dan payload/mau JSON.</p>
+                <span asp-validation-for="DCGH" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tinh giao hang</label>
+                <select id="maTinh" name="maTinh" class="form-select" asp-items="ViewBag.TinhOptions">
+                    <option value="">-- Chon tinh --</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="MaPX" class="form-label">Phuong xa giao hang</label>
+                <select asp-for="MaPX" id="maPX" class="form-select" asp-items="ViewBag.PhuongXaOptions">
+                    <option value="">-- Chon phuong xa --</option>
+                </select>
+                <span asp-validation-for="MaPX" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Luu</button>
+            <a asp-action="Details" asp-route-id="@Model.MaDBH" class="btn btn-outline-secondary ms-2">Quay lai</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        (function () {
+            const tinhSelect = document.getElementById("maTinh");
+            const phuongXaSelect = document.getElementById("maPX");
+            const selectedTinh = "@maTinh";
+            const selectedPhuongXa = "@Model.MaPX";
+            const getPhuongXaUrl = '@Url.Action("GetPhuongXa", "DonBHs")';
+
+            async function loadPhuongXa(maTinh, selectedValue) {
+                phuongXaSelect.innerHTML = '<option value="">-- Chon phuong xa --</option>';
+                if (!maTinh) {
+                    return;
+                }
+
+                const response = await fetch(`${getPhuongXaUrl}?maTinh=${encodeURIComponent(maTinh)}`);
+                if (!response.ok) {
+                    return;
+                }
+
+                const items = await response.json();
+                items.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.maPX;
+                    option.textContent = `${item.maPX} - ${item.tenPX}`;
+                    if (selectedValue && selectedValue === item.maPX) {
+                        option.selected = true;
+                    }
+                    phuongXaSelect.appendChild(option);
+                });
+            }
+
+            tinhSelect.addEventListener("change", () => loadPhuongXa(tinhSelect.value, null));
+            if (selectedTinh) {
+                tinhSelect.value = selectedTinh;
+                loadPhuongXa(selectedTinh, selectedPhuongXa);
+            }
+        })();
+    </script>
+}

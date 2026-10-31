@@ -1,0 +1,59 @@
+@model DbQLBH_65132292.Models.SanPham
+
+@{
+    ViewData["Title"] = "Chi tiet san pham";
+    var moTaNgan = ViewBag.MoTaNgan as string ?? "Khong co mo ta";
+}
+
+<section class="inventory-page detail-page">
+    <div class="inventory-header page-header page-header-split">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title page-title">Chi tiet san pham</h1>
+            <p class="inventory-subtitle page-subtitle detail-code-line">Ma san pham: <span class="inventory-code">@Model.MaSP</span></p>
+            <p class="inventory-subtitle page-subtitle">Thong tin day du de doi chieu truoc khi sua hoac xoa ban ghi.</p>
+        </div>
+        <div class="inventory-toolbar">
+            <a asp-action="Edit" asp-route-id="@Model.MaSP" class="inventory-add-btn">Chinh sua</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Danh sach</a>
+        </div>
+    </div>
+
+    <div class="inventory-card p-3 p-md-4">
+        <div class="row g-4 align-items-start">
+            <div class="col-12 col-lg-4">
+                <div class="detail-image-wrap">
+                    @if (!string.IsNullOrWhiteSpace(Model.AnhSP))
+                    {
+                        <img src="@Model.AnhSP" alt="Anh san pham" class="detail-image" />
+                    }
+                    else
+                    {
+                        <div class="detail-image-placeholder">Khong co anh san pham</div>
+                    }
+                </div>
+            </div>
+            <div class="col-12 col-lg-8">
+                <dl class="row detail-meta-list mb-0">
+                    <dt class="col-sm-4">Ma san pham</dt>
+                    <dd class="col-sm-8"><span class="inventory-code">@Model.MaSP</span></dd>
+
+                    <dt class="col-sm-4">Ten san pham</dt>
+                    <dd class="col-sm-8"><span class="inventory-name">@Model.TenSP</span></dd>
+
+                    <dt class="col-sm-4">Don gia</dt>
+                    <dd class="col-sm-8"><span class="inventory-value">@Model.DonGia.ToString("N0")</span></dd>
+
+                    <dt class="col-sm-4">Ma loai</dt>
+                    <dd class="col-sm-8"><span class="inventory-value">@Model.MaLSP</span></dd>
+
+                    <dt class="col-sm-4">Ma don vi tinh</dt>
+                    <dd class="col-sm-8"><span class="inventory-value">@Model.MaDVT</span></dd>
+
+                    <dt class="col-sm-4">Mo ta</dt>
+                    <dd class="col-sm-8 detail-description">@moTaNgan
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</section>

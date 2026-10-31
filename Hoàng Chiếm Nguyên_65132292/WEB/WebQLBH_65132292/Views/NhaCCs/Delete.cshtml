@@ -1,0 +1,29 @@
+@model DbQLBH_65132292.Models.NhaCC
+
+@{
+    ViewData["Title"] = "Xoa nha cung cap";
+}
+
+<h1>Xoa nha cung cap</h1>
+<h3>Ban co chac chan muon xoa nha cung cap nay?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Ma NCC</dt>
+        <dd class="col-sm-9">@Model.MaNCC</dd>
+        <dt class="col-sm-3">Ten nha cung cap</dt>
+        <dd class="col-sm-9">@Model.TenNCC</dd>
+        <dt class="col-sm-3">Dien thoai</dt>
+        <dd class="col-sm-9">@Model.DienThoai</dd>
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+        <dt class="col-sm-3">Dia chi</dt>
+        <dd class="col-sm-9">@(ViewBag.DiaChiAnToan ?? Model.DiaChi)</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="MaNCC" />
+        <button type="submit" class="btn btn-danger">Xoa</button>
+        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Huy</a>
+    </form>
+</div>

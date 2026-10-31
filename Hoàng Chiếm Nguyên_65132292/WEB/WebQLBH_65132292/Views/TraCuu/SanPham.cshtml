@@ -1,0 +1,162 @@
+@model DbQLBH_65132292.Models.TraCuuSanPhamViewModel
+
+@{
+    ViewData["Title"] = "Tra cuu san pham";
+    var fromPage = Math.Max(1, Model.Page - 2);
+    var toPage = Math.Min(Model.TotalPages, Model.Page + 2);
+}
+
+<section class="inventory-page tra-cuu-page">
+    <div class="inventory-header">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title">Tra cuu san pham</h1>
+            <p class="inventory-subtitle">Loc theo nhom, loai, khoang gia va tu khoa.</p>
+        </div>
+    </div>
+
+    <div class="inventory-card tra-cuu-filter-card">
+        <form method="get" asp-action="SanPham" class="row g-3 p-3 p-md-4">
+            <div class="col-12 col-md-6 col-xl-3">
+                <label class="form-label">Tu khoa</label>
+                <input type="text" name="tuKhoa" value="@Model.TuKhoa" class="form-control"
+                       placeholder="MaSP, TenSP..." />
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <label class="form-label">Nhom san pham</label>
+                <select name="maNsp" class="form-select">
+                    <option value="">Tat ca nhom</option>
+                    @foreach (var item in Model.DanhSachNhom)
+                    {
+                        if (Model.MaNSP == item.MaNSP)
+                        {
+                            <option value="@item.MaNSP" selected>@item.MaNSP - @item.TenNSP</option>
+                        }
+                        else
+                        {
+                            <option value="@item.MaNSP">@item.MaNSP - @item.TenNSP</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <label class="form-label">Loai san pham</label>
+                <select name="maLsp" class="form-select">
+                    <option value="">Tat ca loai</option>
+                    @foreach (var item in Model.DanhSachLoai)
+                    {
+                        if (Model.MaLSP == item.MaLSP)
+                        {
+                            <option value="@item.MaLSP" selected>@item.MaLSP - @item.TenLSP</option>
+                        }
+                        else
+                        {
+                            <option value="@item.MaLSP">@item.MaLSP - @item.TenLSP</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-xl-1">
+                <label class="form-label">Gia tu</label>
+                <input type="number" name="giaTu" value="@Model.GiaTu" class="form-control" min="0" step="1000" />
+            </div>
+            <div class="col-6 col-md-3 col-xl-1">
+                <label class="form-label">Gia den</label>
+                <input type="number" name="giaDen" value="@Model.GiaDen" class="form-control" min="0" step="1000" />
+            </div>
+            <input type="hidden" name="pageSize" value="@Model.PageSize" />
+            <div class="col-12 col-md-6 col-xl-1 d-flex align-items-end">
+                <button type="submit" class="inventory-add-btn w-100 justify-content-center">Loc</button>
+            </div>
+            <div class="col-12 col-md-6 col-xl-1 d-flex align-items-end">
+                <a asp-action="SanPham" class="btn btn-outline-secondary w-100">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="inventory-card mt-4">
+        <div class="inventory-table-wrap table-responsive">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Ma SP</th>
+                        <th>Ten san pham</th>
+                        <th style="width: 140px;">Don gia</th>
+                        <th style="width: 140px;">Loai</th>
+                        <th style="width: 160px;">Nhom</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.KetQua.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">Khong tim thay du lieu phu hop.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.KetQua)
+                        {
+                            <tr>
+                                <td><span class="inventory-code">@item.MaSP</span></td>
+                                <td>
+                                    <div class="inventory-name">@item.TenSP</div>
+                                    <div class="text-muted small">@item.TenLSP</div>
+                                </td>
+                                <td><span class="inventory-value">@item.DonGia.ToString("N0") đ</span></td>
+                                <td><span class="inventory-value">@item.MaLSP</span></td>
+                                <td><span class="inventory-value">@item.TenNSP</span></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="inventory-footer">
+            <p class="inventory-stats">Trang <strong>@Model.Page</strong>/<strong>@Model.TotalPages</strong> - Tong
+                <strong>@Model.TotalItems</strong> ket qua</p>
+                <div class="inventory-pagination">
+                    @if (Model.Page > 1)
+                    {
+                        <a class="inventory-page-btn" asp-action="SanPham" asp-route-page="@(Model.Page - 1)"
+                           asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa" asp-route-maNsp="@Model.MaNSP"
+                           asp-route-maLsp="@Model.MaLSP" asp-route-giaTu="@Model.GiaTu"
+                           asp-route-giaDen="@Model.GiaDen">&lt;</a>
+                    }
+
+                    @for (var i = fromPage; i <= toPage; i++)
+                    {
+                        <a class="inventory-page-btn @(i == Model.Page ? "active" : string.Empty)" asp-action="SanPham"
+                           asp-route-page="@i" asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa"
+                           asp-route-maNsp="@Model.MaNSP" asp-route-maLsp="@Model.MaLSP" asp-route-giaTu="@Model.GiaTu"
+                           asp-route-giaDen="@Model.GiaDen">@i</a>
+                    }
+
+                    @if (Model.Page < Model.TotalPages)
+                    {
+                        <a class="inventory-page-btn" asp-action="SanPham" asp-route-page="@(Model.Page + 1)"
+                           asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa" asp-route-maNsp="@Model.MaNSP"
+                           asp-route-maLsp="@Model.MaLSP" asp-route-giaTu="@Model.GiaTu"
+                           asp-route-giaDen="@Model.GiaDen">&gt;</a>
+                    }
+                </div>
+                <a class="btn btn-sm btn-outline-primary" href="/xuat-du-lieu/san-pham-csv">Tai CSV tat ca san pham</a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .tra-cuu-page .inventory-header {
+            margin-bottom: 20px;
+        }
+
+        .tra-cuu-filter-card {
+            border-radius: 14px;
+        }
+
+        .tra-cuu-filter-card .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #586064;
+            margin-bottom: 6px;
+        }
+    </style>

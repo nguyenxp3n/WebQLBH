@@ -1,0 +1,56 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: webqlbh-db
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Password@123
+      - MSSQL_PID=Developer
+    ports:
+      - "14333:1433"
+    volumes:
+      - sql-data:/var/opt/mssql/data
+      - ./database:/database
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Password@123' -C -Q 'SELECT 1' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: webqlbh-db-init
+    user: root
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./database:/database
+    entrypoint: ["/bin/bash", "/database/init-db.sh"]
+    restart: "no"
+
+  web:
+    build:
+      context: "./Hoàng Chiếm Nguyên_65132292/WEB/WebQLBH_65132292"
+      dockerfile: Dockerfile
+    container_name: webqlbh-web
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DbQLBH_65132292Connection=Server=db,1433;Database=DbQLBH_65132292;User Id=sa;Password=Password@123;TrustServerCertificate=True;Encrypt=False;
+    ports:
+      - "8080:8080"
+    volumes:
+      - web-images:/app/wwwroot/images/sanpham
+    restart: unless-stopped
+
+volumes:
+  sql-data:
+  web-images:

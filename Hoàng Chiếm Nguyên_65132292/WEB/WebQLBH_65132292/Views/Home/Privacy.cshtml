@@ -1,0 +1,71 @@
+@{
+    ViewData["Title"] = "Cai dat va Ho so";
+}
+
+<section class="inventory-page settings-page">
+    <div class="inventory-header page-header page-header-split">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title page-title">Cai dat va Ho so</h1>
+            <p class="inventory-subtitle page-subtitle">Trang cai dat tai khoan, bao mat va tuy chinh he thong theo
+                style admin Stitch.</p>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-xl-4">
+                <div class="inventory-card p-3 p-md-4 h-100 settings-profile-card">
+                    <div class="settings-avatar">N</div>
+                    <h2 class="settings-name">Nguyen Admin</h2>
+                    <p class="settings-role">Quan tri he thong</p>
+
+                    <dl class="row mb-0 detail-meta-list compact">
+                        <dt class="col-5">Email</dt>
+                        <dd class="col-7">admin@qlbanhang.vn</dd>
+                        <dt class="col-5">So dien thoai</dt>
+                        <dd class="col-7">0900 000 000</dd>
+                        <dt class="col-5">Vai tro</dt>
+                        <dd class="col-7">Super Admin</dd>
+                    </dl>
+
+                    <button type="button" class="inventory-add-btn w-100 mt-3">Cap nhat ho so</button>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-8">
+                <div class="inventory-card p-3 p-md-4 mb-3">
+                    <h2 class="h5 mb-3">Bao mat tai khoan</h2>
+                    <div class="row g-3 admin-form-grid">
+                        <div class="col-12 col-md-6">
+                            <label class="control-label">Mat khau hien tai</label>
+                            <input class="form-control" type="password" value="********" readonly />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="control-label">Xac thuc 2 lop</label>
+                            <select class="form-select">
+                                <option>Da bat</option>
+                                <option>Da tat</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="inventory-card p-3 p-md-4">
+                    <h2 class="h5 mb-3">Tuy chinh giao dien</h2>
+                    <div class="settings-toggle-list">
+                        <label class="settings-toggle-item">
+                            <input type="checkbox" checked />
+                            <span>Hien thong bao theo thoi gian thuc</span>
+                        </label>
+                        <label class="settings-toggle-item">
+                            <input type="checkbox" checked />
+                            <span>Hien chi so doanh thu tren dashboard</span>
+                        </label>
+                        <label class="settings-toggle-item">
+                            <input type="checkbox" />
+                            <span>Tu dong thu gon sidebar tren man hinh nho</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

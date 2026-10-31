@@ -1,0 +1,120 @@
+@model IEnumerable<DbQLBH_65132292.Models.NhomSP>
+
+@{
+    ViewData["Title"] = "Nhom san pham";
+    var items = Model?.ToList() ?? new List<DbQLBH_65132292.Models.NhomSP>();
+    var stt = 1;
+}
+
+<section class="inventory-page list-page">
+    <div class="inventory-header page-header page-header-split">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title page-title">Quan ly Nhom san pham</h1>
+            <p class="inventory-subtitle page-subtitle">Dong bo danh muc nhom san pham theo bo giao dien admin thong
+                nhat.</p>
+            </div>
+            <div class="inventory-toolbar">
+                <a asp-action="Create" class="inventory-add-btn">Them nhom</a>
+            </div>
+        </div>
+
+        <div class="inventory-card inventory-filter-card search-card p-3 p-md-4 mb-4">
+            <label class="search-label" for="nhomSpSearch">Tim kiem</label>
+            <div class="search-input-wrap">
+                <span class="search-icon" aria-hidden="true"><i class="bi bi-search"></i></span>
+                <input id="nhomSpSearch" class="inventory-search" type="search" aria-label="Tim ma hoac ten nhom"
+                       placeholder="Tim theo ma nhom hoac ten nhom san pham..." />
+            </div>
+        </div>
+
+        <div class="inventory-card">
+            <div class="inventory-table-wrap table-responsive">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 90px;">STT</th>
+                            <th style="width: 140px;">Ma nhom</th>
+                            <th>Ten nhom san pham</th>
+                            <th style="width: 140px;">Trang thai</th>
+                            <th style="width: 220px; text-align: right;">Thao tac</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (items.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Khong co du lieu de hien thi.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in items)
+                            {
+                                <tr data-search-row="@($"{item.MaNSP} {item.TenNSP}")">
+                                    <td>@stt</td>
+                                    <td><span class="inventory-code">@item.MaNSP</span></td>
+                                    <td><span class="inventory-name">@item.TenNSP</span></td>
+                                    <td><span class="status-badge status-success">Hoat dong</span></td>
+                                    <td>
+                                        <div class="inventory-actions">
+                                            <a asp-action="Details" asp-route-id="@item.MaNSP" class="inventory-action">Chi tiet</a>
+                                            <a asp-action="Edit" asp-route-id="@item.MaNSP" class="inventory-action">Sua</a>
+                                            <a asp-action="Delete" asp-route-id="@item.MaNSP"
+                                               class="inventory-action delete">Xoa</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                stt++;
+                            }
+                            <tr class="inventory-empty-row" data-empty-row hidden>
+                                <td colspan="5">
+                                    <p class="inventory-empty-message" data-empty-message>Khong co du lieu de hien thi.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="inventory-footer">
+                <p class="inventory-stats">Tong <strong>@items.Count</strong> nhom san pham</p>
+            </div>
+        </div>
+    </section>
+
+    @section Scripts {
+        <script>
+            (function () {
+                const input = document.getElementById("nhomSpSearch");
+                if (!input) {
+                    return;
+                }
+
+                const rows = Array.from(document.querySelectorAll("tr[data-search-row]"));
+                const emptyRow = document.querySelector("tr[data-empty-row]");
+
+                function normalize(value) {
+                    return (value || "").toLowerCase().trim();
+                }
+
+                function applyFilter() {
+                    const keyword = normalize(input.value);
+                    let visibleCount = 0;
+
+                    rows.forEach(row => {
+                        const text = normalize(row.getAttribute("data-search-row"));
+                        const visible = !keyword || text.includes(keyword);
+                        row.hidden = !visible;
+                        if (visible) {
+                            visibleCount += 1;
+                        }
+                    });
+
+                    if (emptyRow) {
+                        emptyRow.hidden = visibleCount > 0;
+                    }
+                }
+
+                input.addEventListener("input", applyFilter);
+            })();
+        </script>
+    }

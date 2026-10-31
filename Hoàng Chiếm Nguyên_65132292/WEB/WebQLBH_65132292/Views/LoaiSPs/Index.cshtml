@@ -1,0 +1,164 @@
+@model IEnumerable<DbQLBH_65132292.Models.LoaiSP>
+
+@{
+    ViewData["Title"] = "Loai san pham";
+    var items = Model?.ToList() ?? new List<DbQLBH_65132292.Models.LoaiSP>();
+    var tuKhoa = ViewBag.TuKhoa as string ?? string.Empty;
+    var selectedMaNsp = ViewBag.SelectedMaNSP as short?;
+    var selectedMaLsp = ViewBag.SelectedMaLSP as short?;
+    var sapXep = ViewBag.SapXep as string ?? "maLspAsc";
+    var nhomOptions = ViewBag.NhomOptions as IEnumerable<DbQLBH_65132292.Models.NhomSP>
+        ?? Enumerable.Empty<DbQLBH_65132292.Models.NhomSP>();
+    var loaiOptions = ViewBag.LoaiOptions as IEnumerable<DbQLBH_65132292.Models.LoaiSP>
+        ?? Enumerable.Empty<DbQLBH_65132292.Models.LoaiSP>();
+}
+
+<section class="inventory-page list-page">
+    <div class="inventory-header page-header page-header-split">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title page-title">Quan ly Loai san pham</h1>
+            <p class="inventory-subtitle page-subtitle">Phan loai danh muc luu kho va dieu huong thao tac nhanh cho
+                nguoi quan tri.</p>
+            </div>
+            <div class="inventory-toolbar">
+                <a asp-action="Create" class="inventory-add-btn">Them loai</a>
+            </div>
+        </div>
+
+        <div class="inventory-card inventory-filter-card search-card p-3 p-md-4 mb-4">
+            <form method="get" asp-action="Index" class="row g-3 align-items-xl-end">
+                <div class="col-12 col-xl-3">
+                    <label class="form-label" for="tuKhoa">Tu khoa</label>
+                    <input id="tuKhoa" name="tuKhoa" class="form-control" type="search" value="@tuKhoa"
+                           placeholder="MaLSP, TenLSP..." />
+                </div>
+
+                <div class="col-6 col-xl-2">
+                    <label class="form-label" for="maNsp">Nhom SP</label>
+                    <select id="maNsp" name="maNsp" class="form-select">
+                        <option value="">Tat ca</option>
+                        @foreach (var nhom in nhomOptions)
+                        {
+                            if (selectedMaNsp == nhom.MaNSP)
+                            {
+                                <option value="@nhom.MaNSP" selected>@nhom.MaNSP - @nhom.TenNSP</option>
+                            }
+                            else
+                            {
+                                <option value="@nhom.MaNSP">@nhom.MaNSP - @nhom.TenNSP</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-6 col-xl-2">
+                    <label class="form-label" for="maLsp">Loai SP</label>
+                    <select id="maLsp" name="maLsp" class="form-select">
+                        <option value="">Tat ca</option>
+                        @foreach (var loai in loaiOptions)
+                        {
+                            if (selectedMaLsp == loai.MaLSP)
+                            {
+                                <option value="@loai.MaLSP" selected>@loai.MaLSP - @loai.TenLSP</option>
+                            }
+                            else
+                            {
+                                <option value="@loai.MaLSP">@loai.MaLSP - @loai.TenLSP</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-6 col-xl-2">
+                    <label class="form-label" for="sapXep">Sap xep</label>
+                    <select id="sapXep" name="sapXep" class="form-select">
+                        @if (sapXep == "maLspAsc")
+                        {
+                            <option value="maLspAsc" selected>Ma loai tang dan</option>
+                        }
+                        else
+                        {
+                            <option value="maLspAsc">Ma loai tang dan</option>
+                        }
+
+                        @if (sapXep == "maLspDesc")
+                        {
+                            <option value="maLspDesc" selected>Ma loai giam dan</option>
+                        }
+                        else
+                        {
+                            <option value="maLspDesc">Ma loai giam dan</option>
+                        }
+
+                        @if (sapXep == "tenAsc")
+                        {
+                            <option value="tenAsc" selected>Ten loai A-Z</option>
+                        }
+                        else
+                        {
+                            <option value="tenAsc">Ten loai A-Z</option>
+                        }
+
+                        @if (sapXep == "tenDesc")
+                        {
+                            <option value="tenDesc" selected>Ten loai Z-A</option>
+                        }
+                        else
+                        {
+                            <option value="tenDesc">Ten loai Z-A</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-12 col-xl-3 d-flex gap-2 justify-content-xl-end">
+                    <button type="submit" class="inventory-add-btn w-100">Loc</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="inventory-card">
+            <div class="inventory-table-wrap table-responsive">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 130px;">Ma loai</th>
+                            <th>Ten loai</th>
+                            <th style="width: 120px;">Ma nhom</th>
+                            <th style="width: 220px; text-align: right;">Thao tac</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (items.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Khong co du lieu de hien thi.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in items)
+                            {
+                                <tr>
+                                    <td><span class="inventory-code">@item.MaLSP</span></td>
+                                    <td><span class="inventory-name">@item.TenLSP</span></td>
+                                    <td><span class="inventory-value">@item.MaNSP</span></td>
+                                    <td>
+                                        <div class="inventory-actions">
+                                            <a asp-action="Details" asp-route-id="@item.MaLSP" class="inventory-action">Chi tiet</a>
+                                            <a asp-action="Edit" asp-route-id="@item.MaLSP" class="inventory-action">Sua</a>
+                                            <a asp-action="Delete" asp-route-id="@item.MaLSP"
+                                               class="inventory-action delete">Xoa</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="inventory-footer">
+                <p class="inventory-stats">Dang hien thi <strong>@items.Count</strong> loai san pham</p>
+            </div>
+        </div>
+    </section>

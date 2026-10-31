@@ -1,0 +1,27 @@
+## .NET build artifacts
+**/bin/
+**/obj/
+**/publish/
+
+## Visual Studio & VS Code cache
+**/.vs/
+**/.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Temporary / large database files (backup is in database/)
+*.mdf
+*.ldf
+
+## Large archive snapshots
+*.zip
+*.rar
+*.7z
+
+## OS generated
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,107 @@
+@model DbQLBH_65132292.Models.ViewModels.DonMHIndexViewModel
+
+@{
+    ViewData["Title"] = "Don mua";
+    var fromPage = Math.Max(1, Model.Page - 2);
+    var toPage = Math.Min(Model.TotalPages, Model.Page + 2);
+}
+
+<section class="inventory-page list-page">
+    <div class="inventory-header page-header page-header-split">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title page-title">Don mua hang</h1>
+            <p class="inventory-subtitle page-subtitle">Workflow mua hang voi danh sach, chi tiet va cap nhat dong hang.
+            </p>
+        </div>
+        <div class="inventory-toolbar">
+            <a asp-action="Create" class="inventory-add-btn">Tao don mua</a>
+        </div>
+    </div>
+
+    <div class="inventory-card inventory-filter-card search-card p-3 p-md-4 mb-4">
+        <form method="get" asp-action="Index" class="row g-3 align-items-xl-end">
+            <div class="col-12 col-md-10">
+                <label class="form-label">Tu khoa</label>
+                <input type="text" name="tuKhoa" value="@Model.TuKhoa" class="form-control"
+                       placeholder="Ma don, nha cung cap..." />
+            </div>
+            <input type="hidden" name="pageSize" value="@Model.PageSize" />
+            <div class="col-6 col-md-1 d-flex align-items-end">
+                <button type="submit" class="inventory-add-btn w-100 justify-content-center">Loc</button>
+            </div>
+            <div class="col-6 col-md-1 d-flex align-items-end">
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="inventory-card">
+        <div class="inventory-table-wrap table-responsive">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Ma DMH</th>
+                        <th style="width: 140px;">Ngay mua</th>
+                        <th>Nha cung cap</th>
+                        <th style="width: 120px;">So dong</th>
+                        <th style="width: 150px;">Tong tien</th>
+                        <th style="width: 220px; text-align: right;">Thao tac</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Items.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Khong co du lieu don mua.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td><span class="inventory-code">@item.MaDMH</span></td>
+                                <td><span class="inventory-value">@item.NgayMua.ToString("dd/MM/yyyy")</span></td>
+                                <td><span class="inventory-name">@item.TenNCC</span></td>
+                                <td><span class="inventory-value">@item.SoDong</span></td>
+                                <td><span class="inventory-value">@item.TongTien.ToString("N0")</span></td>
+                                <td>
+                                    <div class="inventory-actions">
+                                        <a asp-action="Details" asp-route-id="@item.MaDMH" class="inventory-action">Chi tiet</a>
+                                        <a asp-action="Edit" asp-route-id="@item.MaDMH" class="inventory-action">Sua</a>
+                                        <a asp-action="Delete" asp-route-id="@item.MaDMH"
+                                           class="inventory-action delete">Xoa</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="inventory-footer">
+            <p class="inventory-stats">Trang <strong>@Model.Page</strong>/<strong>@Model.TotalPages</strong> - Tong
+                <strong>@Model.TotalItems</strong> don mua
+            </p>
+            <div class="inventory-pagination">
+                @if (Model.Page > 1)
+                {
+                    <a class="inventory-page-btn" asp-action="Index" asp-route-page="@(Model.Page - 1)"
+                       asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">&lt;</a>
+                }
+
+                @for (var i = fromPage; i <= toPage; i++)
+                {
+                    <a class="inventory-page-btn @(i == Model.Page ? "active" : string.Empty)" asp-action="Index"
+                       asp-route-page="@i" asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">@i</a>
+                }
+
+                @if (Model.Page < Model.TotalPages)
+                {
+                    <a class="inventory-page-btn" asp-action="Index" asp-route-page="@(Model.Page + 1)"
+                       asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">&gt;</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>

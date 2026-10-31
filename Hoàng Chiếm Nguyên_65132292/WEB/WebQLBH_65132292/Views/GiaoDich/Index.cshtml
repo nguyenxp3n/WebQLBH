@@ -1,0 +1,133 @@
+@model DbQLBH_65132292.Models.ViewModels.GiaoDichTongQuanViewModel
+
+@{
+    ViewData["Title"] = "Tong quan giao dich";
+}
+
+<section class="inventory-page giao-dich-page">
+    <div class="inventory-header">
+        <div class="inventory-title-wrap">
+            <h1 class="inventory-title">Tong quan giao dich</h1>
+            <p class="inventory-subtitle">Theo doi don mua, don ban va gia tri giao dich hien tai.</p>
+        </div>
+        <div class="inventory-toolbar">
+            <a class="inventory-add-btn" href="/giao-dich/don-mua">Don mua</a>
+            <a class="inventory-add-btn" href="/giao-dich/don-ban">Don ban</a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong don mua</p>
+                <p class="bao-cao-kpi-value">@Model.TongDonMua</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong don ban</p>
+                <p class="bao-cao-kpi-value">@Model.TongDonBan</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong gia tri mua</p>
+                <p class="bao-cao-kpi-value">@Model.TongGiaTriMua.ToString("N0") đ</p>
+            </article>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <article class="bao-cao-kpi">
+                <p class="bao-cao-kpi-label">Tong gia tri ban</p>
+                <p class="bao-cao-kpi-value">@Model.TongGiaTriBan.ToString("N0") đ</p>
+            </article>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-xl-6">
+            <div class="inventory-card">
+                <div class="bao-cao-card-header">
+                    <h2 class="bao-cao-card-title">Don mua gan day</h2>
+                    <p class="bao-cao-card-subtitle">Top 5 don mua moi nhat</p>
+                </div>
+                <div class="inventory-table-wrap table-responsive">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">Ma DMH</th>
+                                <th>Ngay mua</th>
+                                <th>Nha cung cap</th>
+                                <th style="width: 140px;">Tong tien</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.DonMuaGanDay.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Khong co du lieu don mua.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var item in Model.DonMuaGanDay)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a class="inventory-code" href="/giao-dich/don-mua/@item.MaDMH">@item.MaDMH</a>
+                                        </td>
+                                        <td><span class="inventory-value">@item.NgayMua.ToString("dd/MM/yyyy")</span></td>
+                                        <td><span class="inventory-name">@item.TenNCC</span></td>
+                                        <td><span class="inventory-value">@item.TongTien.ToString("N0") đ</span></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+            <div class="inventory-card">
+                <div class="bao-cao-card-header">
+                    <h2 class="bao-cao-card-title">Don ban gan day</h2>
+                    <p class="bao-cao-card-subtitle">Top 5 don ban moi nhat</p>
+                </div>
+                <div class="inventory-table-wrap table-responsive">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">Ma DBH</th>
+                                <th>Ngay ban</th>
+                                <th>Khach hang</th>
+                                <th style="width: 140px;">Tong tien</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.DonBanGanDay.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Khong co du lieu don ban.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var item in Model.DonBanGanDay)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a class="inventory-code" href="/giao-dich/don-ban/@item.MaDBH">@item.MaDBH</a>
+                                        </td>
+                                        <td><span class="inventory-value">@item.NgayBan.ToString("dd/MM/yyyy")</span></td>
+                                        <td><span class="inventory-name">@item.TenKH</span></td>
+                                        <td><span class="inventory-value">@item.TongTien.ToString("N0") đ</span></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

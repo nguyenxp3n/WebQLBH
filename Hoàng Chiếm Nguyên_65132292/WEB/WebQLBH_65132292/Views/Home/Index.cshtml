@@ -1,0 +1,236 @@
+﻿@model DbQLBH_65132292.Models.ViewModels.HomeDashboardViewModel
+
+@{
+    ViewData["Title"] = "Trang chủ";
+    var topProducts = Model.TopSanPhamBanChay?.ToList() ?? new List<DbQLBH_65132292.Models.ViewModels.TopProductItem>();
+    var recentOrders = Model.DonBanGanDay?.ToList() ?? new List<DbQLBH_65132292.Models.ViewModels.RecentSaleItem>();
+    var dailyRevenue = Model.DoanhThu7Ngay?.OrderBy(x => x.Ngay).ToList()
+        ?? new List<DbQLBH_65132292.Models.ViewModels.DailyRevenueItem>();
+}
+
+<section class="dashboard-page">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Trang chủ - QL Bán Hàng</h1>
+            <p class="page-subtitle">Theo dõi hiệu suất kinh doanh, đơn hàng gần đây và sản phẩm bán chạy theo thời gian
+                thực.</p>
+                <p id="dashboardRealtimeStatus" class="page-subtitle">Realtime: dang ket noi...</p>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <article class="kpi-card">
+                <p class="kpi-label">Sản phẩm</p>
+                <p class="kpi-value">@Model.TongSanPham</p>
+                <span class="kpi-trend kpi-trend-positive">@topProducts.Count nhóm đang bán tốt</span>
+            </article>
+            <article class="kpi-card">
+                <p class="kpi-label">Đơn bán</p>
+                <p class="kpi-value">@Model.TongDonBan</p>
+                <span class="kpi-trend kpi-trend-neutral">@Model.TongDonMua đơn mua đối ứng</span>
+            </article>
+            <article class="kpi-card">
+                <p class="kpi-label">Khách hàng</p>
+                <p class="kpi-value">@Model.TongKhachHang</p>
+                <span class="kpi-trend kpi-trend-neutral">@Model.TongNhaCungCap nhà cung cấp kết nối</span>
+            </article>
+            <article class="kpi-card">
+                <p class="kpi-label">Doanh thu</p>
+                <p class="kpi-value">@Model.TongDoanhThu.ToString("N0")</p>
+                <span class="kpi-trend kpi-trend-positive">VNĐ</span>
+            </article>
+        </div>
+
+        <div class="dashboard-grid">
+            <section class="app-card chart-card">
+                <div class="card-head">
+                    <h2 class="card-title">Doanh thu 7 ngày</h2>
+                    <span class="card-meta">Dữ liệu từ toàn bộ đơn trong 7 ngày gần nhất</span>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="revenue7dChart" class="chart-canvas" aria-label="Biểu đồ doanh thu 7 ngày"
+                            role="img"></canvas>
+                </div>
+            </section>
+
+            <section class="app-card table-card">
+                <div class="card-head">
+                    <h2 class="card-title">Đơn hàng gần đây</h2>
+                    <span class="card-meta">@recentOrders.Count bản ghi</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="app-table compact">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>Ngày</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!recentOrders.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center">Không có đơn bán gần đây.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                for (var i = 0; i < recentOrders.Count; i++)
+                                {
+                                    var item = recentOrders[i];
+                                    var statusClass = string.IsNullOrWhiteSpace(item.TrangThaiCss)
+                                        ? "status-info"
+                                        : item.TrangThaiCss;
+                                    var statusText = string.IsNullOrWhiteSpace(item.TrangThai)
+                                        ? "Moi"
+                                        : item.TrangThai;
+                                    <tr>
+                                        <td><span class="code-pill">@item.MaDBH</span></td>
+                                        <td>@item.TenKH</td>
+                                        <td>@item.NgayBan.ToString("dd/MM/yyyy")</td>
+                                        <td><span class="money-value">@item.TongTien.ToString("N0")</span></td>
+                                        <td><span class="status-badge @statusClass">@statusText</span></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <section class="app-card rank-card">
+            <h2 class="rank-title">Top sản phẩm bán chạy</h2>
+            <ol class="rank-list">
+                @if (!topProducts.Any())
+                {
+                    <li class="rank-item">
+                        <div class="rank-content">
+                            <p class="rank-name">Chưa có dữ liệu sản phẩm bán chạy.</p>
+                        </div>
+                    </li>
+                }
+                else
+                {
+                    for (var i = 0; i < topProducts.Count; i++)
+                    {
+                        var item = topProducts[i];
+                        <li class="rank-item">
+                            <span class="rank-index">@(i + 1)</span>
+                            <div class="rank-content">
+                                <p class="rank-name">@item.TenSP</p>
+                                <p class="rank-meta">Mã: @item.MaSP</p>
+                            </div>
+                            <div class="rank-values">
+                                <span class="rank-qty">@item.TongSoLuong sp</span>
+                                <span class="rank-money">@item.TongTien.ToString("N0") VNĐ</span>
+                            </div>
+                        </li>
+                    }
+                }
+            </ol>
+        </section>
+    </section>
+
+    @section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+        <script>
+            (() => {
+            const revenueMap = new Map([
+            @foreach (var point in dailyRevenue)
+            {
+                <text>["@point.Ngay.ToString("yyyy-MM-dd")", @point.DoanhThu.ToString(System.Globalization.CultureInfo.InvariantCulture)],</text>
+            }
+            ]);
+
+            const labels = [];
+            const values = [];
+            const now = new Date();
+
+            for (let i = 6; i >= 0; i -= 1) {
+            const d = new Date(now);
+            d.setDate(now.getDate() - i);
+
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+            const label = `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
+
+            labels.push(label);
+            values.push(Number(revenueMap.get(key) || 0));
+            }
+
+            const canvas = document.getElementById("revenue7dChart");
+            if (!canvas) {
+            return;
+            }
+
+            new Chart(canvas, {
+            type: "line",
+            data: {
+            labels,
+            datasets: [
+            {
+            label: "Doanh thu (VNĐ)",
+            data: values,
+            borderColor: "#2563EB",
+            backgroundColor: "rgba(37, 99, 235, 0.14)",
+            fill: true,
+            tension: 0.35,
+            pointRadius: 3,
+            pointHoverRadius: 4
+            }
+            ]
+            },
+            options: {
+            maintainAspectRatio: false,
+            plugins: {
+            legend: {
+            display: false
+            }
+            },
+            scales: {
+            y: {
+            ticks: {
+            callback(value) {
+            return Number(value).toLocaleString("vi-VN");
+            }
+            },
+            grid: {
+            color: "#E2E7FF"
+            }
+            },
+            x: {
+            grid: {
+            display: false
+            }
+            }
+            }
+            }
+            });
+
+            const realtimeStatus = document.getElementById("dashboardRealtimeStatus");
+            if (window.signalR && realtimeStatus) {
+            const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/dashboard")
+            .withAutomaticReconnect()
+            .build();
+
+            connection.on("dashboardPulse", (utcTimestamp) => {
+            const ts = new Date(utcTimestamp);
+            realtimeStatus.textContent = `Realtime: cap nhat ${ts.toLocaleTimeString("vi-VN")}`;
+            });
+
+            connection.start()
+            .then(() => {
+            realtimeStatus.textContent = "Realtime: da ket noi";
+            })
+            .catch(() => {
+            realtimeStatus.textContent = "Realtime: khong the ket noi";
+            });
+            }
+            })();
+        </script>
+    }

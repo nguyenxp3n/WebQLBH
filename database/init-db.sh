@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+echo "==> Waiting for SQL Server (db) to be ready..."
+for i in {1..60}; do
+    if /opt/mssql-tools18/bin/sqlcmd -S db -U sa -P "Password@123" -C -Q "SELECT 1" > /dev/null 2>&1; then
+        echo "==> SQL Server is ready and accepting connections."
+        break
+    fi
+    echo "    Waiting for SQL Server... ($i/60)"
+    sleep 2
+done
+
+echo "==> Initializing database DbQLBH_65132292 from init.sql..."
+/opt/mssql-tools18/bin/sqlcmd -S db -U sa -P "Password@123" -C -i /database/init.sql
+
+echo "==> All database initialization tasks completed successfully!"
+exit 0

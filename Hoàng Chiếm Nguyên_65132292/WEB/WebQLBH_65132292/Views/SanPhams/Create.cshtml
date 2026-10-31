@@ -1,0 +1,196 @@
+﻿@model DbQLBH_65132292.Models.SanPham
+
+@{
+    ViewData["Title"] = "Create";
+
+    var nhomOptions = ViewBag.NhomOptions as IEnumerable<DbQLBH_65132292.Models.NhomSP>
+        ?? Enumerable.Empty<DbQLBH_65132292.Models.NhomSP>();
+    var loaiOptions = ViewBag.LoaiOptionsData as IEnumerable<DbQLBH_65132292.Models.LoaiSP>
+        ?? Enumerable.Empty<DbQLBH_65132292.Models.LoaiSP>();
+    var nextMaSpPreview = ViewBag.NextMaSPPreview as string ?? $"{DateTime.Today:yyMMdd}0001";
+
+    short? selectedMaNsp = null;
+    if (ViewBag.SelectedMaNSP is short selectedFromViewBag)
+    {
+        selectedMaNsp = selectedFromViewBag;
+    }
+    else if (Model != null && Model.MaLSP > 0)
+    {
+        selectedMaNsp = loaiOptions
+            .Where(x => x.MaLSP == Model.MaLSP)
+            .Select(x => (short?)x.MaNSP)
+            .FirstOrDefault();
+    }
+}
+
+<section class="admin-form-page">
+    <div class="page-header page-header-split">
+        <div class="page-title-group">
+            <span class="icon-chip" aria-hidden="true">SP</span>
+            <div>
+                <h1 class="page-title">Them san pham</h1>
+                <p class="page-subtitle">Giao dien theo mau admin Stitch, chi thay doi phan trinh bay.</p>
+            </div>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">Quay lai danh sach</a>
+    </div>
+
+    <div class="app-card admin-form-card">
+        <form asp-action="Create" method="post" enctype="multipart/form-data" class="row g-3 admin-form-grid">
+            <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
+
+            <div class="col-12 col-lg-6">
+                <div class="form-group">
+                    <label class="control-label">MaSP (du kien)</label>
+                    <input class="form-control" value="@nextMaSpPreview" readonly />
+                    <div class="admin-form-hint">MaSP chinh thuc se do SQL cap khi luu.</div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="form-group">
+                    <label asp-for="TenSP" class="control-label"></label>
+                    <input asp-for="TenSP" class="form-control" />
+                    <span asp-validation-for="TenSP" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="form-group">
+                    <label class="control-label">Tai anh tu may</label>
+                    <input type="file" name="anhTep" class="form-control" accept=".jpg,.jpeg,.png,.webp,.gif" />
+                    <span asp-validation-for="AnhSP" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="form-group">
+                    <label asp-for="DonGia" class="control-label"></label>
+                    <input asp-for="DonGia" class="form-control" />
+                    <span asp-validation-for="DonGia" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label asp-for="MoTaCT" class="control-label">Mo ta chi tiet</label>
+                    <textarea asp-for="MoTaCT" class="form-control" rows="4"></textarea>
+                    <div class="admin-form-hint">Nen nhap mo ta ngan gon bang tieng Viet.</div>
+                    <span asp-validation-for="MoTaCT" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="form-group">
+                    <label class="control-label">Nhom SP</label>
+                    <select id="maNsp" name="maNsp" class="form-select">
+                        <option value="">-- Chon nhom san pham --</option>
+                        @foreach (var nsp in nhomOptions)
+                        {
+                            if (selectedMaNsp == nsp.MaNSP)
+                            {
+                                <option value="@nsp.MaNSP" selected>@nsp.MaNSP - @nsp.TenNSP</option>
+                            }
+                            else
+                            {
+                                <option value="@nsp.MaNSP">@nsp.MaNSP - @nsp.TenNSP</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-3">
+                <div class="form-group">
+                    <label asp-for="MaLSP" class="control-label"></label>
+                    <select asp-for="MaLSP" id="maLsp" class="form-select">
+                        <option value="">-- Chon loai san pham --</option>
+                        @foreach (var lsp in loaiOptions)
+                        {
+                            if (Model != null && Model.MaLSP == lsp.MaLSP)
+                            {
+                                <option value="@lsp.MaLSP" data-ma-nsp="@lsp.MaNSP" selected>@lsp.MaLSP - @lsp.TenLSP</option>
+                            }
+                            else
+                            {
+                                <option value="@lsp.MaLSP" data-ma-nsp="@lsp.MaNSP">@lsp.MaLSP - @lsp.TenLSP</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="MaLSP" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-3">
+                <div class="form-group">
+                    <label asp-for="MaDVT" class="control-label"></label>
+                    <select asp-for="MaDVT" asp-items="ViewBag.MaDVTOptions" class="form-select">
+                        <option value="">-- Chon don vi tinh --</option>
+                    </select>
+                    <span asp-validation-for="MaDVT" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-12 admin-form-actions">
+                <a asp-action="Index" class="btn btn-outline-secondary">Huy</a>
+                <button type="submit" class="primary-btn">Luu san pham</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        (function () {
+            const nhomSelect = document.getElementById("maNsp");
+            const loaiSelect = document.getElementById("maLsp");
+            if (!nhomSelect || !loaiSelect) {
+                return;
+            }
+
+            const allLoaiOptions = Array.from(loaiSelect.options)
+                .filter(option => option.value !== "")
+                .map(option => ({
+                    value: option.value,
+                    text: option.text,
+                    maNsp: option.dataset.maNsp || ""
+                }));
+
+            function renderLoaiOptions(selectedMaNsp, selectedLoai) {
+                loaiSelect.innerHTML = "";
+
+                const defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.text = "-- Chon loai san pham --";
+                loaiSelect.appendChild(defaultOption);
+
+                allLoaiOptions
+                    .filter(item => !selectedMaNsp || item.maNsp === selectedMaNsp)
+                    .forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.value;
+                        option.text = item.text;
+                        option.dataset.maNsp = item.maNsp;
+                        loaiSelect.appendChild(option);
+                    });
+
+                if (selectedLoai && Array.from(loaiSelect.options).some(option => option.value === selectedLoai)) {
+                    loaiSelect.value = selectedLoai;
+                } else {
+                    loaiSelect.value = "";
+                }
+            }
+
+            const initialLoai = loaiSelect.value;
+            renderLoaiOptions(nhomSelect.value, initialLoai);
+
+            nhomSelect.addEventListener("change", () => {
+                renderLoaiOptions(nhomSelect.value, loaiSelect.value);
+            });
+        })();
+    </script>
+}

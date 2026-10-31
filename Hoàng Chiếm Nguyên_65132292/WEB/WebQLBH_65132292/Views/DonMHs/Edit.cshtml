@@ -1,0 +1,37 @@
+@model DbQLBH_65132292.Models.DonMH
+
+@{
+    ViewData["Title"] = "Sua don mua";
+}
+
+<h1>Sua don mua</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6 col-lg-5">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MaDMH" />
+            <div class="mb-3">
+                <label asp-for="NgayMua" class="form-label"></label>
+                <input asp-for="NgayMua" type="date" class="form-control" />
+                <span asp-validation-for="NgayMua" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="MaNCC" class="form-label">Nha cung cap</label>
+                <select asp-for="MaNCC" class="form-select" asp-items="ViewBag.NhaCCOptions">
+                    <option value="">-- Chon nha cung cap --</option>
+                </select>
+                <span asp-validation-for="MaNCC" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Luu</button>
+            <a asp-action="Details" asp-route-id="@Model.MaDMH" class="btn btn-outline-secondary ms-2">Quay lai</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
