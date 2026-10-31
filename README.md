@@ -11,7 +11,7 @@
 
 <br/>
 
-**Language:** [English](README_en.md) | [العربية](README_ar.md) | [Português (Brasil)](README_pt.md) | [简体中文](README_zh.md) | [繁體中文](README_zh_tw.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Türkçe](README_tr.md) | [Русский](README_ru.md) | **[Tiếng Việt](README.md)** | [ไทย](README_th.md) | [Deutsch](README_de.md) | [Español](README_es.md) | [Українська](README_uk.md) | [Polski](README_pl.md) | [বাংলা](README_bn.md)
+**Ngôn ngữ / Language:** **Tiếng Việt (Bản gốc)** | [English (Secondary)](README_en.md)
 
 </div>
 
