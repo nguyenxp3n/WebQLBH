@@ -7,11 +7,10 @@
 [![Database](https://img.shields.io/badge/SQL%20Server-2022-CC292B?logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/sql-server)
 [![SignalR](https://img.shields.io/badge/Realtime-SignalR-blue)](https://dotnet.microsoft.com/apps/aspnet/signalr)
 [![UI/UX](https://img.shields.io/badge/UI%2FUX-Enterprise%20Slate%20%26%20Emerald-059669)](Hoàng%20Chiếm%20Nguyên_65132292/WEB/WebQLBH_65132292/wwwroot/css/app.css)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 <br/>
 
-**Language / Ngôn ngữ:** [Tiếng Việt (Bản gốc)](README.md) | **English (Secondary)**
+**Language / Ngôn ngữ:** [Tiếng Việt](README.md) | **English (Secondary)**
 
 </div>
 
@@ -146,9 +145,3 @@ WebQLBH/
 │       ├── wwwroot/                # CSS (Enterprise Slate & Emerald), JS, Uploads
 │       └── Dockerfile              # Multi-stage build (Debian + Native Graphics Fonts)
 ```
-
----
-
-## 📄 License
-
-Distributed under the [MIT License](LICENSE).
