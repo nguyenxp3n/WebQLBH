@@ -15,7 +15,7 @@
 
 </div>
 
-> Hệ thống Quản lý Bán hàng & Chuỗi cung ứng xây dựng trên nền tảng **ASP.NET Core MVC** (.NET 10) và **Microsoft SQL Server 2022**, tích hợp giám sát số liệu thời gian thực qua **SignalR**, giao diện chuẩn **Enterprise Slate & Emerald** (100% tiếng Việt có dấu), cơ chế kiểm duyệt ảnh bằng mã nhận dạng nhị phân (Magic Bytes), và xuất dữ liệu đa định dạng (Excel / PDF / CSV).
+> Hệ thống Quản lý Bán hàng & Chuỗi cung ứng xây dựng trên nền tảng **ASP.NET Core MVC** (.NET 10) và **Microsoft SQL Server 2022**, tích hợp giám sát số liệu thời gian thực qua **SignalR**, giao diện chuẩn **Enterprise Slate & Emerald** (giao diện Tiếng Việt có dấu chuẩn mực), cơ chế kiểm duyệt ảnh bằng mã nhận dạng nhị phân (Magic Bytes), và xuất dữ liệu đa định dạng (Excel / PDF / CSV).
 >
 > 🚀 **Sẵn sàng khởi chạy với 1 lệnh**: Đã được đóng gói hoàn chỉnh bằng **Docker Compose** (gồm Web Application + SQL Server Linux tự động khởi tạo dữ liệu mẫu).
 
@@ -175,18 +175,18 @@ erDiagram
 - **Biểu đồ trực quan:** Tích hợp **Chart.js** hiển thị xu hướng biến động doanh thu 7 ngày gần nhất.
 
 ### 2. 🎨 Giao Diện Doanh Nghiệp (Enterprise Slate & Emerald)
-- **100% Tiếng Việt có dấu:** Toàn bộ menu, tiêu đề cột, biểu mẫu nhập liệu, thông báo xác thực và modal xác nhận được chuẩn hóa ngữ pháp tiếng Việt.
+- **Giao diện Tiếng Việt có dấu:** Toàn bộ menu, tiêu đề cột, biểu mẫu nhập liệu, thông báo xác thực và modal xác nhận được chuẩn hóa ngữ pháp tiếng Việt.
 - **Bảng màu & Typography:** Sử dụng tone nền Slate `#0F172A`, điểm nhấn Emerald `#059669`; phông chữ *Be Vietnam Pro* và số liệu tiền tệ hiển thị font đơn khoảng cách *JetBrains Mono*.
 - **Bộ lọc giá thông minh:** Popover lựa chọn khoảng giá linh hoạt, không che khuất dữ liệu bên dưới.
 
 ### 3. 📦 Tối Ưu Hóa CSDL & 15 Stored Procedures
 - **Quy trình sinh mã an toàn:** Thủ tục lưu trữ `sp_ThemSanPham` tự động sinh mã theo ngày tháng `yyMMdd0001` (độ dài 10 ký tự `CHAR(10)`), sử dụng khóa `(UPDLOCK, HOLDLOCK)` chống trùng lặp mã khi có nhiều giao dịch đồng thời.
-- **Đồng bộ kiểu dữ liệu:** Đảm bảo khớp nối 100% giữa Entity Framework Core và schema SQL Server.
+- **Đồng bộ kiểu dữ liệu:** Khớp nối chặt chẽ cấu trúc Entity Framework Core và schema SQL Server.
 
 ### 4. 🖼️ Kiểm Tra Bảo Mật Ảnh Tải Lên (Magic Bytes Validation)
 - Tích hợp **SixLabors.ImageSharp** để xử lý tệp tải lên:
-  - Kiểm tra **Magic Bytes** thực tế ở đầu tệp nhị phân (chỉ chấp nhận JPEG, PNG, GIF, WebP), ngăn chặn triệt để kỹ thuật giả mạo phần mở rộng tệp.
-  - Tự động nén, điều chỉnh kích thước tối đa 1600px ở mức chất lượng 82% và xóa bỏ siêu dữ liệu (EXIF), ngăn chặn lưu trữ tệp độc hại thô trên máy chủ.
+  - Kiểm tra **Magic Bytes** thực tế ở đầu tệp nhị phân (chỉ chấp nhận JPEG, PNG, GIF, WebP), hỗ trợ phát hiện và ngăn chặn các tệp giả mạo phần mở rộng (extension spoofing).
+  - Tự động nén, điều chỉnh kích thước tối đa 1600px ở mức chất lượng 82% và xóa bỏ siêu dữ liệu (EXIF), hạn chế tối đa lưu trữ tệp thô chưa qua thẩm định trên máy chủ.
   - Ánh xạ thư mục lưu trữ qua Docker volume `/app/wwwroot/uploads/san-pham`.
 
 ### 5. 📑 Báo Cáo & Xuất Dữ Liệu Đa Định Dạng

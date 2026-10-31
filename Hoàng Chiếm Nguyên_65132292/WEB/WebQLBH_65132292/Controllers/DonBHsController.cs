@@ -268,7 +268,7 @@ namespace DbQLBH_65132292.Controllers
                                    TenSP = sp.TenSP,
                                    SLB = ct.SLB,
                                    DGB = ct.DGB,
-                                   ThanhTien = ((decimal)ct.SLB) * ct.DGB
+                                   ThanhTien = OrderCalculator.TinhThanhTienBan(ct.SLB, ct.DGB)
                                }).ToListAsync();
 
             var model = new DonBHDetailsViewModel

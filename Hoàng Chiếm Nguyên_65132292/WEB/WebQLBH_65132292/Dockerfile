@@ -1,5 +1,5 @@
 # 1. Base runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 8080
 
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. Build stage
-FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY ["DbQLBH_65132292.csproj", "./"]
 RUN dotnet restore "DbQLBH_65132292.csproj"

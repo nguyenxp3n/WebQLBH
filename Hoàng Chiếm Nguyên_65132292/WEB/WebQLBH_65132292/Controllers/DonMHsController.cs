@@ -1,4 +1,5 @@
 using DbQLBH_65132292.Data;
+using DbQLBH_65132292.Infrastructure;
 using DbQLBH_65132292.Models;
 using DbQLBH_65132292.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -220,7 +221,7 @@ namespace DbQLBH_65132292.Controllers
                                    TenSP = sp.TenSP,
                                    SLM = ct.SLM,
                                    DGM = ct.DGM,
-                                   ThanhTien = ((decimal)ct.SLM) * ct.DGM
+                                   ThanhTien = OrderCalculator.TinhThanhTienMua(ct.SLM, ct.DGM)
                                }).ToListAsync();
 
             var model = new DonMHDetailsViewModel

@@ -15,7 +15,7 @@
 
 </div>
 
-> An Enterprise Sales & Supply Chain Management System built on **ASP.NET Core MVC** (.NET 10) and **Microsoft SQL Server 2022**, featuring real-time business telemetry via **SignalR**, an enterprise-grade **Slate & Emerald design system** (100% accented Vietnamese typography), binary magic signature image verification, and multi-format document exporting (Excel / PDF / CSV).
+> An Enterprise Sales & Supply Chain Management System built on **ASP.NET Core MVC** (.NET 10) and **Microsoft SQL Server 2022**, featuring real-time business telemetry via **SignalR**, an enterprise-grade **Slate & Emerald design system** (standard accented Vietnamese typography), binary magic signature image verification, and multi-format document exporting (Excel / PDF / CSV).
 >
 > 🚀 **1-Command Turnkey Launch**: Fully containerized using **Docker Compose** (Web Application + SQL Server Linux container with automated schema seeding).
 
@@ -175,7 +175,7 @@ erDiagram
 - **Interactive charts:** Visualized with **Chart.js** displaying rolling 7-day revenue fluctuations with smooth Emerald gradient fills.
 
 ### 2. 🎨 Modern Enterprise UI/UX (Slate & Emerald)
-- **100% Accented Vietnamese Typography:** All labels, form controls, validation errors, and confirmation dialogs adhere strictly to Vietnamese diacritic standards.
+- **Accented Vietnamese Typography:** All labels, form controls, validation errors, and confirmation dialogs adhere strictly to Vietnamese diacritic standards.
 - **Color System & Typefaces:** Slate `#0F172A` background tones accented by Emerald `#059669`; content set in *Be Vietnam Pro* and financial figures formatted with monospace *JetBrains Mono*.
 - **Smart Price Range Selector:** Floating popover filter preventing layout shifting and preserving visibility of table records.
 
@@ -185,7 +185,7 @@ erDiagram
 
 ### 4. 🖼️ Binary Magic Signature Image Validation
 - Powered by **SixLabors.ImageSharp**:
-  - Byte-level **Magic Bytes** verification (JPEG, PNG, GIF, WebP), blocking file extension spoofing attacks.
+  - Byte-level **Magic Bytes** verification (JPEG, PNG, GIF, WebP), detecting and rejecting file extension spoofing attempts.
   - Automatic downscaling (max 1600px width/height, re-encoded at 82% quality) and stripping EXIF metadata.
   - Raw unverified files are never stored on the server file system.
   - Upload volume mapped cleanly to `/app/wwwroot/uploads/san-pham`.
@@ -282,7 +282,7 @@ WebQLBH/
 │   └── WEB/WebQLBH_65132292/       # ASP.NET Core MVC Application
 │       ├── Controllers/            # 17 Business logic & API controllers
 │       ├── Models/                 # Entity Data Models & ViewModels
-│       ├── Views/                  # Razor Views (100% accented Vietnamese)
+│       ├── Views/                  # Razor Views (Accented Vietnamese UI)
 │       ├── Services/               # DashboardService, GiaoDichLookupService
 │       ├── Hubs/                   # SignalR Realtime Hub (/hubs/dashboard)
 │       ├── Infrastructure/         # RateLimiter, HumanTextGuard, OrderCatalog
