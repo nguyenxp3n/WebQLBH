@@ -11,7 +11,7 @@
 
 <br/>
 
-**Ngôn ngữ / Language:** **Tiếng Việt (Bản gốc)** | [English (Secondary)](README_en.md)
+**Ngôn ngữ / Language:** **Tiếng Việt** | [English (Secondary)](README_en.md)
 
 </div>
 
