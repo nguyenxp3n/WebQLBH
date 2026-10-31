@@ -279,7 +279,7 @@ namespace DbQLBH_65132292.Controllers
                 TenKH = header.TenKH,
                 DiaChiGiao = HumanTextGuard.ToSafeAddressDisplay(header.DCGH),
                 ChiTiet = lines,
-                TongTien = lines.Sum(x => x.ThanhTien)
+                TongTien = OrderCalculator.TinhTongThanhTien(lines.Select(x => x.ThanhTien))
             };
 
             await PopulateSanPhamOptionsAsync();
@@ -293,7 +293,7 @@ namespace DbQLBH_65132292.Controllers
             maDBH = maDBH?.Trim() ?? string.Empty;
             maSP = maSP?.Trim() ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(maDBH) || string.IsNullOrWhiteSpace(maSP) || slb == 0 || dgb <= 0)
+            if (string.IsNullOrWhiteSpace(maDBH) || string.IsNullOrWhiteSpace(maSP) || !OrderCalculator.IsValidLineItem(slb, dgb))
             {
                 TempData["WorkflowError"] = "Thông tin dòng chi tiết không hợp lệ.";
                 return RedirectToAction(nameof(Details), new { id = maDBH });

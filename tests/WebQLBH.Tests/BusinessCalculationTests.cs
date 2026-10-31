@@ -84,4 +84,20 @@ public class BusinessCalculationTests
 
         Assert.Equal(expectedValidity, isValid);
     }
+
+    [Fact]
+    public void TinhTongThanhTien_WithDecimalList_AggregatesSumCorrectly()
+    {
+        var lineAmounts = new List<decimal> { 200_000m, 350_000m, 150_000m };
+        decimal grandTotal = OrderCalculator.TinhTongThanhTien(lineAmounts);
+
+        Assert.Equal(700_000m, grandTotal);
+    }
+
+    [Fact]
+    public void TinhTongThanhTien_WithNullOrEmptyList_ReturnsZero()
+    {
+        Assert.Equal(0m, OrderCalculator.TinhTongThanhTien(null));
+        Assert.Equal(0m, OrderCalculator.TinhTongThanhTien(new List<decimal>()));
+    }
 }

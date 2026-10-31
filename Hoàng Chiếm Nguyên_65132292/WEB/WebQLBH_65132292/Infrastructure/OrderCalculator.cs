@@ -60,6 +60,19 @@ namespace DbQLBH_65132292.Infrastructure
         }
 
         /// <summary>
+        /// Tính tổng giá trị từ tập hợp thành tiền của các dòng chi tiết đơn hàng
+        /// </summary>
+        public static decimal TinhTongThanhTien(IEnumerable<decimal>? thanhTiens)
+        {
+            if (thanhTiens == null)
+            {
+                return 0m;
+            }
+
+            return thanhTiens.Sum();
+        }
+
+        /// <summary>
         /// Kiểm tra tính hợp lệ của một dòng chi tiết hàng hóa
         /// </summary>
         public static bool IsValidLineItem(long soLuong, decimal donGia)

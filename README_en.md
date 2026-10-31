@@ -35,7 +35,13 @@
 >
 > **Quick Start Command via Docker:**
 > ```bash
+> # Windows PowerShell:
+> Copy-Item .env.example .env
+>
+> # Linux / macOS / Git Bash:
 > cp .env.example .env
+>
+> # Start container stack:
 > docker compose up -d
 > ```
 
@@ -58,7 +64,7 @@ flowchart TD
     end
 
     subgraph AppLayer ["3. Application Layer"]
-        Controllers["17 MVC Controllers (Sales, Purchases, Partners, Reports)"]
+        Controllers["17 Controllers (15 MVC Controllers + 2 API Controllers)"]
         DashboardService["DashboardService & GiaoDichLookupService"]
         RealtimeHub["SignalR Hub (/hubs/dashboard)"]
         BackgroundWorker["DashboardRealtimeBroadcastService (Hosted Service)"]
@@ -96,11 +102,16 @@ flowchart TD
 
 ## 🗄️ Database Entity-Relationship Diagram (ERD)
 
-The relational supply chain schema comprises 12 entities and 15 optimized Stored Procedures:
+The relational supply chain schema comprises all 12 entities and 15 optimized Stored Procedures:
 
 ```mermaid
 erDiagram
-    NHOM_SAN_PHAM ||--o{ LOAI_SAN_PHAM : "contains"
+    TINH ||--o{ PHUONG_XA : "contains"
+    PHUONG_XA ||--o{ KHACH_HANG : "resident address"
+    PHUONG_XA ||--o{ NHA_CUNG_CAP : "facility address"
+    PHUONG_XA ||--o{ DON_BAN_HANG : "delivery destination"
+    
+    NHOM_SAN_PHAM ||--o{ LOAI_SAN_PHAM : "categorizes"
     LOAI_SAN_PHAM ||--o{ SAN_PHAM : "contains"
     DON_VI_TINH ||--o{ SAN_PHAM : "unit of measure"
     
@@ -112,59 +123,76 @@ erDiagram
     DON_MUA_HANG ||--|{ CHI_TIET_MUA_HANG : "consists of"
     SAN_PHAM ||--o{ CHI_TIET_MUA_HANG : "purchased item"
 
-    TINH ||--o{ PHUONG_XA : "administrative division"
-
+    TINH {
+        char(2) MaTinh PK
+        nvarchar(50) TenTinh
+    }
+    PHUONG_XA {
+        char(5) MaPX PK
+        nvarchar(50) TenPX
+        char(2) MaTinh FK
+    }
+    KHACH_HANG {
+        int MaKH PK
+        nvarchar(50) TenKH
+        varchar(20) DienThoai
+        varchar(100) Email
+        nvarchar(150) DiaChi
+        char(5) MaPX FK
+    }
+    NHA_CUNG_CAP {
+        smallint MaNCC PK
+        nvarchar(50) TenNCC
+        varchar(20) DienThoai
+        varchar(100) Email
+        nvarchar(150) DiaChi
+        char(5) MaPX FK
+    }
+    NHOM_SAN_PHAM {
+        smallint MaNSP PK
+        nvarchar(100) TenNSP
+    }
+    LOAI_SAN_PHAM {
+        smallint MaLSP PK
+        nvarchar(100) TenLSP
+        smallint MaNSP FK
+    }
+    DON_VI_TINH {
+        tinyint MaDVT PK
+        nvarchar(50) TenDVT
+    }
     SAN_PHAM {
         char(10) MaSP PK
-        nvarchar(100) TenSP
-        int DonGia
+        nvarchar(200) TenSP
+        nvarchar(255) AnhSP
+        money DonGia
+        ntext MoTaCT
         smallint MaLSP FK
-        smallint MaDVT FK
-        nvarchar(200) HinhAnh
+        tinyint MaDVT FK
     }
-
     DON_BAN_HANG {
         char(9) MaDBH PK
-        date NgayBH
-        date NgayGH
-        char(6) MaKH FK
-        nvarchar(200) DCGH
+        smalldatetime NgayBan
+        nvarchar(150) DCGH
+        char(5) MaPX FK
+        int MaKH FK
     }
-
     CHI_TIET_BAN_HANG {
         char(9) MaDBH PK,FK
         char(10) MaSP PK,FK
         tinyint SLB
         money DGB
     }
-
     DON_MUA_HANG {
-        char(9) MaDMH PK
-        date NgayMH
-        date NgayGH
-        char(6) MaNCC FK
-        nvarchar(200) DCNH
+        char(7) MaDMH PK
+        smalldatetime NgayMua
+        smallint MaNCC FK
     }
-
     CHI_TIET_MUA_HANG {
-        char(9) MaDMH PK,FK
+        char(7) MaDMH PK,FK
         char(10) MaSP PK,FK
-        tinyint SLM
+        smallint SLM
         money DGM
-    }
-
-    KHACH_HANG {
-        char(6) MaKH PK
-        nvarchar(50) TenKH
-        varchar(12) DienThoai
-        nvarchar(100) DiaChi
-    }
-
-    NHA_CUNG_CAP {
-        char(6) MaNCC PK
-        nvarchar(50) TenNCC
-        varchar(12) DienThoai
-        nvarchar(100) DiaChi
     }
 ```
 
@@ -182,13 +210,14 @@ erDiagram
 - **Smart Price Range Selector:** Floating popover filter designed to maintain visibility of underlying table rows during interaction.
 
 ### 3. 📦 Relational Schema & 15 Stored Procedures
-- **Key Generation Procedure:** `sp_ThemSanPham` generates sequential 10-character SKUs (`yyMMdd0001`, `CHAR(10)`) with `(UPDLOCK, HOLDLOCK)` concurrency locks to mitigate key collision risks during simultaneous transactions.
-- **Data Typing:** Synchronized schema definitions between Entity Framework Core models and SQL Server (`CHAR(10)` for `MaSP`, `SMALLINT` for `MaNSP`).
+- **Key Generation & Concurrency Locking:** Stored Procedure `SanPham_Them` (`database/init.sql` lines 578–618) generates sequential date-based product SKUs (`yyMMdd0001` through `yyMMdd9999`). It enforces `(UPDLOCK, HOLDLOCK)` table hints within an explicit transaction (`BEGIN TRANSACTION`, `SET XACT_ABORT ON`) to mitigate race conditions or key duplication during concurrent product creation.
+- **15 Stored Procedures Catalog:** Evenly divided across 3 main domain entities (`LoaiSP`, `NhomSP`, `SanPham`), each having 5 procedures: Details (`*_CT`), List (`*_DS`), Create (`*_Them`), Update (`*_Sua`), and Delete (`*_Xoa`).
+- **Data Typing:** Synchronized schema definitions between Entity Framework Core models and SQL Server (`CHAR(10)` for `MaSP`, `SMALLINT` for `MaNSP`, `MONEY` for pricing).
 
 ### 4. 🖼️ Image Upload Validation (Magic Bytes)
-- Powered by **SixLabors.ImageSharp**:
-  - Byte-level **Magic Bytes** verification (JPEG, PNG, GIF, WebP), detecting and rejecting file extension spoofing attempts.
-  - Automatic downscaling (max 1600px width/height, re-encoded at 82% quality) and stripping EXIF metadata prior to storage.
+- Implemented in `IsValidImageHeader` and `TryValidateImageUpload` within [`SanPhamsController.cs`](Hoàng%20Chiếm%20Nguyên_65132292/WEB/WebQLBH_65132292/Controllers/SanPhamsController.cs):
+  - Byte-level **Magic Bytes** stream verification (JPEG `FF D8 FF`, PNG `89 50 4E 47`, GIF `47 49 46 38`, WebP `52 49 46 46 ... 57 45 42 50`) to detect and reject extension-spoofed files.
+  - Automatic downscaling (max 1200px dimension), JPEG quality compression / PNG Level 6 optimization, and stripping EXIF metadata via **SixLabors.ImageSharp**.
   - Upload volume mapped cleanly to `/app/wwwroot/uploads/san-pham`.
 
 ### 5. 📑 Multi-Format Report Exporting
@@ -207,21 +236,29 @@ erDiagram
 
 ## 🧪 Automated Testing & CI Pipeline
 
-The project includes an automated test suite powered by xUnit in `tests/WebQLBH.Tests`:
+The project includes an automated test suite powered by xUnit (30 test cases) in `tests/WebQLBH.Tests`:
 
 | Test Suite | Target Area | Number of Tests |
 | :--- | :--- | :---: |
-| `HumanTextGuardTests` | Vietnamese text sanitization, whitespace normalization, suspicious payload detection | 5 tests |
+| `HumanTextGuardTests` | Vietnamese text sanitization, whitespace normalization, suspicious payload detection | 9 tests |
 | `OrderStatusCatalogTests` | Order state machine consistency (`Mới`, `Đang xử lý`, `Hoàn tất`) and semantic CSS styling | 4 tests |
 | `PasswordSecurityTests` | PBKDF2 HMAC-SHA256 password hashing and verification against demo account `admin` | 3 tests |
-| `BusinessCalculationTests` | Directly invokes `OrderCalculator` to verify sales/purchase line calculations, order totals, and boundary conditions (zero quantity, negative unit price) | 16 tests |
-| **Total** | **xUnit automated test suite covering financial calculations & data validation** | **28 tests** |
+| `BusinessCalculationTests` | `OrderCalculator` engine: sales/purchase line computations, grand totals, line amounts aggregation, and boundary inputs | 14 tests |
+| **Total** | **xUnit automated test suite covering financial calculations & data validation** | **30 tests** |
+
+### Implementation Scope & Controller Integration of `OrderCalculator`:
+- **Domain Engine (`OrderCalculator.cs`):** Fully implements business calculation methods: sales line amounts (`TinhThanhTienBan`), purchase line amounts (`TinhThanhTienMua`), total from line item amounts (`TinhTongThanhTien`), entity-collection totals (`TinhTongTienBan`, `TinhTongTienMua`), and line item boundary verification (`IsValidLineItem`). All 14 cases are tested directly in `BusinessCalculationTests`.
+- **Integration into Controllers (`DonBHsController`, `DonMHsController`):**
+  - `TinhThanhTienBan` & `TinhThanhTienMua`: Directly integrated into the `Details` action to compute each line item amount before rendering.
+  - `TinhTongThanhTien`: Integrated into the `Details` action to aggregate total order cost for the view model.
+  - `IsValidLineItem`: Integrated into the `AddLine` (POST) action to validate quantity (`> 0`) and unit price (`> 0`) prior to persisting to the database.
+  - Entity-collection methods (`TinhTongTienBan`, `TinhTongTienMua`) remain available in the domain layer and are independently verified via unit tests.
 
 **Run tests locally:**
 ```bash
 dotnet test tests/WebQLBH.Tests/WebQLBH.Tests.csproj
 ```
-*(Result: 28/28 tests passed, 0 failures).*
+*(Result: 30/30 tests passed, 0 failures).*
 
 A **GitHub Actions** workflow automatically verifies builds and executes all unit tests on every commit to `main`.
 
@@ -241,6 +278,10 @@ No need to install .NET SDK or SQL Server locally:
 
 2. **Setup environment variables:**
    ```bash
+   # Windows PowerShell:
+   Copy-Item .env.example .env
+
+   # Linux / macOS / Git Bash:
    cp .env.example .env
    ```
    *(The `.env.example` file is pre-populated with ready-to-test credentials).*
@@ -282,7 +323,7 @@ WebQLBH/
 ├── Hoàng Chiếm Nguyên_65132292/    # Official coursework & submission root
 │   ├── DATA/                       # Physical data files (.mdf, .bak, script.sql)
 │   └── WEB/WebQLBH_65132292/       # ASP.NET Core MVC Application
-│       ├── Controllers/            # 17 Business logic & API controllers
+│       ├── Controllers/            # 17 Controllers (15 MVC Controllers + 2 API Controllers)
 │       ├── Models/                 # Entity Data Models & ViewModels
 │       ├── Views/                  # Razor Views (Accented Vietnamese UI)
 │       ├── Services/               # DashboardService, GiaoDichLookupService

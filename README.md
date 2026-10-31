@@ -35,7 +35,13 @@
 >
 > **Lệnh khởi chạy nhanh qua Docker:**
 > ```bash
+> # Windows PowerShell:
+> Copy-Item .env.example .env
+>
+> # Linux / macOS / Git Bash:
 > cp .env.example .env
+>
+> # Khởi động hệ thống:
 > docker compose up -d
 > ```
 
@@ -58,12 +64,12 @@ flowchart TD
     end
 
     subgraph AppLayer ["3. Tầng Xử Lý Nghiệp Vụ (Application Layer)"]
-        Controllers["17 MVC Controllers (Bán hàng, Mua hàng, Đối tác, Báo cáo)"]
+        Controllers["17 Controllers (15 MVC Controllers + 2 API Controllers)"]
         DashboardService["DashboardService & GiaoDichLookupService"]
         RealtimeHub["SignalR Hub (/hubs/dashboard)"]
         BackgroundWorker["DashboardRealtimeBroadcastService (Hosted Service)"]
         ImageSecurity["SixLabors.ImageSharp (Kiểm tra Magic Bytes & Nén ảnh)"]
-        OrderEngine["OrderCalculator (Tính thành tiền dòng hàng & tổng đơn)"]
+        OrderEngine["OrderCalculator (Engine tính thành tiền & tổng đơn)"]
     end
 
     subgraph DataAccessLayer ["4. Tầng Dữ Liệu & Lưu Trữ (Persistence Layer)"]
@@ -96,75 +102,97 @@ flowchart TD
 
 ## 🗄️ Sơ Đồ Quan Hệ Cơ Sở Dữ Liệu (Database ERD)
 
-Hệ thống quản lý chuỗi cung ứng bán hàng với 12 bảng thực thể và 15 Stored Procedures:
+Hệ thống quản lý chuỗi cung ứng bán hàng với đầy đủ 12 bảng thực thể và 15 Stored Procedures:
 
 ```mermaid
 erDiagram
-    NHOM_SAN_PHAM ||--o{ LOAI_SAN_PHAM : "chứa"
-    LOAI_SAN_PHAM ||--o{ SAN_PHAM : "chứa"
-    DON_VI_TINH ||--o{ SAN_PHAM : "định lượng"
+    TINH ||--o{ PHUONG_XA : "chứa"
+    PHUONG_XA ||--o{ KHACH_HANG : "địa chỉ"
+    PHUONG_XA ||--o{ NHA_CUNG_CAP : "địa chỉ"
+    PHUONG_XA ||--o{ DON_BAN_HANG : "giao hàng tại"
     
-    KHACH_HANG ||--o{ DON_BAN_HANG : "đặt hàng"
+    NHOM_SAN_PHAM ||--o{ LOAI_SAN_PHAM : "phân loại"
+    LOAI_SAN_PHAM ||--o{ SAN_PHAM : "chứa"
+    DON_VI_TINH ||--o{ SAN_PHAM : "đơn vị"
+    
+    KHACH_HANG ||--o{ DON_BAN_HANG : "mua hàng"
     DON_BAN_HANG ||--|{ CHI_TIET_BAN_HANG : "gồm các dòng"
-    SAN_PHAM ||--o{ CHI_TIET_BAN_HANG : "được xuất bán"
+    SAN_PHAM ||--o{ CHI_TIET_BAN_HANG : "xuất bán"
 
     NHA_CUNG_CAP ||--o{ DON_MUA_HANG : "cung ứng"
     DON_MUA_HANG ||--|{ CHI_TIET_MUA_HANG : "gồm các dòng"
-    SAN_PHAM ||--o{ CHI_TIET_MUA_HANG : "được nhập mua"
+    SAN_PHAM ||--o{ CHI_TIET_MUA_HANG : "nhập mua"
 
-    TINH ||--o{ PHUONG_XA : "quản lý"
-
+    TINH {
+        char(2) MaTinh PK
+        nvarchar(50) TenTinh
+    }
+    PHUONG_XA {
+        char(5) MaPX PK
+        nvarchar(50) TenPX
+        char(2) MaTinh FK
+    }
+    KHACH_HANG {
+        int MaKH PK
+        nvarchar(50) TenKH
+        varchar(20) DienThoai
+        varchar(100) Email
+        nvarchar(150) DiaChi
+        char(5) MaPX FK
+    }
+    NHA_CUNG_CAP {
+        smallint MaNCC PK
+        nvarchar(50) TenNCC
+        varchar(20) DienThoai
+        varchar(100) Email
+        nvarchar(150) DiaChi
+        char(5) MaPX FK
+    }
+    NHOM_SAN_PHAM {
+        smallint MaNSP PK
+        nvarchar(100) TenNSP
+    }
+    LOAI_SAN_PHAM {
+        smallint MaLSP PK
+        nvarchar(100) TenLSP
+        smallint MaNSP FK
+    }
+    DON_VI_TINH {
+        tinyint MaDVT PK
+        nvarchar(50) TenDVT
+    }
     SAN_PHAM {
         char(10) MaSP PK
-        nvarchar(100) TenSP
-        int DonGia
+        nvarchar(200) TenSP
+        nvarchar(255) AnhSP
+        money DonGia
+        ntext MoTaCT
         smallint MaLSP FK
-        smallint MaDVT FK
-        nvarchar(200) HinhAnh
+        tinyint MaDVT FK
     }
-
     DON_BAN_HANG {
         char(9) MaDBH PK
-        date NgayBH
-        date NgayGH
-        char(6) MaKH FK
-        nvarchar(200) DCGH
+        smalldatetime NgayBan
+        nvarchar(150) DCGH
+        char(5) MaPX FK
+        int MaKH FK
     }
-
     CHI_TIET_BAN_HANG {
         char(9) MaDBH PK,FK
         char(10) MaSP PK,FK
         tinyint SLB
         money DGB
     }
-
     DON_MUA_HANG {
-        char(9) MaDMH PK
-        date NgayMH
-        date NgayGH
-        char(6) MaNCC FK
-        nvarchar(200) DCNH
+        char(7) MaDMH PK
+        smalldatetime NgayMua
+        smallint MaNCC FK
     }
-
     CHI_TIET_MUA_HANG {
-        char(9) MaDMH PK,FK
+        char(7) MaDMH PK,FK
         char(10) MaSP PK,FK
-        tinyint SLM
+        smallint SLM
         money DGM
-    }
-
-    KHACH_HANG {
-        char(6) MaKH PK
-        nvarchar(50) TenKH
-        varchar(12) DienThoai
-        nvarchar(100) DiaChi
-    }
-
-    NHA_CUNG_CAP {
-        char(6) MaNCC PK
-        nvarchar(50) TenNCC
-        varchar(12) DienThoai
-        nvarchar(100) DiaChi
     }
 ```
 
@@ -177,18 +205,19 @@ erDiagram
 - **Biểu đồ Chart.js:** Hiển thị xu hướng biến động doanh thu 7 ngày gần nhất.
 
 ### 2. 🎨 Giao Diện Doanh Nghiệp (Slate & Emerald)
-- **Hệ thống nhãn Tiếng Việt:** Toàn bộ menu, tiêu đề cột, biểu mẫu nhập liệu và modal xác nhận được trình bày bằng tiếng Việt có dấu.
+- **Hệ thống nhãn Tiếng Việt:** Toàn bộ menu, tiêu đề cột, biểu mẫu nhập liệu và modal xác nhận được trình bày bằng tiếng Việt có dấu chuẩn mực.
 - **Bảng màu & Typography:** Sử dụng tone nền Slate `#0F172A`, điểm nhấn Emerald `#059669`; phông chữ *Be Vietnam Pro* và số liệu tiền tệ sử dụng font đơn khoảng cách *JetBrains Mono*.
 - **Bộ lọc khoảng giá:** Popover lựa chọn khoảng giá linh hoạt, không làm che khuất các hàng dữ liệu của bảng.
 
 ### 3. 📦 Tối Ưu Hóa CSDL & 15 Stored Procedures
-- **Quy trình sinh mã:** Thủ tục lưu trữ `sp_ThemSanPham` sinh mã theo định dạng ngày tháng `yyMMdd0001` (độ dài 10 ký tự `CHAR(10)`), sử dụng khóa `(UPDLOCK, HOLDLOCK)` nhằm giảm thiểu nguy cơ xung đột mã khi phát sinh giao dịch đồng thời.
-- **Ánh xạ kiểu dữ liệu:** Khớp nối giữa Entity Framework Core và schema SQL Server (`CHAR(10)` cho `MaSP`, `SMALLINT` cho `MaNSP`).
+- **Quy trình sinh mã & Khóa đồng thời:** Thủ tục lưu trữ `SanPham_Them` (`database/init.sql` dòng 578–618) tự động sinh mã sản phẩm theo định dạng ngày `yyMMdd` + 4 chữ số tăng dần (`yyMMdd0001` đến `yyMMdd9999`). Thủ tục áp dụng gợi ý khóa bảng `WITH (UPDLOCK, HOLDLOCK)` kết hợp khối giao dịch tường minh `BEGIN TRANSACTION` và `SET XACT_ABORT ON` nhằm hạn chế xung đột hoặc trùng lặp mã khi có nhiều giao dịch thêm sản phẩm đồng thời.
+- **Danh mục 15 Stored Procedures:** Được tổ chức nhất quán cho 3 nhóm thực thể chính (`LoaiSP`, `NhomSP`, `SanPham`), mỗi nhóm gồm trọn bộ 5 thủ tục: Chi tiết (`*_CT`), Danh sách (`*_DS`), Thêm mới (`*_Them`), Chỉnh sửa (`*_Sua`), và Xóa (`*_Xoa`).
+- **Ánh xạ kiểu dữ liệu:** Khớp nối chính xác giữa Entity Framework Core và schema SQL Server (`CHAR(10)` cho `MaSP`, `SMALLINT` cho `MaNSP`, `MONEY` cho đơn giá).
 
 ### 4. 🖼️ Thẩm Định Ảnh Tải Lên (Magic Bytes Validation)
-- Tích hợp thư viện **SixLabors.ImageSharp**:
-  - Kiểm tra chữ ký nhị phân (Magic Bytes) ở đầu tệp tải lên (chấp nhận định dạng JPEG, PNG, GIF, WebP) nhằm phát hiện các tệp bị đổi phần mở rộng.
-  - Tái mã hóa và điều chỉnh kích thước ảnh (tối đa 1600px, chất lượng 82%), loại bỏ siêu dữ liệu EXIF trước khi lưu vào thư mục lưu trữ.
+- Triển khai trong phương thức `IsValidImageHeader` và `TryValidateImageUpload` tại [`SanPhamsController.cs`](Hoàng%20Chiếm%20Nguyên_65132292/WEB/WebQLBH_65132292/Controllers/SanPhamsController.cs):
+  - Đọc trực tiếp chữ ký nhị phân (Magic Bytes) từ luồng stream của tệp tải lên: JPEG (`FF D8 FF`), PNG (`89 50 4E 47`), GIF (`47 49 46 38`), và WebP (`52 49 46 46 ... 57 45 42 50`) nhằm hỗ trợ phát hiện và từ chối các tệp bị đổi phần mở rộng.
+  - Tích hợp **SixLabors.ImageSharp** để chuẩn hóa kích thước (chiều tối đa 1200px), nén chất lượng JPEG / tối ưu PNG Level 6 và loại bỏ metadata EXIF trước khi lưu.
   - Ánh xạ thư mục lưu trữ qua Docker volume `/app/wwwroot/uploads/san-pham`.
 
 ### 5. 📑 Báo Cáo & Xuất Dữ Liệu Đa Định Dạng
@@ -207,21 +236,29 @@ erDiagram
 
 ## 🧪 Kiểm Thử Tự Động (Automated Testing & CI)
 
-Dự án trang bị bộ kiểm thử tự động xUnit trong thư mục `tests/WebQLBH.Tests`:
+Dự án trang bị bộ kiểm thử tự động xUnit (30 test cases) trong thư mục `tests/WebQLBH.Tests`:
 
 | Test Suite | Phạm vi kiểm tra | Số lượng test |
 | :--- | :--- | :---: |
-| `HumanTextGuardTests` | Chuẩn hóa chuỗi tiếng Việt, thu gọn khoảng trắng, lọc payload bất thường | 5 tests |
+| `HumanTextGuardTests` | Chuẩn hóa chuỗi tiếng Việt, thu gọn khoảng trắng, lọc payload bất thường | 9 tests |
 | `OrderStatusCatalogTests` | Kiểm tra tính nhất quán danh mục trạng thái đơn hàng (`Mới`, `Đang xử lý`, `Hoàn tất`) và lớp định dạng CSS | 4 tests |
 | `PasswordSecurityTests` | Xác thực thuật toán băm PBKDF2 HMAC-SHA256 với tài khoản kiểm thử `admin` | 3 tests |
-| `BusinessCalculationTests` | Gọi trực tiếp `OrderCalculator` kiểm thử tính thành tiền đơn bán/mua, tổng đơn hàng và xử lý giá trị biên (số lượng 0, đơn giá âm) | 16 tests |
-| **Tổng cộng** | **Bộ kiểm thử tự động xUnit bao phủ logic nghiệp vụ và an toàn dữ liệu** | **28 tests** |
+| `BusinessCalculationTests` | Kiểm thử lớp `OrderCalculator`: tính thành tiền dòng bán/mua, tổng đơn hàng, tổng dòng thành tiền và kiểm tra giá trị biên | 14 tests |
+| **Tổng cộng** | **Bộ kiểm thử tự động xUnit bao phủ logic nghiệp vụ và an toàn dữ liệu** | **30 tests** |
+
+### Mức độ triển khai & tích hợp của `OrderCalculator`:
+- **Trong lớp Domain (`OrderCalculator.cs`):** Triển khai trọn vẹn các phương thức nghiệp vụ gồm tính thành tiền dòng bán (`TinhThanhTienBan`), thành tiền dòng mua (`TinhThanhTienMua`), tính tổng giá trị đơn từ danh sách thành tiền (`TinhTongThanhTien`), tính tổng đơn từ tập thực thể CSDL (`TinhTongTienBan`, `TinhTongTienMua`), và kiểm tra tính hợp lệ dữ liệu dòng hàng (`IsValidLineItem`). Toàn bộ 14 trường hợp kiểm thử biên và giá trị hợp lệ được kiểm tra độc lập tại `BusinessCalculationTests`.
+- **Mức độ tích hợp thực tế vào Controllers (`DonBHsController`, `DonMHsController`):**
+  - `TinhThanhTienBan` & `TinhThanhTienMua`: Tích hợp trực tiếp tại Action `Details` để tính toán chính xác giá trị thành tiền từng dòng sản phẩm trước khi render ra view.
+  - `TinhTongThanhTien`: Tích hợp tại Action `Details` để tổng hợp tổng tiền toàn đơn hiển thị cho người dùng.
+  - `IsValidLineItem`: Tích hợp tại Action `AddLine` (POST) để thẩm định tính hợp lệ của số lượng (`> 0`) và đơn giá (`> 0`) trước khi ghi nhận dòng hàng vào cơ sở dữ liệu.
+  - Các hàm nhận tập thực thể `CTBH`/`CTMH` (`TinhTongTienBan`, `TinhTongTienMua`) được triển khai sẵn trong tầng nghiệp vụ và kiểm thử độc lập qua xUnit.
 
 **Chạy kiểm thử cục bộ:**
 ```bash
 dotnet test tests/WebQLBH.Tests/WebQLBH.Tests.csproj
 ```
-*(Kết quả: 28/28 tests passed, 0 failures).*
+*(Kết quả: 30/30 tests passed, 0 failures).*
 
 Pipeline **GitHub Actions** tự động biên dịch và chạy toàn bộ test suite mỗi khi có commit mới lên nhánh `main`.
 
@@ -241,6 +278,10 @@ Bạn không cần cài đặt .NET SDK hay SQL Server cục bộ:
 
 2. **Thiết lập file cấu hình môi trường (.env):**
    ```bash
+   # Dành cho Windows PowerShell:
+   Copy-Item .env.example .env
+
+   # Dành cho Linux / macOS / Git Bash:
    cp .env.example .env
    ```
    *(Tệp `.env.example` đã điền sẵn tài khoản demo và mật khẩu SQL Server để phục vụ kiểm thử nhanh).*
@@ -282,7 +323,7 @@ WebQLBH/
 ├── Hoàng Chiếm Nguyên_65132292/    # Gói mã nguồn chính thức (Theo chuẩn nộp bài Đại học)
 │   ├── DATA/                       # File dữ liệu vật lý (.mdf, .bak, script.sql)
 │   └── WEB/WebQLBH_65132292/       # Ứng dụng ASP.NET Core MVC
-│       ├── Controllers/            # 17 Controllers xử lý nghiệp vụ & API
+│       ├── Controllers/            # 17 Controllers (15 MVC Controllers + 2 API Controllers)
 │       ├── Models/                 # Entity Data Models & ViewModels
 │       ├── Views/                  # Giao diện Razor Pages tiếng Việt
 │       ├── Services/               # DashboardService, GiaoDichLookupService
