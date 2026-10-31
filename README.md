@@ -77,13 +77,18 @@ docker compose up --build -d
 ```
 *Lần chạy đầu tiên sẽ tự động tải base image, build ứng dụng và khởi tạo database từ `database/init.sql` trong khoảng 1-2 phút.*
 
-### 4. Truy cập ứng dụng
-* **Web Application:** `http://localhost:8080`
+### 4. Truy cập ứng dụng & Tài khoản kiểm thử (Demo Credentials)
+
+* **Địa chỉ Web Application:** `http://localhost:8080`
 * **Health Check Endpoint:** `http://localhost:8080/health`
-* **Tài khoản đăng nhập mặc định (Local Demo):**
-  - **Tên đăng nhập:** `admin`
-  - **Mật khẩu:** `Admin@2026!Secure`
-  *(Mật khẩu đã được băm PBKDF2 lưu trong biến `ADMIN_PASSWORD_HASH`)*.
+
+| Thông tin đăng nhập | Giá trị mặc định kiểm thử | Quyền hạn & Ghi chú |
+| :--- | :--- | :--- |
+| **Tên đăng nhập (Username)** | `admin` | Quản trị viên hệ thống (Admin) |
+| **Mật khẩu (Password)** | `Admin@2026!Secure` | Đã cấu hình sẵn trong Docker |
+| **Trang đăng nhập (URL)** | `http://localhost:8080/Account/Login` | Được bảo vệ Rate Limiting 10 req/phút |
+
+> 💡 **Ghi chú bảo mật**: Mật khẩu trên được mã hóa bằng thuật toán **PBKDF2 HMAC-SHA256 (với Salt ngẫu nhiên)** thông qua `IPasswordHasher<string>` của ASP.NET Core Identity; hệ thống tuyệt đối không lưu trữ hay so sánh mật khẩu dạng văn bản thô.
 
 ---
 
@@ -98,7 +103,6 @@ WebQLBH/
 │   ├── restore.sql                # Kịch bản khôi phục (nếu dùng SSMS thủ công)
 │   ├── init-db.sh                 # Entrypoint tự động nạp DB an toàn cho SQL container
 │   └── DbQLBH_65132292.bak        # File backup gốc cho môi trường Windows SSMS
-├── CLEAR.md                        # Hướng dẫn kiểm tra máy & dọn dẹp sau khi chạy
 ├── Hoàng Chiếm Nguyên_65132292/    # Thư mục mã nguồn chính thức (Đại học & Báo cáo)
 │   ├── DATA/                       # File dữ liệu vật lý (.mdf, .bak, script.sql)
 │   └── WEB/WebQLBH_65132292/       # ASP.NET Core MVC Application
@@ -111,9 +115,3 @@ WebQLBH/
 │       ├── wwwroot/                # Tài nguyên tĩnh & Thư mục Upload ảnh
 │       └── Dockerfile              # Multi-stage build (Debian + Native Graphics Fonts)
 ```
-
----
-
-## 🛠️ Dọn Dẹp Môi Trường Sau Khi Chạy (Cleanup)
-
-Xem chi tiết trong tệp [CLEAR.md](CLEAR.md) để biết các lệnh dừng container, xóa volume và giải phóng tài nguyên hệ thống.
