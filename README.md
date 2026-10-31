@@ -15,15 +15,15 @@
 
 </div>
 
-> Hệ thống Quản lý Bán hàng & Chuỗi cung ứng xây dựng trên nền tảng **ASP.NET Core MVC** (.NET 10) và **Microsoft SQL Server 2022**, tích hợp giám sát số liệu thời gian thực qua **SignalR**, giao diện chuẩn **Enterprise Slate & Emerald** (giao diện Tiếng Việt có dấu chuẩn mực), cơ chế kiểm duyệt ảnh bằng mã nhận dạng nhị phân (Magic Bytes), và xuất dữ liệu đa định dạng (Excel / PDF / CSV).
+> Dự án Quản lý Bán hàng & Chuỗi cung ứng xây dựng trên nền tảng **ASP.NET Core MVC** (.NET 10) và **Microsoft SQL Server 2022**, tích hợp cơ chế cập nhật số liệu thời gian thực qua **SignalR**, giao diện bảng màu Slate & Emerald với hệ thống nhãn Tiếng Việt có dấu, cơ chế thẩm định định dạng ảnh qua chữ ký nhị phân (Magic Bytes), và hỗ trợ xuất dữ liệu báo cáo (Excel / PDF / CSV).
 >
-> 🚀 **Sẵn sàng khởi chạy với 1 lệnh**: Đã được đóng gói hoàn chỉnh bằng **Docker Compose** (gồm Web Application + SQL Server Linux tự động khởi tạo dữ liệu mẫu).
+> 🚀 **Triển khai môi trường thử nghiệm qua Docker Compose**: Hệ thống được đóng gói multi-container gồm Web Application và SQL Server Linux nạp sẵn dữ liệu mẫu phục vụ đánh giá.
 
 ---
 
 > [!IMPORTANT]
 > ### 🔑 THÔNG TIN ĐĂNG NHẬP & TRUY CẬP KIỂM THỬ (DEMO CREDENTIALS)
-> Bất kỳ ai clone mã nguồn đều có thể khởi chạy và đăng nhập trải nghiệm hệ thống ngay lập tức:
+> Thông tin tài khoản được cấu hình sẵn trong tệp `.env.example` phục vụ mục đích kiểm thử chức năng:
 >
 > | Thông số truy cập | Giá trị kiểm thử mặc định | Ghi chú & Quyền hạn |
 > | :--- | :--- | :--- |
@@ -63,6 +63,7 @@ flowchart TD
         RealtimeHub["SignalR Hub (/hubs/dashboard)"]
         BackgroundWorker["DashboardRealtimeBroadcastService (Hosted Service)"]
         ImageSecurity["SixLabors.ImageSharp (Kiểm tra Magic Bytes & Nén ảnh)"]
+        OrderEngine["OrderCalculator (Tính thành tiền dòng hàng & tổng đơn)"]
     end
 
     subgraph DataAccessLayer ["4. Tầng Dữ Liệu & Lưu Trữ (Persistence Layer)"]
@@ -79,6 +80,7 @@ flowchart TD
 
     Controllers --> DashboardService
     Controllers --> ImageSecurity
+    Controllers --> OrderEngine
     ImageSecurity --> UploadVolume
     DashboardService --> RealtimeHub
     BackgroundWorker --> RealtimeHub
@@ -94,7 +96,7 @@ flowchart TD
 
 ## 🗄️ Sơ Đồ Quan Hệ Cơ Sở Dữ Liệu (Database ERD)
 
-Hệ thống quản lý chuỗi cung ứng bán hàng với 12 bảng thực thể và 15 Stored Procedures tối ưu hóa:
+Hệ thống quản lý chuỗi cung ứng bán hàng với 12 bảng thực thể và 15 Stored Procedures:
 
 ```mermaid
 erDiagram
@@ -171,22 +173,22 @@ erDiagram
 ## 🌟 Tính Năng Kỹ Thuật Chi Tiết
 
 ### 1. 📊 Giám Sát Thời Gian Thực (Realtime Analytics)
-- **Cập nhật động đa màn hình:** Sử dụng **ASP.NET Core SignalR** kết hợp Hosted Background Service để đẩy dữ liệu doanh thu, đơn hàng mới tức thời đến toàn bộ các máy trạm mà không cần tải lại trang.
-- **Biểu đồ trực quan:** Tích hợp **Chart.js** hiển thị xu hướng biến động doanh thu 7 ngày gần nhất.
+- **Cơ chế truyền phát SignalR:** Sử dụng **ASP.NET Core SignalR** kết hợp Hosted Background Service để truyền phát cập nhật doanh thu và trạng thái đơn hàng đến các phiên làm việc đang kết nối.
+- **Biểu đồ Chart.js:** Hiển thị xu hướng biến động doanh thu 7 ngày gần nhất.
 
-### 2. 🎨 Giao Diện Doanh Nghiệp (Enterprise Slate & Emerald)
-- **Giao diện Tiếng Việt có dấu:** Toàn bộ menu, tiêu đề cột, biểu mẫu nhập liệu, thông báo xác thực và modal xác nhận được chuẩn hóa ngữ pháp tiếng Việt.
-- **Bảng màu & Typography:** Sử dụng tone nền Slate `#0F172A`, điểm nhấn Emerald `#059669`; phông chữ *Be Vietnam Pro* và số liệu tiền tệ hiển thị font đơn khoảng cách *JetBrains Mono*.
-- **Bộ lọc giá thông minh:** Popover lựa chọn khoảng giá linh hoạt, không che khuất dữ liệu bên dưới.
+### 2. 🎨 Giao Diện Doanh Nghiệp (Slate & Emerald)
+- **Hệ thống nhãn Tiếng Việt:** Toàn bộ menu, tiêu đề cột, biểu mẫu nhập liệu và modal xác nhận được trình bày bằng tiếng Việt có dấu.
+- **Bảng màu & Typography:** Sử dụng tone nền Slate `#0F172A`, điểm nhấn Emerald `#059669`; phông chữ *Be Vietnam Pro* và số liệu tiền tệ sử dụng font đơn khoảng cách *JetBrains Mono*.
+- **Bộ lọc khoảng giá:** Popover lựa chọn khoảng giá linh hoạt, không làm che khuất các hàng dữ liệu của bảng.
 
 ### 3. 📦 Tối Ưu Hóa CSDL & 15 Stored Procedures
-- **Quy trình sinh mã an toàn:** Thủ tục lưu trữ `sp_ThemSanPham` tự động sinh mã theo ngày tháng `yyMMdd0001` (độ dài 10 ký tự `CHAR(10)`), sử dụng khóa `(UPDLOCK, HOLDLOCK)` chống trùng lặp mã khi có nhiều giao dịch đồng thời.
-- **Đồng bộ kiểu dữ liệu:** Khớp nối chặt chẽ cấu trúc Entity Framework Core và schema SQL Server.
+- **Quy trình sinh mã:** Thủ tục lưu trữ `sp_ThemSanPham` sinh mã theo định dạng ngày tháng `yyMMdd0001` (độ dài 10 ký tự `CHAR(10)`), sử dụng khóa `(UPDLOCK, HOLDLOCK)` nhằm giảm thiểu nguy cơ xung đột mã khi phát sinh giao dịch đồng thời.
+- **Ánh xạ kiểu dữ liệu:** Khớp nối giữa Entity Framework Core và schema SQL Server (`CHAR(10)` cho `MaSP`, `SMALLINT` cho `MaNSP`).
 
-### 4. 🖼️ Kiểm Tra Bảo Mật Ảnh Tải Lên (Magic Bytes Validation)
-- Tích hợp **SixLabors.ImageSharp** để xử lý tệp tải lên:
-  - Kiểm tra **Magic Bytes** thực tế ở đầu tệp nhị phân (chỉ chấp nhận JPEG, PNG, GIF, WebP), hỗ trợ phát hiện và ngăn chặn các tệp giả mạo phần mở rộng (extension spoofing).
-  - Tự động nén, điều chỉnh kích thước tối đa 1600px ở mức chất lượng 82% và xóa bỏ siêu dữ liệu (EXIF), hạn chế tối đa lưu trữ tệp thô chưa qua thẩm định trên máy chủ.
+### 4. 🖼️ Thẩm Định Ảnh Tải Lên (Magic Bytes Validation)
+- Tích hợp thư viện **SixLabors.ImageSharp**:
+  - Kiểm tra chữ ký nhị phân (Magic Bytes) ở đầu tệp tải lên (chấp nhận định dạng JPEG, PNG, GIF, WebP) nhằm phát hiện các tệp bị đổi phần mở rộng.
+  - Tái mã hóa và điều chỉnh kích thước ảnh (tối đa 1600px, chất lượng 82%), loại bỏ siêu dữ liệu EXIF trước khi lưu vào thư mục lưu trữ.
   - Ánh xạ thư mục lưu trữ qua Docker volume `/app/wwwroot/uploads/san-pham`.
 
 ### 5. 📑 Báo Cáo & Xuất Dữ Liệu Đa Định Dạng
@@ -197,9 +199,9 @@ erDiagram
 ### 6. 🛡️ Cơ Chế Bảo Vệ Ứng Dụng
 - **Băm mật khẩu an toàn:** Sử dụng `IPasswordHasher<string>` (PBKDF2 HMAC-SHA256 kèm salt ngẫu nhiên) chuẩn ASP.NET Core Identity; không lưu hoặc so sánh mật khẩu trần.
 - **Giới hạn tần suất truy cập (Rate Limiting Middleware):**
-  - Giới hạn **10 requests/phút** cho các endpoint xác thực `/Account/Login` nhằm chống brute-force.
-  - Giới hạn **120 requests/phút** theo địa chỉ IP cho toàn bộ ứng dụng.
-- **Chống giả mạo yêu cầu (CSRF):** Bảo vệ tự động với `[ValidateAntiForgeryToken]` trên tất cả các hành động POST.
+  - Áp dụng chính sách Rate Limiting (10 requests/phút) trên endpoint xác thực `/Account/Login` nhằm giảm thiểu rủi ro tấn công dò quét mật khẩu lặp lại.
+  - Áp dụng Rate Limiting 120 requests/phút theo IP cho các tuyến đường chung.
+- **Chống giả mạo yêu cầu (CSRF):** Áp dụng thuộc tính `[ValidateAntiForgeryToken]` trên các Controller xử lý thao tác POST thay đổi dữ liệu.
 
 ---
 
@@ -209,16 +211,17 @@ Dự án trang bị bộ kiểm thử tự động xUnit trong thư mục `tests
 
 | Test Suite | Phạm vi kiểm tra | Số lượng test |
 | :--- | :--- | :---: |
-| `HumanTextGuardTests` | Chuẩn hóa tiếng Việt, cắt khoảng trắng dư thừa, phát hiện payload độc hại | 5 tests |
-| `OrderStatusCatalogTests` | Kiểm tra tính nhất quán trạng thái đơn hàng (`Mới`, `Đang xử lý`, `Hoàn tất`) và class semantic CSS | 4 tests |
-| `PasswordSecurityTests` | Xác thực cơ chế băm PBKDF2 HMAC-SHA256, kiểm tra mật khẩu demo `Admin@2026!Secure` | 3 tests |
-| `BusinessCalculationTests` | Kiểm tra công thức tính thành tiền dòng hàng (`Số lượng × Đơn giá`) và tổng tiền đơn hàng | 3 tests |
+| `HumanTextGuardTests` | Chuẩn hóa chuỗi tiếng Việt, thu gọn khoảng trắng, lọc payload bất thường | 5 tests |
+| `OrderStatusCatalogTests` | Kiểm tra tính nhất quán danh mục trạng thái đơn hàng (`Mới`, `Đang xử lý`, `Hoàn tất`) và lớp định dạng CSS | 4 tests |
+| `PasswordSecurityTests` | Xác thực thuật toán băm PBKDF2 HMAC-SHA256 với tài khoản kiểm thử `admin` | 3 tests |
+| `BusinessCalculationTests` | Gọi trực tiếp `OrderCalculator` kiểm thử tính thành tiền đơn bán/mua, tổng đơn hàng và xử lý giá trị biên (số lượng 0, đơn giá âm) | 16 tests |
+| **Tổng cộng** | **Bộ kiểm thử tự động xUnit bao phủ logic nghiệp vụ và an toàn dữ liệu** | **28 tests** |
 
 **Chạy kiểm thử cục bộ:**
 ```bash
 dotnet test tests/WebQLBH.Tests/WebQLBH.Tests.csproj
 ```
-*(Kết quả: 19/19 tests passed, 0 failures).*
+*(Kết quả: 28/28 tests passed, 0 failures).*
 
 Pipeline **GitHub Actions** tự động biên dịch và chạy toàn bộ test suite mỗi khi có commit mới lên nhánh `main`.
 
@@ -226,9 +229,9 @@ Pipeline **GitHub Actions** tự động biên dịch và chạy toàn bộ test
 
 ## 🚀 Hướng Dẫn Khởi Chạy Nhanh (Quick Start)
 
-### Cách 1: Khởi chạy 1 lệnh bằng Docker (Khuyên Dùng)
+### Cách 1: Khởi chạy qua Docker Compose (Khuyên Dùng)
 
-Bạn **không cần cài đặt .NET SDK hay SQL Server**, chỉ cần cài Docker Desktop:
+Bạn không cần cài đặt .NET SDK hay SQL Server cục bộ:
 
 1. **Clone mã nguồn:**
    ```bash
@@ -240,7 +243,7 @@ Bạn **không cần cài đặt .NET SDK hay SQL Server**, chỉ cần cài Doc
    ```bash
    cp .env.example .env
    ```
-   *(Tệp `.env.example` đã điền sẵn tài khoản demo và mật khẩu SQL Server để chạy ngay).*
+   *(Tệp `.env.example` đã điền sẵn tài khoản demo và mật khẩu SQL Server để phục vụ kiểm thử nhanh).*
 
 3. **Khởi chạy hệ thống:**
    ```bash
@@ -255,7 +258,7 @@ Bạn **không cần cài đặt .NET SDK hay SQL Server**, chỉ cần cài Doc
 
 ### Cách 2: Chạy cục bộ bằng Visual Studio (Local Development)
 
-1. Mở file giải pháp `Hoàng Chiếm Nguyên_65132292/WEB/WebQLBH_65132292.slnx` (hoặc `.csproj`) bằng Visual Studio 2022 / 2026.
+1. Mở file giải pháp `Hoàng Chiếm Nguyên_65132292/WEB/WebQLBH_65132292/DbQLBH_65132292.slnx` (hoặc `.csproj`) bằng Visual Studio 2022 / 2026.
 2. Đảm bảo SQL Server đang chạy và nạp script khởi tạo `database/init.sql` để tạo cơ sở dữ liệu `DbQLBH_65132292`.
 3. Kiểm tra chuỗi kết nối trong `appsettings.json`.
 4. Nhấn **F5** hoặc chạy lệnh `dotnet run` từ thư mục dự án.
@@ -270,9 +273,9 @@ WebQLBH/
 ├── docker-compose.yml              # Điều phối Multi-Container (Web + SQL Server)
 ├── .env.example                    # File mẫu cấu hình môi trường (chứa credentials demo)
 ├── database/                       # Dữ liệu & Kịch bản khởi tạo SQL Server
-│   ├── init.sql                   # Nguồn chân lý: Schema 12 bảng, 15 SPs & Seed Data
+│   ├── init.sql                   # Schema 12 bảng, 15 SPs & Seed Data
 │   ├── restore.sql                # Kịch bản khôi phục (SSMS)
-│   ├── init-db.sh                 # Entrypoint tự động nạp DB an toàn cho SQL container
+│   ├── init-db.sh                 # Entrypoint tự động nạp DB cho SQL container
 │   └── DbQLBH_65132292.bak        # File backup gốc cho môi trường Windows SSMS
 ├── tests/                          # Bộ kiểm thử tự động
 │   └── WebQLBH.Tests/             # Project xUnit kiểm thử bảo mật & logic nghiệp vụ
@@ -281,13 +284,13 @@ WebQLBH/
 │   └── WEB/WebQLBH_65132292/       # Ứng dụng ASP.NET Core MVC
 │       ├── Controllers/            # 17 Controllers xử lý nghiệp vụ & API
 │       ├── Models/                 # Entity Data Models & ViewModels
-│       ├── Views/                  # Giao diện Razor Pages chuẩn tiếng Việt
+│       ├── Views/                  # Giao diện Razor Pages tiếng Việt
 │       ├── Services/               # DashboardService, GiaoDichLookupService
 │       ├── Hubs/                   # SignalR Realtime Hub (/hubs/dashboard)
-│       ├── Infrastructure/         # RateLimiter, HumanTextGuard, OrderCatalog
+│       ├── Infrastructure/         # RateLimiter, HumanTextGuard, OrderCalculator, OrderCatalog
 │       ├── wwwroot/                # CSS (Enterprise Slate & Emerald), JS, Uploads
 │       └── Dockerfile              # Multi-stage build (.NET 10 + Thư viện đồ họa native)
 ```
 
 > [!NOTE]
-> **Quy chuẩn đồ án:** Thư mục mã nguồn chính được đặt tên `Hoàng Chiếm Nguyên_65132292` theo đúng quy định barem nộp bài học phần của Nhà trường. Toàn bộ cấu trúc này đã được container hóa độc lập qua Docker Compose, đảm bảo việc kiểm thử và triển khai từ bên ngoài diễn ra hoàn toàn liền mạch.
+> **Quy chuẩn đồ án:** Thư mục mã nguồn chính được đặt tên `Hoàng Chiếm Nguyên_65132292` theo đúng quy định barem nộp bài học phần của Nhà trường. Toàn bộ cấu trúc này đã được container hóa độc lập qua Docker Compose, giúp việc kiểm thử và triển khai từ bên ngoài diễn ra thuận tiện.

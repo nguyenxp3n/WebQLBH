@@ -15,15 +15,15 @@
 
 </div>
 
-> An Enterprise Sales & Supply Chain Management System built on **ASP.NET Core MVC** (.NET 10) and **Microsoft SQL Server 2022**, featuring real-time business telemetry via **SignalR**, an enterprise-grade **Slate & Emerald design system** (standard accented Vietnamese typography), binary magic signature image verification, and multi-format document exporting (Excel / PDF / CSV).
+> A Sales & Supply Chain Management project developed on **ASP.NET Core MVC** (.NET 10) and **Microsoft SQL Server 2022**, featuring real-time data synchronization via **SignalR**, a Slate & Emerald design system with accented Vietnamese typography, binary magic signature verification for image uploads, and multi-format document exporting (Excel / PDF / CSV).
 >
-> 🚀 **1-Command Turnkey Launch**: Fully containerized using **Docker Compose** (Web Application + SQL Server Linux container with automated schema seeding).
+> 🚀 **Evaluation Environment via Docker Compose**: Packaged into a multi-container deployment comprising the Web Application and SQL Server Linux preloaded with seed data for rapid assessment.
 
 ---
 
 > [!IMPORTANT]
 > ### 🔑 LIVE DEMO ACCESS & TEST CREDENTIALS
-> Anyone cloning this repository can launch and explore the system immediately:
+> Demo account credentials are preconfigured in `.env.example` to facilitate functional evaluation:
 >
 > | Parameter | Default Test Value | Notes & Privileges |
 > | :--- | :--- | :--- |
@@ -63,6 +63,7 @@ flowchart TD
         RealtimeHub["SignalR Hub (/hubs/dashboard)"]
         BackgroundWorker["DashboardRealtimeBroadcastService (Hosted Service)"]
         ImageSecurity["SixLabors.ImageSharp (Magic Bytes & Image Optimization)"]
+        OrderEngine["OrderCalculator (Financial Engine & Line Total Aggregation)"]
     end
 
     subgraph DataAccessLayer ["4. Persistence Layer"]
@@ -79,6 +80,7 @@ flowchart TD
 
     Controllers --> DashboardService
     Controllers --> ImageSecurity
+    Controllers --> OrderEngine
     ImageSecurity --> UploadVolume
     DashboardService --> RealtimeHub
     BackgroundWorker --> RealtimeHub
@@ -171,23 +173,22 @@ erDiagram
 ## 🌟 Technical Highlights
 
 ### 1. 📊 Realtime Telemetry & Business Analytics
-- **Multi-client telemetry:** Uses **ASP.NET Core SignalR** backed by a hosted background worker service to push instant sales order, customer, and revenue updates across all connected sessions.
-- **Interactive charts:** Visualized with **Chart.js** displaying rolling 7-day revenue fluctuations with smooth Emerald gradient fills.
+- **SignalR Telemetry Broadcasting:** Uses **ASP.NET Core SignalR** backed by a hosted background service to broadcast sales and order updates to connected client sessions.
+- **Interactive charts:** Visualized with **Chart.js** displaying 7-day rolling revenue trends with smooth Emerald gradient fills.
 
-### 2. 🎨 Modern Enterprise UI/UX (Slate & Emerald)
-- **Accented Vietnamese Typography:** All labels, form controls, validation errors, and confirmation dialogs adhere strictly to Vietnamese diacritic standards.
+### 2. 🎨 User Interface & Styling (Slate & Emerald)
+- **Accented Vietnamese Typography:** All labels, navigation items, validation errors, and confirmation dialogs adhere to Vietnamese diacritic standards.
 - **Color System & Typefaces:** Slate `#0F172A` background tones accented by Emerald `#059669`; content set in *Be Vietnam Pro* and financial figures formatted with monospace *JetBrains Mono*.
-- **Smart Price Range Selector:** Floating popover filter preventing layout shifting and preserving visibility of table records.
+- **Smart Price Range Selector:** Floating popover filter designed to maintain visibility of underlying table rows during interaction.
 
 ### 3. 📦 Relational Schema & 15 Stored Procedures
-- **Safe Key Generation:** `sp_ThemSanPham` generates sequential 10-character SKUs (`yyMMdd0001`, `CHAR(10)`) protected by transaction concurrency locks `(UPDLOCK, HOLDLOCK)` to prevent collisions.
-- **Strict Data Typing:** Strict mapping between Entity Framework Core models and SQL Server schemas (`CHAR(10)` for `MaSP`, `SMALLINT` for `MaNSP`).
+- **Key Generation Procedure:** `sp_ThemSanPham` generates sequential 10-character SKUs (`yyMMdd0001`, `CHAR(10)`) with `(UPDLOCK, HOLDLOCK)` concurrency locks to mitigate key collision risks during simultaneous transactions.
+- **Data Typing:** Synchronized schema definitions between Entity Framework Core models and SQL Server (`CHAR(10)` for `MaSP`, `SMALLINT` for `MaNSP`).
 
-### 4. 🖼️ Binary Magic Signature Image Validation
+### 4. 🖼️ Image Upload Validation (Magic Bytes)
 - Powered by **SixLabors.ImageSharp**:
   - Byte-level **Magic Bytes** verification (JPEG, PNG, GIF, WebP), detecting and rejecting file extension spoofing attempts.
-  - Automatic downscaling (max 1600px width/height, re-encoded at 82% quality) and stripping EXIF metadata.
-  - Raw unverified files are never stored on the server file system.
+  - Automatic downscaling (max 1600px width/height, re-encoded at 82% quality) and stripping EXIF metadata prior to storage.
   - Upload volume mapped cleanly to `/app/wwwroot/uploads/san-pham`.
 
 ### 5. 📑 Multi-Format Report Exporting
@@ -195,12 +196,12 @@ erDiagram
 - **PDF Documents:** High-resolution vector invoices generated using **QuestPDF**.
 - **CSV Data:** UTF-8 encoded files ready for offline business intelligence tools.
 
-### 6. 🛡️ Application Security Hardening
-- **Secure Password Hashing:** Uses `IPasswordHasher<string>` (PBKDF2 HMAC-SHA256 with cryptographically random 128-bit salt) following ASP.NET Core Identity standards; plaintext comparison is strictly banned.
+### 6. 🛡️ Application Protection Mechanisms
+- **Secure Password Hashing:** Uses `IPasswordHasher<string>` (PBKDF2 HMAC-SHA256 with cryptographically random 128-bit salt) following ASP.NET Core Identity standards; plaintext comparison is strictly avoided.
 - **Multi-Tier Rate Limiting Middleware:**
-  - `AuthPolicy`: Strict limit of **10 requests/minute** on `/Account/Login` endpoints to prevent brute-force attacks.
-  - `ApiPolicy`: **120 requests/minute** per IP across general application routes.
-- **Anti-Forgery / CSRF:** 100% enforced on state-modifying actions via `[ValidateAntiForgeryToken]`.
+  - `AuthPolicy`: 10 requests/minute limit applied to `/Account/Login` to mitigate repeated credential guessing attempts.
+  - `ApiPolicy`: 120 requests/minute per IP across general application routes.
+- **Anti-Forgery / CSRF:** Enforced on state-modifying mutation actions (POST) via `[ValidateAntiForgeryToken]`.
 
 ---
 
@@ -210,16 +211,17 @@ The project includes an automated test suite powered by xUnit in `tests/WebQLBH.
 
 | Test Suite | Target Area | Number of Tests |
 | :--- | :--- | :---: |
-| `HumanTextGuardTests` | Vietnamese text sanitization, whitespace normalization, machine payload detection | 5 tests |
-| `OrderStatusCatalogTests` | Order state machine consistency (`Mới`, `Đang xử lý`, `Hoàn tất`) and semantic CSS | 4 tests |
-| `PasswordSecurityTests` | PBKDF2 HMAC-SHA256 hashing verification against default demo password `Admin@2026!Secure` | 3 tests |
-| `BusinessCalculationTests` | Line-item calculation formula (`Quantity × UnitPrice`) and order total aggregation | 3 tests |
+| `HumanTextGuardTests` | Vietnamese text sanitization, whitespace normalization, suspicious payload detection | 5 tests |
+| `OrderStatusCatalogTests` | Order state machine consistency (`Mới`, `Đang xử lý`, `Hoàn tất`) and semantic CSS styling | 4 tests |
+| `PasswordSecurityTests` | PBKDF2 HMAC-SHA256 password hashing and verification against demo account `admin` | 3 tests |
+| `BusinessCalculationTests` | Directly invokes `OrderCalculator` to verify sales/purchase line calculations, order totals, and boundary conditions (zero quantity, negative unit price) | 16 tests |
+| **Total** | **xUnit automated test suite covering financial calculations & data validation** | **28 tests** |
 
 **Run tests locally:**
 ```bash
 dotnet test tests/WebQLBH.Tests/WebQLBH.Tests.csproj
 ```
-*(Result: 19/19 tests passed, 0 failures).*
+*(Result: 28/28 tests passed, 0 failures).*
 
 A **GitHub Actions** workflow automatically verifies builds and executes all unit tests on every commit to `main`.
 
@@ -227,9 +229,9 @@ A **GitHub Actions** workflow automatically verifies builds and executes all uni
 
 ## 🚀 Quick Start Guide
 
-### Option 1: 1-Command Launch with Docker (Recommended)
+### Option 1: Launch via Docker Compose (Recommended)
 
-No need to install .NET SDK or SQL Server locally — Docker Desktop is all you need:
+No need to install .NET SDK or SQL Server locally:
 
 1. **Clone the repository:**
    ```bash
@@ -256,7 +258,7 @@ No need to install .NET SDK or SQL Server locally — Docker Desktop is all you 
 
 ### Option 2: Local Development with Visual Studio / .NET CLI
 
-1. Open `Hoàng Chiếm Nguyên_65132292/WEB/WebQLBH_65132292.slnx` (or `.csproj`) in Visual Studio 2022 / 2026.
+1. Open `Hoàng Chiếm Nguyên_65132292/WEB/WebQLBH_65132292/DbQLBH_65132292.slnx` (or `.csproj`) in Visual Studio 2022 / 2026.
 2. Run `database/init.sql` against your local SQL Server instance to initialize `DbQLBH_65132292`.
 3. Verify connection string in `appsettings.json`.
 4. Press **F5** or run `dotnet run` from the project directory.
@@ -271,9 +273,9 @@ WebQLBH/
 ├── docker-compose.yml              # Multi-container orchestration (Web + DB)
 ├── .env.example                    # Environment configuration template (with demo credentials)
 ├── database/                       # SQL Server Data & Provisioning Scripts
-│   ├── init.sql                   # Single source of truth: 12 tables, 15 SPs & seed data
+│   ├── init.sql                   # Schema 12 tables, 15 SPs & seed data
 │   ├── restore.sql                # Manual restore script (SSMS)
-│   ├── init-db.sh                 # Safe container initialization script
+│   ├── init-db.sh                 # Container initialization script
 │   └── DbQLBH_65132292.bak        # Original database backup file
 ├── tests/                          # Automated testing suite
 │   └── WebQLBH.Tests/             # xUnit test project for business logic & security
@@ -285,7 +287,7 @@ WebQLBH/
 │       ├── Views/                  # Razor Views (Accented Vietnamese UI)
 │       ├── Services/               # DashboardService, GiaoDichLookupService
 │       ├── Hubs/                   # SignalR Realtime Hub (/hubs/dashboard)
-│       ├── Infrastructure/         # RateLimiter, HumanTextGuard, OrderCatalog
+│       ├── Infrastructure/         # RateLimiter, HumanTextGuard, OrderCalculator, OrderCatalog
 │       ├── wwwroot/                # CSS (Enterprise Slate & Emerald), JS, Uploads
 │       └── Dockerfile              # Multi-stage build (.NET 10 + Native Graphics Libraries)
 ```
