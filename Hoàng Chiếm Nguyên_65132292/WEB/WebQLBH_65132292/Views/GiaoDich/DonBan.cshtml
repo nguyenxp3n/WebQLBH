@@ -1,14 +1,19 @@
 @model DbQLBH_65132292.Models.ViewModels.DonBanTraCuuViewModel
 
 @{
-    ViewData["Title"] = "Tra cuu don ban";
+    ViewData["Title"] = "Tra cứu đơn bán";
 }
 
 <section class="inventory-page">
-    <div class="inventory-header">
+    <div class="inventory-header d-flex justify-content-between align-items-center mb-4">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title">Tra cuu don ban</h1>
-            <p class="inventory-subtitle">Tim theo ma don, khach hang va khoang ngay ban.</p>
+            <h1 class="inventory-title h4 mb-1">Tra cứu đơn bán hàng</h1>
+            <p class="inventory-subtitle text-muted mb-0">Tìm kiếm đơn xuất hàng theo mã đơn, khách hàng và khoảng thời gian giao dịch.</p>
+        </div>
+        <div>
+            <a asp-controller="DonBHs" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Lập đơn bán mới
+            </a>
         </div>
     </div>
 
@@ -17,48 +22,53 @@
             <input type="hidden" name="page" value="1" />
             <input type="hidden" name="pageSize" value="@Model.PageSize" />
             <div class="col-12 col-md-6 col-xl-5">
-                <label class="form-label">Tu khoa</label>
+                <label class="form-label">Từ khóa tìm kiếm</label>
                 <input type="text" name="tuKhoa" value="@Model.TuKhoa" class="form-control"
-                       placeholder="Ma don, ten KH..." />
+                       placeholder="Nhập mã đơn bán, tên khách hàng..." />
             </div>
             <div class="col-6 col-md-3 col-xl-2">
-                <label class="form-label">Tu ngay</label>
+                <label class="form-label">Từ ngày</label>
                 <input type="date" name="tuNgay" value="@(Model.TuNgay?.ToString("yyyy-MM-dd"))" class="form-control" />
             </div>
             <div class="col-6 col-md-3 col-xl-2">
-                <label class="form-label">Den ngay</label>
-                <input type="date" name="denNgay" value="@(Model.DenNgay?.ToString("yyyy-MM-dd"))"
-                       class="form-control" />
+                <label class="form-label">Đến ngày</label>
+                <input type="date" name="denNgay" value="@(Model.DenNgay?.ToString("yyyy-MM-dd"))" class="form-control" />
             </div>
             <div class="col-6 col-md-3 col-xl-1 d-flex align-items-end">
-                <button class="inventory-add-btn w-100 justify-content-center" type="submit">Loc</button>
+                <button class="btn btn-primary w-100" type="submit"><i class="bi bi-funnel me-1"></i>Lọc</button>
             </div>
             <div class="col-6 col-md-3 col-xl-2 d-flex align-items-end">
-                <a class="btn btn-outline-secondary w-100" asp-action="DonBan" asp-controller="GiaoDich">Reset</a>
+                <a class="btn btn-outline-secondary w-100" asp-action="DonBan" asp-controller="GiaoDich"><i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại</a>
             </div>
         </form>
     </div>
 
     <div class="inventory-card">
         <div class="inventory-table-wrap table-responsive">
-            <table class="inventory-table">
+            <table class="inventory-table table align-middle mb-0">
                 <thead>
                     <tr>
-                        <th style="width: 130px;">Ma DBH</th>
-                        <th style="width: 130px;">Ngay ban</th>
-                        <th style="width: 120px;">Ma KH</th>
-                        <th>Khach hang</th>
-                        <th style="width: 180px;">Dia chi giao</th>
-                        <th style="width: 120px;">So mat hang</th>
-                        <th style="width: 150px;">Tong tien</th>
-                        <th style="width: 120px; text-align: right;">Chi tiet</th>
+                        <th style="width: 130px;">Mã DBH</th>
+                        <th style="width: 130px;">Ngày bán</th>
+                        <th style="width: 110px;">Mã KH</th>
+                        <th>Khách hàng</th>
+                        <th style="width: 220px;">Địa chỉ giao hàng</th>
+                        <th style="width: 110px;" class="text-center">Số món</th>
+                        <th style="width: 160px;" class="text-end">Tổng tiền (VNĐ)</th>
+                        <th style="width: 120px; text-align: right;">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (Model.KetQua.Count == 0)
                     {
                         <tr>
-                            <td colspan="8" class="text-center text-muted">Khong co du lieu phu hop.</td>
+                            <td colspan="8">
+                                <div class="empty-state-card my-3 py-4">
+                                    <i class="bi bi-receipt empty-state-icon mb-2"></i>
+                                    <p class="empty-state-title mb-1">Không tìm thấy đơn bán phù hợp</p>
+                                    <p class="empty-state-text mb-0 small">Thử kiểm tra lại từ khóa hoặc nới rộng khoảng thời gian tìm kiếm.</p>
+                                </div>
+                            </td>
                         </tr>
                     }
                     else
@@ -66,16 +76,18 @@
                         foreach (var item in Model.KetQua)
                         {
                             <tr>
-                                <td><span class="inventory-code">@item.MaDBH</span></td>
-                                <td><span class="inventory-value">@item.NgayBan.ToString("dd/MM/yyyy")</span></td>
-                                <td><span class="inventory-value">@item.MaKH</span></td>
-                                <td><span class="inventory-name">@item.TenKH</span></td>
-                                <td><span class="inventory-value">@item.DiaChiGiaoHang</span></td>
-                                <td><span class="inventory-value">@item.SoMatHang</span></td>
-                                <td><span class="inventory-value">@item.TongTien.ToString("N0") đ</span></td>
+                                <td><span class="code-badge">@item.MaDBH</span></td>
+                                <td><span class="text-muted small">@item.NgayBan.ToString("dd/MM/yyyy")</span></td>
+                                <td><span class="code-badge">@item.MaKH</span></td>
+                                <td><span class="fw-semibold text-dark">@item.TenKH</span></td>
+                                <td><span class="text-secondary small">@item.DiaChiGiaoHang</span></td>
+                                <td class="text-center"><span class="badge-status badge-new font-monospace">@item.SoMatHang</span></td>
+                                <td class="text-end"><span class="font-monospace fw-semibold" style="color: var(--accent-emerald);">@item.TongTien.ToString("N0")</span></td>
                                 <td style="text-align: right;">
-                                    <a class="btn btn-sm btn-outline-primary" asp-action="DonBanChiTiet"
-                                       asp-controller="GiaoDich" asp-route-maDBH="@item.MaDBH">Xem</a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-action="DonBanChiTiet"
+                                       asp-controller="GiaoDich" asp-route-maDBH="@item.MaDBH">
+                                        <i class="bi bi-eye me-1"></i> Chi tiết
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -96,7 +108,7 @@
                         <a class="page-link" asp-action="DonBan" asp-route-tuKhoa="@Model.TuKhoa"
                            asp-route-tuNgay="@(Model.TuNgay?.ToString("yyyy-MM-dd"))"
                            asp-route-denNgay="@(Model.DenNgay?.ToString("yyyy-MM-dd"))" asp-route-page="@(Model.Page - 1)"
-                           asp-route-pageSize="@Model.PageSize">Truoc</a>
+                           asp-route-pageSize="@Model.PageSize">&laquo; Trước</a>
                     </li>
 
                     @for (var p = startPage; p <= endPage; p++)
@@ -113,19 +125,20 @@
                         <a class="page-link" asp-action="DonBan" asp-route-tuKhoa="@Model.TuKhoa"
                            asp-route-tuNgay="@(Model.TuNgay?.ToString("yyyy-MM-dd"))"
                            asp-route-denNgay="@(Model.DenNgay?.ToString("yyyy-MM-dd"))" asp-route-page="@(Model.Page + 1)"
-                           asp-route-pageSize="@Model.PageSize">Sau</a>
+                           asp-route-pageSize="@Model.PageSize">Sau &raquo;</a>
                     </li>
                 </ul>
             </div>
         }
 
-        <div class="inventory-footer">
-            <p class="inventory-stats">
-                Tong ket qua: <strong>@Model.TotalItems</strong>
+        <div class="inventory-footer d-flex flex-wrap justify-content-between align-items-center p-3 border-top mt-2">
+            <p class="inventory-stats text-muted mb-0 small">
+                Tổng kết quả: <strong>@Model.TotalItems</strong> đơn bán
                 | Trang <strong>@Model.Page/@Math.Max(Model.TotalPages, 1)</strong>
             </p>
-            <a class="btn btn-outline-secondary btn-sm" asp-action="Index" asp-controller="GiaoDich">Ve tong quan giao
-                dich</a>
-            </div>
+            <a class="btn btn-outline-secondary btn-sm" asp-action="Index" asp-controller="GiaoDich">
+                <i class="bi bi-arrow-left me-1"></i> Về tổng quan giao dịch
+            </a>
         </div>
-    </section>
+    </div>
+</section>

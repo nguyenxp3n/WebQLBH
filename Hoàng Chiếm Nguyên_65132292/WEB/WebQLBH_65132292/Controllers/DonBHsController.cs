@@ -106,22 +106,22 @@ namespace DbQLBH_65132292.Controllers
 
             if (!await _context.KhachHang.AnyAsync(x => x.MaKH == donBH.MaKH))
             {
-                ModelState.AddModelError(nameof(DonBH.MaKH), "Khach hang khong ton tai.");
+                ModelState.AddModelError(nameof(DonBH.MaKH), "Khách hàng không tồn tại.");
             }
 
             if (string.IsNullOrWhiteSpace(donBH.DCGH))
             {
-                ModelState.AddModelError(nameof(DonBH.DCGH), "Dia chi giao hang khong duoc de trong.");
+                ModelState.AddModelError(nameof(DonBH.DCGH), "Địa chỉ giao hàng không được để trống.");
             }
 
             if (HumanTextGuard.LooksLikeMachinePayload(donBH.DCGH))
             {
-                ModelState.AddModelError(nameof(DonBH.DCGH), "Dia chi giao hang khong hop le. Vui long nhap dia chi ngan gon, de doc.");
+                ModelState.AddModelError(nameof(DonBH.DCGH), "Địa chỉ giao hàng không hợp lệ. Vui lòng nhập địa chỉ ngắn gọn, dễ đọc.");
             }
 
             if (!await IsValidPhuongXaAsync(donBH.MaPX, maTinh))
             {
-                ModelState.AddModelError(nameof(DonBH.MaPX), "Phuong xa giao hang khong hop le.");
+                ModelState.AddModelError(nameof(DonBH.MaPX), "Phường/Xã giao hàng không hợp lệ.");
             }
 
             if (!ModelState.IsValid)
@@ -139,7 +139,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the tao don ban. Vui long kiem tra ma don co bi trung khong.");
+                ModelState.AddModelError(string.Empty, "Không thể tạo đơn bán. Vui lòng kiểm tra mã đơn có bị trùng không.");
                 await PopulateKhachHangOptionsAsync(donBH.MaKH);
                 await PopulateLocationOptionsAsync(maTinh, donBH.MaPX);
                 return View(donBH);
@@ -185,22 +185,22 @@ namespace DbQLBH_65132292.Controllers
 
             if (!await _context.KhachHang.AnyAsync(x => x.MaKH == donBH.MaKH))
             {
-                ModelState.AddModelError(nameof(DonBH.MaKH), "Khach hang khong ton tai.");
+                ModelState.AddModelError(nameof(DonBH.MaKH), "Khách hàng không tồn tại.");
             }
 
             if (string.IsNullOrWhiteSpace(donBH.DCGH))
             {
-                ModelState.AddModelError(nameof(DonBH.DCGH), "Dia chi giao hang khong duoc de trong.");
+                ModelState.AddModelError(nameof(DonBH.DCGH), "Địa chỉ giao hàng không được để trống.");
             }
 
             if (HumanTextGuard.LooksLikeMachinePayload(donBH.DCGH))
             {
-                ModelState.AddModelError(nameof(DonBH.DCGH), "Dia chi giao hang khong hop le. Vui long nhap dia chi ngan gon, de doc.");
+                ModelState.AddModelError(nameof(DonBH.DCGH), "Địa chỉ giao hàng không hợp lệ. Vui lòng nhập địa chỉ ngắn gọn, dễ đọc.");
             }
 
             if (!await IsValidPhuongXaAsync(donBH.MaPX, maTinh))
             {
-                ModelState.AddModelError(nameof(DonBH.MaPX), "Phuong xa giao hang khong hop le.");
+                ModelState.AddModelError(nameof(DonBH.MaPX), "Phường/Xã giao hàng không hợp lệ.");
             }
 
             if (!ModelState.IsValid)
@@ -226,7 +226,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the cap nhat don ban. Vui long thu lai.");
+                ModelState.AddModelError(string.Empty, "Không thể cập nhật đơn bán. Vui lòng thử lại.");
                 await PopulateKhachHangOptionsAsync(donBH.MaKH);
                 await PopulateLocationOptionsAsync(maTinh, donBH.MaPX);
                 ViewBag.MaTinh = maTinh;
@@ -295,7 +295,7 @@ namespace DbQLBH_65132292.Controllers
 
             if (string.IsNullOrWhiteSpace(maDBH) || string.IsNullOrWhiteSpace(maSP) || slb == 0 || dgb <= 0)
             {
-                TempData["WorkflowError"] = "Thong tin dong chi tiet khong hop le.";
+                TempData["WorkflowError"] = "Thông tin dòng chi tiết không hợp lệ.";
                 return RedirectToAction(nameof(Details), new { id = maDBH });
             }
 
@@ -308,7 +308,7 @@ namespace DbQLBH_65132292.Controllers
             var spTonTai = await _context.SanPham.AnyAsync(x => x.MaSP == maSP);
             if (!spTonTai)
             {
-                TempData["WorkflowError"] = "San pham khong ton tai.";
+                TempData["WorkflowError"] = "Sản phẩm không tồn tại.";
                 return RedirectToAction(nameof(Details), new { id = maDBH });
             }
 
@@ -328,7 +328,7 @@ namespace DbQLBH_65132292.Controllers
             {
                 if (line.SLB > byte.MaxValue - slb)
                 {
-                    TempData["WorkflowError"] = "Tong so luong vuot qua gioi han cho phep.";
+                    TempData["WorkflowError"] = "Tổng số lượng vượt quá giới hạn cho phép.";
                     return RedirectToAction(nameof(Details), new { id = maDBH });
                 }
 
@@ -408,12 +408,12 @@ namespace DbQLBH_65132292.Controllers
                 _context.DonBH.Remove(donBH);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                TempData["WorkflowSuccess"] = "Da xoa don ban.";
+                TempData["WorkflowSuccess"] = "Đã xóa đơn bán thành công.";
             }
             catch (DbUpdateException)
             {
                 await transaction.RollbackAsync();
-                TempData["WorkflowError"] = "Khong the xoa don ban vi con rang buoc du lieu lien quan.";
+                TempData["WorkflowError"] = "Không thể xóa đơn bán vì còn ràng buộc dữ liệu liên quan.";
             }
 
             return RedirectToAction(nameof(Index));

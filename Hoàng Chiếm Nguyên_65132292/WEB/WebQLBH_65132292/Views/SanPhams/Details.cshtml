@@ -1,20 +1,20 @@
 @model DbQLBH_65132292.Models.SanPham
 
 @{
-    ViewData["Title"] = "Chi tiet san pham";
-    var moTaNgan = ViewBag.MoTaNgan as string ?? "Khong co mo ta";
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    var moTaNgan = ViewBag.MoTaNgan as string ?? "Không có mô tả";
 }
 
 <section class="inventory-page detail-page">
     <div class="inventory-header page-header page-header-split">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title page-title">Chi tiet san pham</h1>
-            <p class="inventory-subtitle page-subtitle detail-code-line">Ma san pham: <span class="inventory-code">@Model.MaSP</span></p>
-            <p class="inventory-subtitle page-subtitle">Thong tin day du de doi chieu truoc khi sua hoac xoa ban ghi.</p>
+            <h1 class="inventory-title page-title">Chi tiết sản phẩm</h1>
+            <p class="inventory-subtitle page-subtitle detail-code-line">Mã sản phẩm: <span class="inventory-code">@Model.MaSP</span></p>
+            <p class="inventory-subtitle page-subtitle">Thông tin đầy đủ để đối chiếu trước khi sửa hoặc xóa bản ghi.</p>
         </div>
         <div class="inventory-toolbar">
-            <a asp-action="Edit" asp-route-id="@Model.MaSP" class="inventory-add-btn">Chinh sua</a>
-            <a asp-action="Index" class="btn btn-outline-secondary">Danh sach</a>
+            <a asp-action="Edit" asp-route-id="@Model.MaSP" class="inventory-add-btn">Chỉnh sửa</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Danh sách</a>
         </div>
     </div>
 
@@ -24,32 +24,32 @@
                 <div class="detail-image-wrap">
                     @if (!string.IsNullOrWhiteSpace(Model.AnhSP))
                     {
-                        <img src="@Model.AnhSP" alt="Anh san pham" class="detail-image" />
+                        <img src="@Model.AnhSP" alt="Ảnh sản phẩm" class="detail-image" />
                     }
                     else
                     {
-                        <div class="detail-image-placeholder">Khong co anh san pham</div>
+                        <div class="detail-image-placeholder">Chưa có ảnh sản phẩm</div>
                     }
                 </div>
             </div>
             <div class="col-12 col-lg-8">
                 <dl class="row detail-meta-list mb-0">
-                    <dt class="col-sm-4">Ma san pham</dt>
+                    <dt class="col-sm-4">Mã sản phẩm</dt>
                     <dd class="col-sm-8"><span class="inventory-code">@Model.MaSP</span></dd>
 
-                    <dt class="col-sm-4">Ten san pham</dt>
+                    <dt class="col-sm-4">Tên sản phẩm</dt>
                     <dd class="col-sm-8"><span class="inventory-name">@Model.TenSP</span></dd>
 
-                    <dt class="col-sm-4">Don gia</dt>
+                    <dt class="col-sm-4">Đơn giá</dt>
                     <dd class="col-sm-8"><span class="inventory-value">@Model.DonGia.ToString("N0")</span></dd>
 
-                    <dt class="col-sm-4">Ma loai</dt>
+                    <dt class="col-sm-4">Mã loại</dt>
                     <dd class="col-sm-8"><span class="inventory-value">@Model.MaLSP</span></dd>
 
-                    <dt class="col-sm-4">Ma don vi tinh</dt>
+                    <dt class="col-sm-4">Mã đơn vị tính</dt>
                     <dd class="col-sm-8"><span class="inventory-value">@Model.MaDVT</span></dd>
 
-                    <dt class="col-sm-4">Mo ta</dt>
+                    <dt class="col-sm-4">Mô tả</dt>
                     <dd class="col-sm-8 detail-description">@moTaNgan
                     </dd>
                 </dl>

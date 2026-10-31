@@ -1,7 +1,7 @@
 @model IEnumerable<DbQLBH_65132292.Models.NhomSP>
 
 @{
-    ViewData["Title"] = "Nhom san pham";
+    ViewData["Title"] = "Nhóm sản phẩm";
     var items = Model?.ToList() ?? new List<DbQLBH_65132292.Models.NhomSP>();
     var stt = 1;
 }
@@ -9,21 +9,20 @@
 <section class="inventory-page list-page">
     <div class="inventory-header page-header page-header-split">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title page-title">Quan ly Nhom san pham</h1>
-            <p class="inventory-subtitle page-subtitle">Dong bo danh muc nhom san pham theo bo giao dien admin thong
-                nhat.</p>
+            <h1 class="inventory-title page-title">Quản lý Nhóm sản phẩm</h1>
+            <p class="inventory-subtitle page-subtitle">Đồng bộ danh mục nhóm sản phẩm theo giao diện quản trị thống nhất.</p>
             </div>
             <div class="inventory-toolbar">
-                <a asp-action="Create" class="inventory-add-btn">Them nhom</a>
+                <a asp-action="Create" class="inventory-add-btn">Thêm nhóm mới</a>
             </div>
         </div>
 
-        <div class="inventory-card inventory-filter-card search-card p-3 p-md-4 mb-4">
-            <label class="search-label" for="nhomSpSearch">Tim kiem</label>
-            <div class="search-input-wrap">
-                <span class="search-icon" aria-hidden="true"><i class="bi bi-search"></i></span>
-                <input id="nhomSpSearch" class="inventory-search" type="search" aria-label="Tim ma hoac ten nhom"
-                       placeholder="Tim theo ma nhom hoac ten nhom san pham..." />
+        <div class="inventory-card inventory-filter-card search-card mb-4">
+            <label class="form-label" for="nhomSpSearch">Tìm kiếm</label>
+            <div class="inventory-search-wrap">
+                <i class="bi bi-search inventory-search-icon" aria-hidden="true"></i>
+                <input id="nhomSpSearch" class="inventory-search" type="search" aria-label="Tìm mã hoặc tên nhóm"
+                       placeholder="Tìm theo mã nhóm hoặc tên nhóm sản phẩm..." />
             </div>
         </div>
 
@@ -33,17 +32,17 @@
                     <thead>
                         <tr>
                             <th style="width: 90px;">STT</th>
-                            <th style="width: 140px;">Ma nhom</th>
-                            <th>Ten nhom san pham</th>
-                            <th style="width: 140px;">Trang thai</th>
-                            <th style="width: 220px; text-align: right;">Thao tac</th>
+                            <th style="width: 140px;">Mã nhóm</th>
+                            <th>Tên nhóm sản phẩm</th>
+                            <th style="width: 140px;">Trạng thái</th>
+                            <th style="width: 240px; text-align: right;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (items.Count == 0)
                         {
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Khong co du lieu de hien thi.</td>
+                                <td colspan="5" class="text-center text-muted">Không có dữ liệu để hiển thị.</td>
                             </tr>
                         }
                         else
@@ -54,13 +53,13 @@
                                     <td>@stt</td>
                                     <td><span class="inventory-code">@item.MaNSP</span></td>
                                     <td><span class="inventory-name">@item.TenNSP</span></td>
-                                    <td><span class="status-badge status-success">Hoat dong</span></td>
-                                    <td>
+                                    <td><span class="status-badge status-success">Hoạt động</span></td>
+                                    <td class="text-end">
                                         <div class="inventory-actions">
-                                            <a asp-action="Details" asp-route-id="@item.MaNSP" class="inventory-action">Chi tiet</a>
-                                            <a asp-action="Edit" asp-route-id="@item.MaNSP" class="inventory-action">Sua</a>
+                                            <a asp-action="Details" asp-route-id="@item.MaNSP" class="inventory-action">Chi tiết</a>
+                                            <a asp-action="Edit" asp-route-id="@item.MaNSP" class="inventory-action">Sửa</a>
                                             <a asp-action="Delete" asp-route-id="@item.MaNSP"
-                                               class="inventory-action delete">Xoa</a>
+                                               class="inventory-action delete">Xóa</a>
                                         </div>
                                     </td>
                                 </tr>
@@ -68,7 +67,7 @@
                             }
                             <tr class="inventory-empty-row" data-empty-row hidden>
                                 <td colspan="5">
-                                    <p class="inventory-empty-message" data-empty-message>Khong co du lieu de hien thi.</p>
+                                    <p class="inventory-empty-message" data-empty-message>Không có dữ liệu để hiển thị.</p>
                                 </td>
                             </tr>
                         }
@@ -76,7 +75,7 @@
                 </table>
             </div>
             <div class="inventory-footer">
-                <p class="inventory-stats">Tong <strong>@items.Count</strong> nhom san pham</p>
+                <p class="inventory-stats">Tổng số <strong>@items.Count</strong> nhóm sản phẩm</p>
             </div>
         </div>
     </section>

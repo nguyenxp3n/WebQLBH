@@ -1,71 +1,81 @@
 @model DbQLBH_65132292.Models.BaoCaoTongQuanViewModel
 
 @{
-    ViewData["Title"] = "Bao cao tong quan";
+    ViewData["Title"] = "Báo cáo tổng quan";
 }
 
 <section class="inventory-page bao-cao-page">
-    <div class="inventory-header">
+    <div class="inventory-header d-flex justify-content-between align-items-center mb-4">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title">Bao cao tong quan</h1>
-            <p class="inventory-subtitle">Thong ke nhanh danh muc san pham tu du lieu he thong hien tai.</p>
+            <h1 class="inventory-title h4 mb-1">Báo cáo tổng quan danh mục</h1>
+            <p class="inventory-subtitle text-muted mb-0">Thống kê danh mục sản phẩm và các chỉ số giá trị từ dữ liệu hệ thống.</p>
         </div>
         <div class="inventory-toolbar">
-            <a asp-action="Index" class="inventory-add-btn">
-                <span>Lam moi du lieu</span>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới dữ liệu
             </a>
         </div>
     </div>
 
+    <!-- KPI Metric Bento Grid -->
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong nhom san pham</p>
-                <p class="bao-cao-kpi-value">@Model.TongNhomSP</p>
+            <article class="kpi-card kpi-card-products p-3">
+                <p class="kpi-label mb-1">Tổng nhóm sản phẩm</p>
+                <p class="kpi-value mb-0">@Model.TongNhomSP</p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong loai san pham</p>
-                <p class="bao-cao-kpi-value">@Model.TongLoaiSP</p>
+            <article class="kpi-card kpi-card-partners p-3">
+                <p class="kpi-label mb-1">Tổng loại sản phẩm</p>
+                <p class="kpi-value mb-0">@Model.TongLoaiSP</p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong san pham</p>
-                <p class="bao-cao-kpi-value">@Model.TongSanPham</p>
+            <article class="kpi-card kpi-card-orders p-3">
+                <p class="kpi-label mb-1">Tổng số sản phẩm</p>
+                <p class="kpi-value mb-0">@Model.TongSanPham</p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Gia trung binh</p>
-                <p class="bao-cao-kpi-value">@Model.GiaTrungBinh.ToString("N0") đ</p>
+            <article class="kpi-card kpi-card-revenue p-3">
+                <p class="kpi-label mb-1">Đơn giá trung bình</p>
+                <p class="kpi-value mb-0" style="color: var(--accent-emerald);">@Model.GiaTrungBinh.ToString("N0") <small class="fs-6 text-muted">VNĐ</small></p>
             </article>
         </div>
     </div>
 
+    <!-- Category Breakdown & Top Value Products -->
     <div class="row g-4">
         <div class="col-12 col-xl-7">
             <div class="inventory-card">
-                <div class="bao-cao-card-header">
-                    <h2 class="bao-cao-card-title">Thong ke theo nhom</h2>
-                    <p class="bao-cao-card-subtitle">So loai va so san pham trong tung nhom</p>
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="h5 mb-0 fw-bold text-dark">Thống kê theo nhóm sản phẩm</h2>
+                        <p class="text-muted small mb-0">Số loại và số sản phẩm trực thuộc từng nhóm hàng</p>
+                    </div>
+                    <span class="badge-status badge-new">@Model.NhomThongKe.Count nhóm</span>
                 </div>
                 <div class="inventory-table-wrap table-responsive">
-                    <table class="inventory-table">
+                    <table class="inventory-table table align-middle mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 140px;">Ma NSP</th>
-                                <th>Ten nhom</th>
-                                <th style="width: 160px;">So loai</th>
-                                <th style="width: 180px;">So san pham</th>
+                                <th style="width: 130px;">Mã NSP</th>
+                                <th>Tên nhóm sản phẩm</th>
+                                <th style="width: 140px;" class="text-center">Số loại SP</th>
+                                <th style="width: 150px;" class="text-center">Số sản phẩm</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (Model.NhomThongKe.Count == 0)
                             {
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted">Chua co du lieu nhom san pham.</td>
+                                    <td colspan="4">
+                                        <div class="empty-state-card my-3 py-4">
+                                            <i class="bi bi-boxes empty-state-icon mb-2"></i>
+                                            <p class="empty-state-title mb-1">Chưa có dữ liệu nhóm sản phẩm</p>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                             else
@@ -73,10 +83,10 @@
                                 foreach (var item in Model.NhomThongKe)
                                 {
                                     <tr>
-                                        <td><span class="inventory-code">@item.MaNSP</span></td>
-                                        <td><span class="inventory-name">@item.TenNSP</span></td>
-                                        <td><span class="inventory-value">@item.SoLoaiSP</span></td>
-                                        <td><span class="inventory-value">@item.SoSanPham</span></td>
+                                        <td><span class="code-badge">@item.MaNSP</span></td>
+                                        <td class="fw-semibold text-dark">@item.TenNSP</td>
+                                        <td class="text-center"><span class="badge-status badge-new font-monospace">@item.SoLoaiSP</span></td>
+                                        <td class="text-center"><span class="badge-status badge-done font-monospace">@item.SoSanPham</span></td>
                                     </tr>
                                 }
                             }
@@ -87,38 +97,44 @@
         </div>
 
         <div class="col-12 col-xl-5">
-            <div class="inventory-card bao-cao-card-side">
-                <div class="bao-cao-card-header">
-                    <h2 class="bao-cao-card-title">Top 5 gia cao nhat</h2>
-                    <p class="bao-cao-card-subtitle">Sap xep theo don gia giam dan</p>
+            <div class="inventory-card p-3">
+                <div class="border-bottom pb-3 mb-3">
+                    <h2 class="h5 mb-0 fw-bold text-dark">Top 5 sản phẩm giá cao nhất</h2>
+                    <p class="text-muted small mb-0">Xếp hạng theo đơn giá niêm yết giảm dần</p>
                 </div>
 
-                <div class="bao-cao-price-range">
+                <div class="d-flex justify-content-between bg-light p-3 rounded mb-3 border">
                     <div>
-                        <p class="bao-cao-mini-label">Gia thap nhat</p>
-                        <p class="bao-cao-mini-value">@Model.GiaThapNhat.ToString("N0") đ</p>
+                        <span class="text-muted small d-block">Đơn giá thấp nhất</span>
+                        <span class="fw-bold text-dark font-monospace">@Model.GiaThapNhat.ToString("N0") VNĐ</span>
                     </div>
-                    <div>
-                        <p class="bao-cao-mini-label">Gia cao nhat</p>
-                        <p class="bao-cao-mini-value">@Model.GiaCaoNhat.ToString("N0") đ</p>
+                    <div class="text-end">
+                        <span class="text-muted small d-block">Đơn giá cao nhất</span>
+                        <span class="fw-bold font-monospace" style="color: var(--accent-emerald);">@Model.GiaCaoNhat.ToString("N0") VNĐ</span>
                     </div>
                 </div>
 
-                <div class="bao-cao-top-list">
+                <div class="d-flex flex-column gap-2">
                     @if (Model.TopSanPhamGiaCao.Count == 0)
                     {
-                        <p class="text-muted mb-0">Chua co du lieu san pham.</p>
+                        <div class="empty-state-card my-2 py-3">
+                            <p class="empty-state-text mb-0 small">Chưa có dữ liệu sản phẩm trong kho.</p>
+                        </div>
                     }
                     else
                     {
-                        foreach (var item in Model.TopSanPhamGiaCao)
+                        for (var i = 0; i < Model.TopSanPhamGiaCao.Count; i++)
                         {
-                            <article class="bao-cao-top-item">
-                                <div>
-                                    <p class="bao-cao-top-name">@item.TenSP</p>
-                                    <p class="bao-cao-top-code">@item.MaSP - LSP @item.MaLSP</p>
+                            var item = Model.TopSanPhamGiaCao[i];
+                            <article class="d-flex justify-content-between align-items-center p-2 rounded border bg-white">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="rank-badge">@(i + 1)</span>
+                                    <div>
+                                        <p class="mb-0 fw-semibold text-dark">@item.TenSP</p>
+                                        <span class="text-muted small">Mã: <span class="code-badge py-0 px-1">@item.MaSP</span></span>
+                                    </div>
                                 </div>
-                                <p class="bao-cao-top-price">@item.DonGia.ToString("N0") đ</p>
+                                <span class="fw-bold font-monospace" style="color: var(--accent-emerald);">@item.DonGia.ToString("N0") VNĐ</span>
                             </article>
                         }
                     }
@@ -127,126 +143,3 @@
         </div>
     </div>
 </section>
-
-<style>
-    .bao-cao-page .inventory-header {
-        align-items: center;
-    }
-
-    .bao-cao-kpi {
-        border: 1px solid rgba(234, 239, 241, 0.8);
-        border-radius: 14px;
-        background: #ffffff;
-        box-shadow: 0 8px 20px rgba(43, 52, 55, 0.05);
-        padding: 18px 20px;
-        height: 100%;
-    }
-
-    .bao-cao-kpi-label {
-        margin: 0;
-        color: #586064;
-        font-weight: 600;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .bao-cao-kpi-value {
-        margin: 10px 0 0;
-        color: #2b3437;
-        font-size: 30px;
-        font-weight: 800;
-        line-height: 1.2;
-    }
-
-    .bao-cao-card-header {
-        padding: 20px 24px 10px;
-    }
-
-    .bao-cao-card-title {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 800;
-        color: #2b3437;
-    }
-
-    .bao-cao-card-subtitle {
-        margin: 6px 0 0;
-        color: #586064;
-        font-size: 14px;
-    }
-
-    .bao-cao-card-side {
-        padding-bottom: 20px;
-    }
-
-    .bao-cao-price-range {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 12px 24px 20px;
-    }
-
-    .bao-cao-mini-label {
-        margin: 0;
-        color: #586064;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .bao-cao-mini-value {
-        margin: 4px 0 0;
-        color: #2b3437;
-        font-size: 18px;
-        font-weight: 700;
-    }
-
-    .bao-cao-top-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        padding: 0 16px;
-    }
-
-    .bao-cao-top-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        border-radius: 12px;
-        background: #f9fbff;
-        border: 1px solid #e8edf5;
-        padding: 12px;
-        margin: 0;
-    }
-
-    .bao-cao-top-name {
-        margin: 0;
-        color: #2b3437;
-        font-weight: 700;
-    }
-
-    .bao-cao-top-code {
-        margin: 2px 0 0;
-        color: #586064;
-        font-size: 12px;
-    }
-
-    .bao-cao-top-price {
-        margin: 0;
-        color: #4d44e3;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    @@media (max-width: 768px) {
-        .bao-cao-kpi-value {
-            font-size: 26px;
-        }
-
-        .bao-cao-price-range {
-            flex-direction: column;
-        }
-    }
-</style>

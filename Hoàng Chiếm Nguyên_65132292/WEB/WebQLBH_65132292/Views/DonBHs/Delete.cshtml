@@ -1,25 +1,25 @@
 @model DbQLBH_65132292.Models.DonBH
 
 @{
-    ViewData["Title"] = "Xoa don ban";
+    ViewData["Title"] = "Xóa đơn bán";
 }
 
-<h1>Xoa don ban</h1>
-<h3>Ban co chac chan muon xoa don ban @Model.MaDBH?</h3>
+<h1 class="page-title h4 mb-1">Xóa đơn bán hàng</h1>
+<h3>Bạn có chắc chắn muốn xóa đơn bán hàng @Model.MaDBH?</h3>
 
 <div>
     <dl class="row">
-        <dt class="col-sm-3">Ngay ban</dt>
+        <dt class="col-sm-3">Ngày bán</dt>
         <dd class="col-sm-9">@Model.NgayBan.ToString("dd/MM/yyyy")</dd>
-        <dt class="col-sm-3">Ma KH</dt>
+        <dt class="col-sm-3">Mã KH</dt>
         <dd class="col-sm-9">@Model.MaKH</dd>
-        <dt class="col-sm-3">Dia chi giao</dt>
+        <dt class="col-sm-3">Địa chỉ giao</dt>
         <dd class="col-sm-9">@(ViewBag.DiaChiGiaoAnToan ?? Model.DCGH)</dd>
     </dl>
 
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="MaDBH" />
-        <button type="submit" class="btn btn-danger">Xoa</button>
-        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Huy</a>
+        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Hủy</a>
     </form>
 </div>

@@ -1,8 +1,8 @@
-﻿@model IEnumerable<DbQLBH_65132292.Models.SanPham>
+@model IEnumerable<DbQLBH_65132292.Models.SanPham>
 @using System.Globalization
 
 @{
-    ViewData["Title"] = "Quan ly San pham";
+    ViewData["Title"] = "Quản lý Sản phẩm";
     var items = Model?.ToList() ?? new List<DbQLBH_65132292.Models.SanPham>();
 
     var tuKhoa = ViewBag.TuKhoa as string;
@@ -25,31 +25,56 @@
 
     var fromPage = Math.Max(1, currentPage - 2);
     var toPage = Math.Min(totalPages, currentPage + 2);
+
+    string initialPriceSummary = "Tất cả";
+    if (giaTu.HasValue && giaDen.HasValue)
+    {
+        if (giaTu.Value == 0 && giaDen.Value == 200000) initialPriceSummary = "Dưới 200k";
+        else if (giaTu.Value == 200000 && giaDen.Value == 500000) initialPriceSummary = "200k - 500k";
+        else if (giaTu.Value == 500000 && giaDen.Value == 1000000) initialPriceSummary = "500k - 1 triệu";
+        else if (giaTu.Value == 1000000 && giaDen.Value == 2000000) initialPriceSummary = "1tr - 2 triệu";
+        else if (giaTu.Value == 2000000 && giaDen.Value == 3000000) initialPriceSummary = "2tr - 3 triệu";
+        else initialPriceSummary = $"{giaTu.Value:N0}đ - {giaDen.Value:N0}đ";
+    }
+    else if (giaTu.HasValue)
+    {
+        if (giaTu.Value == 3000000) initialPriceSummary = "Trên 3 triệu";
+        else initialPriceSummary = $"Từ {giaTu.Value:N0}đ";
+    }
+    else if (giaDen.HasValue)
+    {
+        initialPriceSummary = $"Đến {giaDen.Value:N0}đ";
+    }
 }
 
 <section class="inventory-page list-page">
     <div class="inventory-header page-header page-header-split">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title page-title">Quan ly San pham</h1>
-            <p class="inventory-subtitle page-subtitle">Loc va phan trang tren server de xu ly tap du lieu lon.</p>
+            <h1 class="inventory-title page-title">Quản lý Sản phẩm</h1>
+            <p class="inventory-subtitle page-subtitle">Tra cứu, lọc và phân trang dữ liệu hệ thống.</p>
         </div>
         <div class="inventory-toolbar">
             <a asp-action="Create" class="inventory-add-btn">
-                <span>Them moi</span>
+                <span>Thêm mới</span>
             </a>
         </div>
     </div>
 
     <div class="inventory-card inventory-filter-card search-card p-3 p-md-4 mb-4">
-        <form method="get" asp-action="Index" class="row g-3 align-items-xl-end">
-            <div class="col-12 col-xl-3">
-                <label class="form-label">Tu khoa</label>
-                <input type="text" name="tuKhoa" value="@tuKhoa" class="form-control" placeholder="MaSP, TenSP..." />
+        <form method="get" asp-action="Index" id="productFilterForm" class="row g-3 align-items-end">
+            <div class="col-12 col-md-4 col-xl-3">
+                <label class="form-label">Từ khóa</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" name="tuKhoa" value="@tuKhoa" class="form-control border-start-0 ps-0" placeholder="Mã hoặc tên sản phẩm..." />
+                </div>
             </div>
-            <div class="col-6 col-xl-2">
-                <label class="form-label">Nhom SP</label>
+            <div class="col-6 col-md-4 col-xl-2">
+                <label class="form-label">Nhóm SP</label>
                 <select id="filter-maNsp" name="maNsp" class="form-select">
-                    <option value="">Tat ca</option>
+                    <option value="">Tất cả nhóm</option>
                     @foreach (var nsp in nhomOptions)
                     {
                         if (maNsp == nsp.MaNSP)
@@ -63,10 +88,10 @@
                     }
                 </select>
             </div>
-            <div class="col-6 col-xl-2">
-                <label class="form-label">Loai SP</label>
+            <div class="col-6 col-md-4 col-xl-2">
+                <label class="form-label">Loại SP</label>
                 <select id="filter-maLsp" name="maLsp" class="form-select">
-                    <option value="">Tat ca</option>
+                    <option value="">Tất cả loại</option>
                     @foreach (var lsp in loaiOptions)
                     {
                         if (maLsp == lsp.MaLSP)
@@ -80,179 +105,165 @@
                     }
                 </select>
             </div>
-            <div class="col-6 col-xl-2">
-                <label class="form-label">Muc gia</label>
-                <div id="priceFilterPopover" class="inventory-price-popover neu-price-filter">
-                    <button id="pricePopoverTrigger" type="button" class="inventory-price-trigger" aria-expanded="false"
+            <div class="col-12 col-md-6 col-xl-3">
+                <label class="form-label">Mức giá</label>
+                <div id="priceFilterPopover" class="price-popover-container position-relative">
+                    <button id="pricePopoverTrigger" type="button" class="price-trigger-btn" aria-expanded="false"
                             aria-controls="pricePopoverPanel">
-                        <span id="priceFilterSummary" class="inventory-price-trigger-text">Tat ca</span>
-                        <span class="inventory-price-trigger-icon" aria-hidden="true">▾</span>
+                        <i class="bi bi-tag text-muted me-2"></i>
+                        <span id="priceFilterSummary" class="price-summary-text">@initialPriceSummary</span>
+                        <i class="bi bi-chevron-down ms-auto text-muted price-chevron-icon"></i>
                     </button>
 
-                    <fieldset id="pricePopoverPanel" class="inventory-price-filter inventory-price-panel" role="dialog"
-                              aria-label="Bo loc muc gia san pham">
-                        <div class="inventory-price-header">
-                            <span class="inventory-price-title">Muc gia</span>
+                    <div id="pricePopoverPanel" class="price-popover-panel shadow-lg" role="dialog"
+                         aria-label="Bộ lọc mức giá sản phẩm">
+                        <div class="price-panel-header">
+                            <span class="price-panel-title"><i class="bi bi-sliders me-1"></i> Khoảng giá (VNĐ)</span>
+                            <button type="button" id="priceResetBtn" class="price-reset-link">Xóa chọn</button>
                         </div>
 
-                        <div class="inventory-price-preset-list" role="radiogroup" aria-label="Khoang gia goi y">
-                            <label class="inventory-price-option">
-                                <input type="radio" name="pricePresetUi" data-min="" data-max="" />
-                                <span>Tat ca</span>
-                            </label>
-                            <label class="inventory-price-option">
-                                <input type="radio" name="pricePresetUi" data-min="0" data-max="200000" />
-                                <span>Duoi 200k</span>
-                            </label>
-                            <label class="inventory-price-option">
-                                <input type="radio" name="pricePresetUi" data-min="200000" data-max="500000" />
-                                <span>200k - 500k</span>
-                            </label>
-                            <label class="inventory-price-option">
-                                <input type="radio" name="pricePresetUi" data-min="500000" data-max="1000000" />
-                                <span>500k - 1tr</span>
-                            </label>
-                            <label class="inventory-price-option">
-                                <input type="radio" name="pricePresetUi" data-min="1000000" data-max="2000000" />
-                                <span>1tr - 2tr</span>
-                            </label>
-                            <label class="inventory-price-option">
-                                <input type="radio" name="pricePresetUi" data-min="2000000" data-max="3000000" />
-                                <span>2tr - 3tr</span>
-                            </label>
-                            <label class="inventory-price-option">
-                                <input type="radio" name="pricePresetUi" data-min="3000000" data-max="" />
-                                <span>Tren 3tr</span>
-                            </label>
+                        <div class="price-presets-grid" role="group" aria-label="Khoảng giá gợi ý">
+                            <button type="button" class="price-chip-btn @(string.IsNullOrEmpty(giaTuValue) && string.IsNullOrEmpty(giaDenValue) ? "is-active" : "")" data-min="" data-max="">Tất cả</button>
+                            <button type="button" class="price-chip-btn @(giaTuValue == "0" && giaDenValue == "200000" ? "is-active" : "")" data-min="0" data-max="200000">Dưới 200k</button>
+                            <button type="button" class="price-chip-btn @(giaTuValue == "200000" && giaDenValue == "500000" ? "is-active" : "")" data-min="200000" data-max="500000">200k - 500k</button>
+                            <button type="button" class="price-chip-btn @(giaTuValue == "500000" && giaDenValue == "1000000" ? "is-active" : "")" data-min="500000" data-max="1000000">500k - 1 triệu</button>
+                            <button type="button" class="price-chip-btn @(giaTuValue == "1000000" && giaDenValue == "2000000" ? "is-active" : "")" data-min="1000000" data-max="2000000">1tr - 2 triệu</button>
+                            <button type="button" class="price-chip-btn @(giaTuValue == "2000000" && giaDenValue == "3000000" ? "is-active" : "")" data-min="2000000" data-max="3000000">2tr - 3 triệu</button>
+                            <button type="button" class="price-chip-btn @(giaTuValue == "3000000" && string.IsNullOrEmpty(giaDenValue) ? "is-active" : "")" data-min="3000000" data-max="">Trên 3 triệu</button>
                         </div>
 
-                        <div class="inventory-price-custom">
-                            <label class="inventory-price-note" for="giaTuDisplay">Hoac nhap khoang gia tuy
-                                chinh:</label>
-                                <div class="inventory-price-inputs">
-                                    <input id="giaTuDisplay" type="text" class="form-control inventory-price-display"
-                                           inputmode="numeric" placeholder="Gia tu" autocomplete="off" />
-                                    <span class="inventory-price-separator">~</span>
-                                    <input id="giaDenDisplay" type="text" class="form-control inventory-price-display"
-                                           inputmode="numeric" placeholder="Gia den" autocomplete="off" />
+                        <div class="price-custom-section">
+                            <div class="price-custom-label">Hoặc nhập khoảng giá tùy chỉnh:</div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="input-group input-group-sm flex-fill">
+                                    <span class="input-group-text bg-light text-muted">Từ</span>
+                                    <input id="giaTuDisplay" type="text" class="form-control"
+                                           value="@(giaTu.HasValue ? giaTu.Value.ToString("N0", new CultureInfo("vi-VN")) : "")"
+                                           inputmode="numeric" placeholder="0" autocomplete="off" />
+                                </div>
+                                <span class="text-muted fw-bold">-</span>
+                                <div class="input-group input-group-sm flex-fill">
+                                    <span class="input-group-text bg-light text-muted">Đến</span>
+                                    <input id="giaDenDisplay" type="text" class="form-control"
+                                           value="@(giaDen.HasValue ? giaDen.Value.ToString("N0", new CultureInfo("vi-VN")) : "")"
+                                           inputmode="numeric" placeholder="Tối đa" autocomplete="off" />
                                 </div>
                             </div>
-                        </fieldset>
+                        </div>
+
+                        <div class="price-panel-footer">
+                            <button type="button" id="priceCancelBtn" class="btn btn-sm btn-outline-secondary">Đóng</button>
+                            <button type="button" id="priceApplyBtn" class="btn btn-sm btn-primary">Áp dụng</button>
+                        </div>
                     </div>
 
                     <input id="giaTuHidden" type="hidden" name="giaTu" value="@giaTuValue" />
                     <input id="giaDenHidden" type="hidden" name="giaDen" value="@giaDenValue" />
                 </div>
-                <input type="hidden" name="pageSize" value="@pageSize" />
-                <div class="col-12 col-xl-3 d-flex align-items-end justify-content-end gap-2 inventory-filter-actions">
-                    <button type="submit" class="inventory-add-btn justify-content-center">Loc</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
-                </div>
-            </form>
-        </div>
+            </div>
+            <input type="hidden" name="pageSize" value="@pageSize" />
+            <div class="col-12 col-md-6 col-xl-2 d-flex align-items-end justify-content-end gap-2 inventory-filter-actions">
+                <button type="submit" class="inventory-add-btn justify-content-center flex-fill">
+                    <i class="bi bi-funnel me-1"></i> Lọc
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Đặt lại bộ lọc">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </a>
+            </div>
+        </form>
+    </div>
 
-        <div class="inventory-card">
-            <div class="inventory-table-wrap table-responsive">
-                <table class="inventory-table">
-                    <thead>
+    <div class="inventory-card">
+        <div class="inventory-table-wrap table-responsive">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Mã SP</th>
+                        <th>Sản phẩm</th>
+                        <th style="width: 150px;">Đơn giá</th>
+                        <th style="width: 100px;">Mã LSP</th>
+                        <th style="width: 100px;">Mã ĐVT</th>
+                        <th style="width: 240px; text-align: right;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (items.Count == 0)
+                    {
                         <tr>
-                            <th style="width: 140px;">Ma SP</th>
-                            <th>San pham</th>
-                            <th style="width: 150px;">Don gia</th>
-                            <th style="width: 100px;">Ma LSP</th>
-                            <th style="width: 100px;">Ma DVT</th>
-                            <th style="width: 220px; text-align: right;">Thao tac</th>
+                            <td colspan="6" class="text-center text-muted py-4">Không có dữ liệu phù hợp.</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @if (items.Count == 0)
+                    }
+                    else
+                    {
+                        foreach (var item in items)
                         {
                             <tr>
-                                <td colspan="6" class="text-center text-muted">Khong co du lieu phu hop.</td>
+                                <td><span class="inventory-code">@item.MaSP</span></td>
+                                <td>
+                                    <span class="inventory-name">@item.TenSP</span>
+                                    @if (!string.IsNullOrWhiteSpace(item.AnhSP))
+                                    {
+                                        <div class="text-muted small mt-1">Có ảnh sản phẩm</div>
+                                    }
+                                </td>
+                                <td><span class="inventory-value">@item.DonGia.ToString("N0") đ</span></td>
+                                <td><span class="inventory-value">@item.MaLSP</span></td>
+                                <td><span class="inventory-value">@item.MaDVT</span></td>
+                                <td class="text-end">
+                                    <div class="inventory-actions">
+                                        <a asp-action="Details" asp-route-id="@item.MaSP" class="inventory-action"
+                                           aria-label="Chi tiết" title="Chi tiết">Chi tiết</a>
+                                        <a asp-action="Edit" asp-route-id="@item.MaSP" class="inventory-action" aria-label="Sửa"
+                                           title="Sửa">Sửa</a>
+                                        <a asp-action="Delete" asp-route-id="@item.MaSP" class="inventory-action delete"
+                                           aria-label="Xóa" title="Xóa">Xóa</a>
+                                    </div>
+                                </td>
                             </tr>
                         }
-                        else
-                        {
-                            foreach (var item in items)
-                            {
-                                <tr>
-                                    <td><span class="inventory-code">@item.MaSP</span></td>
-                                    <td>
-                                        <span class="inventory-name">@item.TenSP</span>
-                                        @if (!string.IsNullOrWhiteSpace(item.AnhSP))
-                                        {
-                                            <div class="text-muted small mt-1">Co anh san pham</div>
-                                        }
-                                    </td>
-                                    <td><span class="inventory-value">@item.DonGia.ToString("N0")</span></td>
-                                    <td><span class="inventory-value">@item.MaLSP</span></td>
-                                    <td><span class="inventory-value">@item.MaDVT</span></td>
-                                    <td>
-                                        <div class="inventory-actions">
-                                            <a asp-action="Details" asp-route-id="@item.MaSP" class="inventory-action"
-                                               aria-label="Chi tiet" title="Chi tiet">Chi tiet</a>
-                                            <a asp-action="Edit" asp-route-id="@item.MaSP" class="inventory-action" aria-label="Sua"
-                                               title="Sua">Sua</a>
-                                            <a asp-action="Delete" asp-route-id="@item.MaSP" class="inventory-action delete"
-                                               aria-label="Xoa" title="Xoa">Xoa</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <div class="inventory-footer">
-                <p class="inventory-stats">Trang <strong>@currentPage</strong>/<strong>@totalPages</strong> - Tong ban ghi:
-                    <strong>@totalItems</strong>
-                </p>
-                <div class="inventory-pagination" aria-label="Pagination">
-                    @if (currentPage > 1)
-                    {
-                        <a class="inventory-page-btn" asp-action="Index" asp-route-page="@(currentPage - 1)"
-                           asp-route-pageSize="@pageSize" asp-route-tuKhoa="@tuKhoa" asp-route-maNsp="@maNsp"
-                           asp-route-maLsp="@maLsp" asp-route-giaTu="@giaTu" asp-route-giaDen="@giaDen">&lt;</a>
                     }
-
-                    @for (var i = fromPage; i <= toPage; i++)
-                    {
-                        <a class="inventory-page-btn @(i == currentPage ? "active" : string.Empty)" asp-action="Index"
-                           asp-route-page="@i" asp-route-pageSize="@pageSize" asp-route-tuKhoa="@tuKhoa"
-                           asp-route-maNsp="@maNsp" asp-route-maLsp="@maLsp" asp-route-giaTu="@giaTu"
-                           asp-route-giaDen="@giaDen">@i</a>
-                    }
-
-                    @if (currentPage < totalPages)
-                    {
-                        <a class="inventory-page-btn" asp-action="Index" asp-route-page="@(currentPage + 1)"
-                           asp-route-pageSize="@pageSize" asp-route-tuKhoa="@tuKhoa" asp-route-maNsp="@maNsp"
-                           asp-route-maLsp="@maLsp" asp-route-giaTu="@giaTu" asp-route-giaDen="@giaDen">&gt;</a>
-                    }
-                </div>
-            </div>
+                </tbody>
+            </table>
         </div>
-    </section>
-
-    @section Scripts {
-        <script>
-            (function () {
-                const nhomSelect = document.getElementById("filter-maNsp");
-                const loaiSelect = document.getElementById("filter-maLsp");
-                const giaTuHidden = document.getElementById("giaTuHidden");
-                const giaDenHidden = document.getElementById("giaDenHidden");
-                const giaTuDisplay = document.getElementById("giaTuDisplay");
-                const giaDenDisplay = document.getElementById("giaDenDisplay");
-                const pricePopover = document.getElementById("priceFilterPopover");
-                const pricePopoverTrigger = document.getElementById("pricePopoverTrigger");
-                const pricePopoverPanel = document.getElementById("pricePopoverPanel");
-                const priceFilterSummary = document.getElementById("priceFilterSummary");
-                const presetRadios = Array.from(document.querySelectorAll("input[name='pricePresetUi']"));
-
-                if (!nhomSelect || !loaiSelect) {
-                    return;
+        <div class="inventory-footer">
+            <p class="inventory-stats">Trang <strong>@currentPage</strong>/<strong>@totalPages</strong> - Tổng số:
+                <strong>@totalItems</strong> sản phẩm
+            </p>
+            <div class="inventory-pagination" aria-label="Pagination">
+                @if (currentPage > 1)
+                {
+                    <a class="inventory-page-btn" asp-action="Index" asp-route-page="@(currentPage - 1)"
+                       asp-route-pageSize="@pageSize" asp-route-tuKhoa="@tuKhoa" asp-route-maNsp="@maNsp"
+                       asp-route-maLsp="@maLsp" asp-route-giaTu="@giaTu" asp-route-giaDen="@giaDen">&lt;</a>
                 }
 
+                @for (var i = fromPage; i <= toPage; i++)
+                {
+                    <a class="inventory-page-btn @(i == currentPage ? "active" : string.Empty)" asp-action="Index"
+                       asp-route-page="@i" asp-route-pageSize="@pageSize" asp-route-tuKhoa="@tuKhoa"
+                       asp-route-maNsp="@maNsp" asp-route-maLsp="@maLsp" asp-route-giaTu="@giaTu"
+                       asp-route-giaDen="@giaDen">@i</a>
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <a class="inventory-page-btn" asp-action="Index" asp-route-page="@(currentPage + 1)"
+                       asp-route-pageSize="@pageSize" asp-route-tuKhoa="@tuKhoa" asp-route-maNsp="@maNsp"
+                       asp-route-maLsp="@maLsp" asp-route-giaTu="@giaTu" asp-route-giaDen="@giaDen">&gt;</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        (function () {
+            // Cascading Nhóm SP -> Loại SP
+            const nhomSelect = document.getElementById("filter-maNsp");
+            const loaiSelect = document.getElementById("filter-maLsp");
+
+            if (nhomSelect && loaiSelect) {
                 const allLoaiOptions = Array.from(loaiSelect.options)
                     .filter(option => option.value !== "")
                     .map(option => ({
@@ -266,7 +277,7 @@
 
                     const defaultOption = document.createElement("option");
                     defaultOption.value = "";
-                    defaultOption.text = "Tat ca";
+                    defaultOption.text = "Tất cả loại";
                     loaiSelect.appendChild(defaultOption);
 
                     allLoaiOptions
@@ -292,190 +303,151 @@
                 nhomSelect.addEventListener("change", () => {
                     renderLoaiOptions(nhomSelect.value, loaiSelect.value);
                 });
+            }
 
-                function toDigits(value) {
-                    return (value || "").replace(/\D/g, "");
+            // Modern Price Popover Filter
+            const productFilterForm = document.getElementById("productFilterForm");
+            const giaTuHidden = document.getElementById("giaTuHidden");
+            const giaDenHidden = document.getElementById("giaDenHidden");
+            const giaTuDisplay = document.getElementById("giaTuDisplay");
+            const giaDenDisplay = document.getElementById("giaDenDisplay");
+            const pricePopover = document.getElementById("priceFilterPopover");
+            const pricePopoverTrigger = document.getElementById("pricePopoverTrigger");
+            const pricePopoverPanel = document.getElementById("pricePopoverPanel");
+            const priceFilterSummary = document.getElementById("priceFilterSummary");
+            const presetChips = Array.from(document.querySelectorAll(".price-chip-btn"));
+            const priceResetBtn = document.getElementById("priceResetBtn");
+            const priceCancelBtn = document.getElementById("priceCancelBtn");
+            const priceApplyBtn = document.getElementById("priceApplyBtn");
+
+            function toDigits(val) {
+                return (val || "").replace(/\D/g, "");
+            }
+
+            function formatMoney(val) {
+                if (!val) return "";
+                const num = Number(val);
+                if (Number.isNaN(num)) return "";
+                return num.toLocaleString("vi-VN") + "đ";
+            }
+
+            function syncDisplayFromHidden() {
+                if (!giaTuHidden || !giaDenHidden || !giaTuDisplay || !giaDenDisplay) return;
+                giaTuDisplay.value = giaTuHidden.value ? Number(giaTuHidden.value).toLocaleString("vi-VN") : "";
+                giaDenDisplay.value = giaDenHidden.value ? Number(giaDenHidden.value).toLocaleString("vi-VN") : "";
+            }
+
+            function updatePriceSummary() {
+                if (!priceFilterSummary) return;
+
+                const activeChip = presetChips.find(c => c.classList.contains("is-active"));
+                if (activeChip) {
+                    priceFilterSummary.textContent = activeChip.textContent.trim();
+                    return;
                 }
 
-                function formatMoney(value) {
-                    if (!value) {
-                        return "";
-                    }
+                const minVal = (giaTuHidden?.value || "").trim();
+                const maxVal = (giaDenHidden?.value || "").trim();
 
-                    const number = Number(value);
-                    if (Number.isNaN(number)) {
-                        return "";
-                    }
-
-                    return `${number.toLocaleString("vi-VN")}d`;
+                if (!minVal && !maxVal) {
+                    priceFilterSummary.textContent = "Tất cả";
+                    return;
                 }
-
-                function syncDisplayFromHidden() {
-                    if (!giaTuHidden || !giaDenHidden || !giaTuDisplay || !giaDenDisplay) {
-                        return;
-                    }
-
-                    giaTuDisplay.value = formatMoney(giaTuHidden.value);
-                    giaDenDisplay.value = formatMoney(giaDenHidden.value);
+                if (minVal && maxVal) {
+                    priceFilterSummary.textContent = `${formatMoney(minVal)} - ${formatMoney(maxVal)}`;
+                    return;
                 }
-
-                function syncHiddenFromDisplay(clearPreset) {
-                    if (!giaTuHidden || !giaDenHidden || !giaTuDisplay || !giaDenDisplay) {
-                        return;
-                    }
-
-                    giaTuHidden.value = toDigits(giaTuDisplay.value);
-                    giaDenHidden.value = toDigits(giaDenDisplay.value);
-
-                    if (clearPreset) {
-                        presetRadios.forEach(radio => {
-                            radio.checked = false;
-                        });
-                    }
+                if (minVal) {
+                    priceFilterSummary.textContent = `Từ ${formatMoney(minVal)}`;
+                    return;
                 }
+                if (maxVal) {
+                    priceFilterSummary.textContent = `Đến ${formatMoney(maxVal)}`;
+                    return;
+                }
+            }
 
-                function syncPresetFromHidden() {
-                    const minValue = (giaTuHidden?.value || "").trim();
-                    const maxValue = (giaDenHidden?.value || "").trim();
+            function setPopoverOpen(isOpen) {
+                if (!pricePopover || !pricePopoverTrigger) return;
+                pricePopover.classList.toggle("is-open", isOpen);
+                pricePopoverTrigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            }
 
-                    let matched = false;
-                    presetRadios.forEach(radio => {
-                        const radioMin = (radio.dataset.min || "").trim();
-                        const radioMax = (radio.dataset.max || "").trim();
-                        const isMatch = radioMin === minValue && radioMax === maxValue;
-                        radio.checked = isMatch;
-                        matched = matched || isMatch;
+            if (pricePopover && pricePopoverTrigger && pricePopoverPanel) {
+                pricePopoverTrigger.addEventListener("click", e => {
+                    e.preventDefault();
+                    setPopoverOpen(!pricePopover.classList.contains("is-open"));
+                });
+
+                document.addEventListener("click", e => {
+                    if (!pricePopover.contains(e.target)) {
+                        setPopoverOpen(false);
+                    }
+                });
+
+                document.addEventListener("keydown", e => {
+                    if (e.key === "Escape") {
+                        setPopoverOpen(false);
+                    }
+                });
+
+                priceCancelBtn?.addEventListener("click", () => {
+                    setPopoverOpen(false);
+                });
+
+                priceApplyBtn?.addEventListener("click", () => {
+                    setPopoverOpen(false);
+                    productFilterForm?.submit();
+                });
+
+                priceResetBtn?.addEventListener("click", () => {
+                    if (giaTuHidden) giaTuHidden.value = "";
+                    if (giaDenHidden) giaDenHidden.value = "";
+                    if (giaTuDisplay) giaTuDisplay.value = "";
+                    if (giaDenDisplay) giaDenDisplay.value = "";
+                    presetChips.forEach(chip => {
+                        chip.classList.toggle("is-active", !chip.dataset.min && !chip.dataset.max);
                     });
-
-                    if (!matched) {
-                        presetRadios.forEach(radio => {
-                            radio.checked = false;
-                        });
-                    }
-                }
-
-                function getSelectedPresetLabel() {
-                    const activeRadio = presetRadios.find(radio => radio.checked);
-                    if (!activeRadio) {
-                        return "";
-                    }
-
-                    const labelNode = activeRadio.closest("label");
-                    return labelNode ? (labelNode.innerText || "").trim() : "";
-                }
-
-                function updatePriceSummary() {
-                    if (!priceFilterSummary) {
-                        return;
-                    }
-
-                    const presetLabel = getSelectedPresetLabel();
-                    if (presetLabel) {
-                        priceFilterSummary.textContent = presetLabel;
-                        return;
-                    }
-
-                    const minValue = (giaTuHidden?.value || "").trim();
-                    const maxValue = (giaDenHidden?.value || "").trim();
-
-                    if (!minValue && !maxValue) {
-                        priceFilterSummary.textContent = "Tat ca";
-                        return;
-                    }
-
-                    if (minValue && maxValue) {
-                        priceFilterSummary.textContent = `${formatMoney(minValue)} - ${formatMoney(maxValue)}`;
-                        return;
-                    }
-
-                    if (minValue) {
-                        priceFilterSummary.textContent = `Tu ${formatMoney(minValue)}`;
-                        return;
-                    }
-
-                    priceFilterSummary.textContent = `Den ${formatMoney(maxValue)}`;
-                }
-
-                function setPopoverOpen(isOpen) {
-                    if (!pricePopover || !pricePopoverTrigger) {
-                        return;
-                    }
-
-                    pricePopover.classList.toggle("is-open", isOpen);
-                    pricePopoverTrigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-                }
-
-                function setupPricePopover() {
-                    if (!pricePopover || !pricePopoverTrigger || !pricePopoverPanel) {
-                        return;
-                    }
-
-                    pricePopoverTrigger.addEventListener("click", event => {
-                        event.preventDefault();
-                        const willOpen = !pricePopover.classList.contains("is-open");
-                        setPopoverOpen(willOpen);
-                    });
-
-                    document.addEventListener("click", event => {
-                        const target = event.target;
-                        if (!(target instanceof Node)) {
-                            return;
-                        }
-
-                        if (!pricePopover.contains(target)) {
-                            setPopoverOpen(false);
-                        }
-                    });
-
-                    document.addEventListener("keydown", event => {
-                        if (event.key === "Escape") {
-                            setPopoverOpen(false);
-                        }
-                    });
-                }
-
-                if (giaTuHidden && giaDenHidden && giaTuDisplay && giaDenDisplay) {
-                    syncDisplayFromHidden();
-                    syncPresetFromHidden();
                     updatePriceSummary();
-                    setupPricePopover();
+                });
 
-                    presetRadios.forEach(radio => {
-                        radio.addEventListener("change", () => {
-                            if (!radio.checked) {
-                                return;
-                            }
-
-                            giaTuHidden.value = (radio.dataset.min || "").trim();
-                            giaDenHidden.value = (radio.dataset.max || "").trim();
-                            syncDisplayFromHidden();
-                            updatePriceSummary();
-                            setPopoverOpen(false);
-                        });
-                    });
-
-                    giaTuDisplay.addEventListener("input", () => {
-                        syncHiddenFromDisplay(true);
-                        updatePriceSummary();
-                    });
-
-                    giaDenDisplay.addEventListener("input", () => {
-                        syncHiddenFromDisplay(true);
-                        updatePriceSummary();
-                    });
-
-                    giaTuDisplay.addEventListener("blur", () => {
-                        syncHiddenFromDisplay(true);
+                presetChips.forEach(chip => {
+                    chip.addEventListener("click", () => {
+                        if (giaTuHidden) giaTuHidden.value = (chip.dataset.min || "").trim();
+                        if (giaDenHidden) giaDenHidden.value = (chip.dataset.max || "").trim();
                         syncDisplayFromHidden();
+                        presetChips.forEach(c => c.classList.toggle("is-active", c === chip));
                         updatePriceSummary();
                     });
+                });
 
-                    giaDenDisplay.addEventListener("blur", () => {
-                        syncHiddenFromDisplay(true);
-                        syncDisplayFromHidden();
-                        updatePriceSummary();
-                    });
+                function handleCustomInput(inputEl, hiddenEl) {
+                    const raw = toDigits(inputEl.value);
+                    if (hiddenEl) hiddenEl.value = raw;
+                    presetChips.forEach(c => c.classList.remove("is-active"));
+                    updatePriceSummary();
                 }
-            })();
-        </script>
-    }
+
+                giaTuDisplay?.addEventListener("input", () => {
+                    handleCustomInput(giaTuDisplay, giaTuHidden);
+                });
+
+                giaDenDisplay?.addEventListener("input", () => {
+                    handleCustomInput(giaDenDisplay, giaDenHidden);
+                });
+
+                giaTuDisplay?.addEventListener("blur", () => {
+                    if (giaTuHidden && giaTuHidden.value) {
+                        giaTuDisplay.value = Number(giaTuHidden.value).toLocaleString("vi-VN");
+                    }
+                });
+
+                giaDenDisplay?.addEventListener("blur", () => {
+                    if (giaDenHidden && giaDenHidden.value) {
+                        giaDenDisplay.value = Number(giaDenHidden.value).toLocaleString("vi-VN");
+                    }
+                });
+            }
+        })();
+    </script>
+}

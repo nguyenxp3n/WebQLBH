@@ -73,7 +73,7 @@ namespace DbQLBH_65132292.Infrastructure
             var normalized = NormalizeInput(value);
             if (normalized.Length == 0 || LooksLikeMachinePayload(normalized))
             {
-                return "Dia chi chua cap nhat";
+                return "Địa chỉ chưa cập nhật";
             }
 
             return normalized;

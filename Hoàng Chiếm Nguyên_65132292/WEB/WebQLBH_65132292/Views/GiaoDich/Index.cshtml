@@ -1,70 +1,96 @@
 @model DbQLBH_65132292.Models.ViewModels.GiaoDichTongQuanViewModel
 
 @{
-    ViewData["Title"] = "Tong quan giao dich";
+    ViewData["Title"] = "Tổng quan giao dịch";
 }
 
 <section class="inventory-page giao-dich-page">
-    <div class="inventory-header">
+    <div class="inventory-header d-flex justify-content-between align-items-center mb-4">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title">Tong quan giao dich</h1>
-            <p class="inventory-subtitle">Theo doi don mua, don ban va gia tri giao dich hien tai.</p>
+            <h1 class="inventory-title h4 mb-1">Tổng quan luồng giao dịch</h1>
+            <p class="inventory-subtitle text-muted mb-0">Theo dõi luồng đơn mua hàng, đơn bán hàng và đối soát tổng giá trị giao dịch.</p>
         </div>
-        <div class="inventory-toolbar">
-            <a class="inventory-add-btn" href="/giao-dich/don-mua">Don mua</a>
-            <a class="inventory-add-btn" href="/giao-dich/don-ban">Don ban</a>
+        <div class="inventory-toolbar d-flex gap-2">
+            <a class="btn btn-outline-secondary" href="/giao-dich/don-mua">
+                <i class="bi bi-cart3 me-1"></i> Tra cứu đơn mua
+            </a>
+            <a class="btn btn-primary" href="/giao-dich/don-ban">
+                <i class="bi bi-receipt me-1"></i> Tra cứu đơn bán
+            </a>
         </div>
     </div>
 
+    <!-- KPI Metric Bento Grid -->
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong don mua</p>
-                <p class="bao-cao-kpi-value">@Model.TongDonMua</p>
+            <article class="kpi-card kpi-card-products p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tổng đơn mua hàng</span>
+                    <span class="badge-status badge-new"><i class="bi bi-cart3"></i></span>
+                </div>
+                <p class="kpi-value mb-0">@Model.TongDonMua</p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong don ban</p>
-                <p class="bao-cao-kpi-value">@Model.TongDonBan</p>
+            <article class="kpi-card kpi-card-orders p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tổng đơn bán hàng</span>
+                    <span class="badge-status badge-done"><i class="bi bi-receipt"></i></span>
+                </div>
+                <p class="kpi-value mb-0">@Model.TongDonBan</p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong gia tri mua</p>
-                <p class="bao-cao-kpi-value">@Model.TongGiaTriMua.ToString("N0") đ</p>
+            <article class="kpi-card kpi-card-partners p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tổng giá trị mua vào</span>
+                    <span class="badge-status badge-new"><i class="bi bi-cash"></i></span>
+                </div>
+                <p class="kpi-value mb-0 fs-5">@Model.TongGiaTriMua.ToString("N0") <small class="fs-6 text-muted">VNĐ</small></p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong gia tri ban</p>
-                <p class="bao-cao-kpi-value">@Model.TongGiaTriBan.ToString("N0") đ</p>
+            <article class="kpi-card kpi-card-revenue p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tổng doanh thu bán ra</span>
+                    <span class="badge-status badge-done"><i class="bi bi-cash-stack"></i></span>
+                </div>
+                <p class="kpi-value mb-0 fs-5" style="color: var(--accent-emerald);">@Model.TongGiaTriBan.ToString("N0") <small class="fs-6 text-muted">VNĐ</small></p>
             </article>
         </div>
     </div>
 
+    <!-- Recent Purchase & Sale Orders -->
     <div class="row g-4">
         <div class="col-12 col-xl-6">
             <div class="inventory-card">
-                <div class="bao-cao-card-header">
-                    <h2 class="bao-cao-card-title">Don mua gan day</h2>
-                    <p class="bao-cao-card-subtitle">Top 5 don mua moi nhat</p>
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="h5 mb-0 fw-bold text-dark">Đơn mua hàng gần đây</h2>
+                        <p class="text-muted small mb-0">Top 5 đơn nhập hàng mới nhất từ nhà cung cấp</p>
+                    </div>
+                    <a asp-controller="DonMHs" asp-action="Index" class="btn btn-sm btn-outline-secondary">Tất cả</a>
                 </div>
                 <div class="inventory-table-wrap table-responsive">
-                    <table class="inventory-table">
+                    <table class="inventory-table table align-middle mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 140px;">Ma DMH</th>
-                                <th>Ngay mua</th>
-                                <th>Nha cung cap</th>
-                                <th style="width: 140px;">Tong tien</th>
+                                <th style="width: 140px;">Mã DMH</th>
+                                <th>Ngày nhập</th>
+                                <th>Nhà cung cấp</th>
+                                <th style="width: 160px;" class="text-end">Tổng tiền (VNĐ)</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (Model.DonMuaGanDay.Count == 0)
                             {
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted">Khong co du lieu don mua.</td>
+                                    <td colspan="4">
+                                        <div class="empty-state-card my-3 py-4">
+                                            <i class="bi bi-cart3 empty-state-icon mb-2"></i>
+                                            <p class="empty-state-title mb-1">Chưa có đơn mua hàng</p>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                             else
@@ -73,11 +99,11 @@
                                 {
                                     <tr>
                                         <td>
-                                            <a class="inventory-code" href="/giao-dich/don-mua/@item.MaDMH">@item.MaDMH</a>
+                                            <a class="code-badge text-decoration-none" href="/giao-dich/don-mua/@item.MaDMH">@item.MaDMH</a>
                                         </td>
-                                        <td><span class="inventory-value">@item.NgayMua.ToString("dd/MM/yyyy")</span></td>
-                                        <td><span class="inventory-name">@item.TenNCC</span></td>
-                                        <td><span class="inventory-value">@item.TongTien.ToString("N0") đ</span></td>
+                                        <td><span class="text-muted small">@item.NgayMua.ToString("dd/MM/yyyy")</span></td>
+                                        <td><span class="fw-semibold text-dark">@item.TenNCC</span></td>
+                                        <td class="text-end"><span class="font-monospace fw-semibold text-dark">@item.TongTien.ToString("N0")</span></td>
                                     </tr>
                                 }
                             }
@@ -89,25 +115,33 @@
 
         <div class="col-12 col-xl-6">
             <div class="inventory-card">
-                <div class="bao-cao-card-header">
-                    <h2 class="bao-cao-card-title">Don ban gan day</h2>
-                    <p class="bao-cao-card-subtitle">Top 5 don ban moi nhat</p>
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="h5 mb-0 fw-bold text-dark">Đơn bán hàng gần đây</h2>
+                        <p class="text-muted small mb-0">Top 5 đơn xuất bán mới nhất cho khách hàng</p>
+                    </div>
+                    <a asp-controller="DonBHs" asp-action="Index" class="btn btn-sm btn-outline-secondary">Tất cả</a>
                 </div>
                 <div class="inventory-table-wrap table-responsive">
-                    <table class="inventory-table">
+                    <table class="inventory-table table align-middle mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 140px;">Ma DBH</th>
-                                <th>Ngay ban</th>
-                                <th>Khach hang</th>
-                                <th style="width: 140px;">Tong tien</th>
+                                <th style="width: 140px;">Mã DBH</th>
+                                <th>Ngày xuất</th>
+                                <th>Khách hàng</th>
+                                <th style="width: 160px;" class="text-end">Tổng tiền (VNĐ)</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (Model.DonBanGanDay.Count == 0)
                             {
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted">Khong co du lieu don ban.</td>
+                                    <td colspan="4">
+                                        <div class="empty-state-card my-3 py-4">
+                                            <i class="bi bi-receipt empty-state-icon mb-2"></i>
+                                            <p class="empty-state-title mb-1">Chưa có đơn bán hàng</p>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                             else
@@ -116,11 +150,11 @@
                                 {
                                     <tr>
                                         <td>
-                                            <a class="inventory-code" href="/giao-dich/don-ban/@item.MaDBH">@item.MaDBH</a>
+                                            <a class="code-badge text-decoration-none" href="/giao-dich/don-ban/@item.MaDBH">@item.MaDBH</a>
                                         </td>
-                                        <td><span class="inventory-value">@item.NgayBan.ToString("dd/MM/yyyy")</span></td>
-                                        <td><span class="inventory-name">@item.TenKH</span></td>
-                                        <td><span class="inventory-value">@item.TongTien.ToString("N0") đ</span></td>
+                                        <td><span class="text-muted small">@item.NgayBan.ToString("dd/MM/yyyy")</span></td>
+                                        <td><span class="fw-semibold text-dark">@item.TenKH</span></td>
+                                        <td class="text-end"><span class="font-monospace fw-semibold" style="color: var(--accent-emerald);">@item.TongTien.ToString("N0")</span></td>
                                     </tr>
                                 }
                             }

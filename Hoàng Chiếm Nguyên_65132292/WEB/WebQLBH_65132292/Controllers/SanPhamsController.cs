@@ -190,8 +190,17 @@ namespace DbQLBH_65132292.Controllers
             string? uploadedImagePath = null;
             if (anhTep is not null && anhTep.Length > 0)
             {
-                uploadedImagePath = await SaveProductImageAsync(anhTep);
-                sanPham.AnhSP = uploadedImagePath;
+                try
+                {
+                    uploadedImagePath = await SaveProductImageAsync(anhTep);
+                    sanPham.AnhSP = uploadedImagePath;
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError(nameof(SanPham.AnhSP), "Tệp ảnh bị hỏng hoặc định dạng không hợp lệ.");
+                    await PopulateCreateViewAsync(sanPham.MaLSP, sanPham.MaDVT, maNsp);
+                    return View(sanPham);
+                }
             }
 
             try
@@ -207,7 +216,7 @@ namespace DbQLBH_65132292.Controllers
                 TempData["SuccessMessage"] = $"Thêm sản phẩm mới thành công. Mã sản phẩm: {newMaSP}";
                 return RedirectToAction(nameof(Index));
             }
-            catch (SqlException)
+            catch (SqlException ex)
             {
                 if (!string.IsNullOrWhiteSpace(uploadedImagePath))
                 {
@@ -215,7 +224,10 @@ namespace DbQLBH_65132292.Controllers
                     sanPham.AnhSP = null;
                 }
 
-                ModelState.AddModelError(string.Empty, "Khong the tao san pham. Vui long thu lai.");
+                var errorMsg = ex.Number == 50001
+                    ? ex.Message
+                    : "Không thể tạo sản phẩm. Vui lòng thử lại.";
+                ModelState.AddModelError(string.Empty, errorMsg);
                 await PopulateCreateViewAsync(sanPham.MaLSP, sanPham.MaDVT, maNsp);
                 return View(sanPham);
             }
@@ -227,7 +239,7 @@ namespace DbQLBH_65132292.Controllers
                     sanPham.AnhSP = null;
                 }
 
-                ModelState.AddModelError(string.Empty, "Khong the tao san pham. Vui long thu lai.");
+                ModelState.AddModelError(string.Empty, "Không thể tạo sản phẩm. Vui lòng thử lại.");
                 await PopulateCreateViewAsync(sanPham.MaLSP, sanPham.MaDVT, maNsp);
                 return View(sanPham);
             }
@@ -299,8 +311,17 @@ namespace DbQLBH_65132292.Controllers
 
             if (anhTep is not null && anhTep.Length > 0)
             {
-                newUploadedImagePath = await SaveProductImageAsync(anhTep);
-                targetImagePath = newUploadedImagePath;
+                try
+                {
+                    newUploadedImagePath = await SaveProductImageAsync(anhTep);
+                    targetImagePath = newUploadedImagePath;
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("anhTep", "Tệp ảnh bị hỏng hoặc định dạng không hợp lệ.");
+                    await PopulateDropdownsAsync(sanPham.MaLSP, sanPham.MaDVT);
+                    return View(sanPham);
+                }
             }
 
             try
@@ -321,7 +342,7 @@ namespace DbQLBH_65132292.Controllers
                     TryDeleteImageIfExists(newUploadedImagePath);
                 }
 
-                ModelState.AddModelError(string.Empty, "Khong the cap nhat san pham. Vui long thu lai voi du lieu hop le.");
+                ModelState.AddModelError(string.Empty, "Không thể cập nhật sản phẩm. Vui lòng thử lại với dữ liệu hợp lệ.");
                 await PopulateDropdownsAsync(sanPham.MaLSP, sanPham.MaDVT);
                 return View(sanPham);
             }
@@ -332,7 +353,7 @@ namespace DbQLBH_65132292.Controllers
 
             if (shouldDeleteOldImage && !TryDeleteImageIfExists(currentImagePath))
             {
-                TempData["WorkflowWarning"] = "Da cap nhat san pham, nhung khong the xoa tep anh cu.";
+                TempData["WorkflowWarning"] = "Đã cập nhật sản phẩm, nhưng không thể xóa tệp ảnh cũ.";
             }
 
             return RedirectToAction(nameof(Index));
@@ -371,7 +392,7 @@ namespace DbQLBH_65132292.Controllers
             var sanPham = await _context.SanPham_CT(id);
             if (sanPham == null)
             {
-                TempData["WorkflowError"] = "Khong tim thay san pham can xoa.";
+                TempData["WorkflowError"] = "Không tìm thấy sản phẩm cần xóa.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -384,30 +405,30 @@ namespace DbQLBH_65132292.Controllers
 
                 if (stillExists)
                 {
-                    TempData["WorkflowError"] = "Khong the xoa san pham. Vui long thu lai.";
+                    TempData["WorkflowError"] = "Không thể xóa sản phẩm. Vui lòng thử lại.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 var imageCleanupOk = true;
                 imageCleanupOk = TryDeleteImageIfExists(sanPham.AnhSP);
 
-                TempData["WorkflowSuccess"] = "Da xoa san pham.";
+                TempData["WorkflowSuccess"] = "Đã xóa sản phẩm thành công.";
                 if (!imageCleanupOk)
                 {
-                    TempData["WorkflowWarning"] = "Khong the xoa tep anh cu vi tep dang bi khoa hoac khong du quyen truy cap.";
+                    TempData["WorkflowWarning"] = "Không thể xóa tệp ảnh cũ vì tệp đang bị khóa hoặc không đủ quyền truy cập.";
                 }
             }
             catch (SqlException ex) when (ex.Number == 547)
             {
-                TempData["WorkflowError"] = "Khong the xoa san pham vi con chi tiet don nhap, chi tiet don ban hoac rang buoc lien quan.";
+                TempData["WorkflowError"] = "Không thể xóa sản phẩm vì còn chi tiết đơn nhập, chi tiết đơn bán hoặc ràng buộc liên quan.";
             }
             catch (DbUpdateException)
             {
-                TempData["WorkflowError"] = "Khong the xoa san pham vi con chi tiet don nhap, chi tiet don ban hoac rang buoc lien quan.";
+                TempData["WorkflowError"] = "Không thể xóa sản phẩm vì còn chi tiết đơn nhập, chi tiết đơn bán hoặc ràng buộc liên quan.";
             }
             catch (SqlException)
             {
-                TempData["WorkflowError"] = "Khong the xoa san pham. Vui long thu lai.";
+                TempData["WorkflowError"] = "Không thể xóa sản phẩm. Vui lòng thử lại.";
             }
 
             return RedirectToAction(nameof(Index));
@@ -503,13 +524,13 @@ namespace DbQLBH_65132292.Controllers
             var loaiExists = await _context.LoaiSP.AsNoTracking().AnyAsync(x => x.MaLSP == maLsp);
             if (!loaiExists)
             {
-                ModelState.AddModelError(nameof(SanPham.MaLSP), "Loai san pham khong ton tai.");
+                ModelState.AddModelError(nameof(SanPham.MaLSP), "Loại sản phẩm không tồn tại.");
             }
 
             var dvtExists = await _context.DonViTinh.AsNoTracking().AnyAsync(x => x.MaDVT == maDvt);
             if (!dvtExists)
             {
-                ModelState.AddModelError(nameof(SanPham.MaDVT), "Don vi tinh khong ton tai.");
+                ModelState.AddModelError(nameof(SanPham.MaDVT), "Đơn vị tính không tồn tại.");
             }
         }
 
@@ -756,10 +777,10 @@ namespace DbQLBH_65132292.Controllers
 
             if (string.IsNullOrWhiteSpace(normalizedName))
             {
-                return "San pham chat luong tot, mo ta ngan gon bang tieng Viet.";
+                return "Sản phẩm chất lượng tốt, mô tả ngắn gọn bằng tiếng Việt.";
             }
 
-            return $"San pham {normalizedName} chat luong tot, mo ta ngan gon bang tieng Viet.";
+            return $"Sản phẩm {normalizedName} chất lượng tốt, mô tả ngắn gọn bằng tiếng Việt.";
         }
 
         private static string CollapseWhitespace(string value)

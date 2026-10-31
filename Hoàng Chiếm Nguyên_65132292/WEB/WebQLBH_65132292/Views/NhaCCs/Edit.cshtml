@@ -1,11 +1,11 @@
 @model DbQLBH_65132292.Models.NhaCC
 
 @{
-    ViewData["Title"] = "Sua nha cung cap";
+    ViewData["Title"] = "Chỉnh sửa nhà cung cấp";
     var maTinh = ViewBag.MaTinh as string;
 }
 
-<h1>Sua nha cung cap</h1>
+<h1 class="page-title h4 mb-1">Chỉnh sửa thông tin nhà cung cấp</h1>
 <hr />
 <div class="row">
     <div class="col-md-7 col-lg-6">
@@ -30,24 +30,24 @@
             <div class="mb-3">
                 <label asp-for="DiaChi" class="form-label"></label>
                 <input asp-for="DiaChi" class="form-control" />
-                <p class="admin-form-hint">Nhap dia chi ngan gon, de doc. Khong dan payload/mau JSON.</p>
+                <p class="admin-form-hint">Nhập địa chỉ ngắn gọn, dễ đọc. Không dán payload/mẫu JSON.</p>
                 <span asp-validation-for="DiaChi" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label class="form-label">Tinh</label>
+                <label class="form-label">Tỉnh / Thành phố</label>
                 <select id="maTinh" name="maTinh" class="form-select" asp-items="ViewBag.TinhOptions">
-                    <option value="">-- Chon tinh --</option>
+                    <option value="">-- Chọn Tỉnh/Thành phố --</option>
                 </select>
             </div>
             <div class="mb-3">
-                <label asp-for="MaPX" class="form-label">Phuong xa</label>
+                <label asp-for="MaPX" class="form-label">Phường/Xã</label>
                 <select asp-for="MaPX" id="maPX" class="form-select" asp-items="ViewBag.PhuongXaOptions">
-                    <option value="">-- Chon phuong xa --</option>
+                    <option value="">-- Chọn Phường/Xã --</option>
                 </select>
                 <span asp-validation-for="MaPX" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Luu</button>
-            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Quay lai</a>
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Quay lại</a>
         </form>
     </div>
 </div>
@@ -65,7 +65,7 @@
             const getPhuongXaUrl = '@Url.Action("GetPhuongXa", "NhaCCs")';
 
             async function loadPhuongXa(maTinh, selectedValue) {
-                phuongXaSelect.innerHTML = '<option value="">-- Chon phuong xa --</option>';
+                phuongXaSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
                 if (!maTinh) {
                     return;
                 }

@@ -267,12 +267,12 @@ public class AppDbContext : DbContext
                 };
             }
 
-            throw new ArgumentException("MaSP khong hop le.", nameof(value));
+            throw new ArgumentException("Mã sản phẩm không hợp lệ.", nameof(value));
         }
 
         if (normalized.Length > 10)
         {
-            throw new ArgumentException("MaSP vuot qua do dai toi da 10 ky tu.", nameof(value));
+            throw new ArgumentException("Mã sản phẩm vượt quá độ dài tối đa 10 ký tự.", nameof(value));
         }
 
         return new SqlParameter(name, SqlDbType.Char, 10)

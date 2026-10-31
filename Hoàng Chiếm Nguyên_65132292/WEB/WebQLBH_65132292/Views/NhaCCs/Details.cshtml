@@ -1,43 +1,42 @@
 @model DbQLBH_65132292.Models.NhaCC
 
 @{
-    ViewData["Title"] = "Chi tiet nha cung cap";
+    ViewData["Title"] = "Chi tiết nhà cung cấp";
 }
 
 <section class="inventory-page detail-page">
     <div class="inventory-header page-header page-header-split">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title page-title">Chi tiet nha cung cap @Model.MaNCC</h1>
-            <p class="inventory-subtitle page-subtitle">Ho so doi tac va thong tin lien he duoc chuan hoa theo cung mot
-                style.</p>
+            <h1 class="inventory-title page-title">Chi tiết nhà cung cấp @Model.MaNCC</h1>
+            <p class="inventory-subtitle page-subtitle">Hồ sơ đối tác và thông tin liên hệ được chuẩn hóa theo hệ thống quản trị.</p>
             </div>
             <div class="inventory-toolbar">
-                <a asp-action="Edit" asp-route-id="@Model.MaNCC" class="inventory-add-btn">Chinh sua</a>
-                <a asp-action="Index" class="btn btn-outline-secondary">Danh sach</a>
+                <a asp-action="Edit" asp-route-id="@Model.MaNCC" class="inventory-add-btn">Chỉnh sửa</a>
+                <a asp-action="Index" class="btn btn-outline-secondary">Danh sách</a>
             </div>
         </div>
 
         <div class="inventory-card p-3 p-md-4">
             <dl class="row detail-meta-list mb-0">
-                <dt class="col-sm-3">Ma nha cung cap</dt>
+                <dt class="col-sm-3">Mã nhà cung cấp</dt>
                 <dd class="col-sm-9"><span class="inventory-code">@Model.MaNCC</span></dd>
 
-                <dt class="col-sm-3">Ten nha cung cap</dt>
+                <dt class="col-sm-3">Tên nhà cung cấp</dt>
                 <dd class="col-sm-9"><span class="inventory-name">@Model.TenNCC</span></dd>
 
-                <dt class="col-sm-3">Dien thoai</dt>
+                <dt class="col-sm-3">Điện thoại</dt>
                 <dd class="col-sm-9">@Model.DienThoai</dd>
 
                 <dt class="col-sm-3">Email</dt>
                 <dd class="col-sm-9">@Model.Email</dd>
 
-                <dt class="col-sm-3">Dia chi</dt>
+                <dt class="col-sm-3">Địa chỉ</dt>
                 <dd class="col-sm-9">@(ViewBag.DiaChiAnToan ?? Model.DiaChi)</dd>
 
-                <dt class="col-sm-3">Phuong xa</dt>
+                <dt class="col-sm-3">Phường/Xã</dt>
                 <dd class="col-sm-9">@ViewBag.TenPX</dd>
 
-                <dt class="col-sm-3">Tinh</dt>
+                <dt class="col-sm-3">Tỉnh/Thành</dt>
                 <dd class="col-sm-9">@ViewBag.TenTinh</dd>
             </dl>
         </div>

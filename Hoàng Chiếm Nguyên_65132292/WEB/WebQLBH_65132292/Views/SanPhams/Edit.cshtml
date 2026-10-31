@@ -1,12 +1,12 @@
 ﻿@model DbQLBH_65132292.Models.SanPham
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa";
 }
 
-<h1>Edit</h1>
+<h1 class="page-title">Chỉnh sửa</h1>
 
-<h4>SanPham</h4>
+<h4>Thông tin Sản phẩm</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,26 +19,26 @@
                 <span asp-validation-for="TenSP" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Anh hien tai</label>
+                <label class="control-label">Ảnh hiện tại</label>
                 @if (!string.IsNullOrWhiteSpace(Model.AnhSP))
                 {
                     <div class="mt-2">
-                        <img src="@Model.AnhSP" alt="Anh san pham"
+                        <img src="@Model.AnhSP" alt="Ảnh sản phẩm"
                              style="max-width: 160px; border-radius: 8px; border: 1px solid #ddd;" />
                     </div>
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" id="xoaAnhHienTai" name="xoaAnhHienTai"
                                value="true" />
-                        <label class="form-check-label" for="xoaAnhHienTai">Xoa anh hien tai</label>
+                        <label class="form-check-label" for="xoaAnhHienTai">Xóa ảnh hiện tại</label>
                     </div>
                 }
                 else
                 {
-                    <div class="admin-form-hint mt-2">Chua co anh san pham hien tai.</div>
+                    <div class="admin-form-hint mt-2">Chưa có ảnh sản phẩm hiện tại.</div>
                 }
             </div>
             <div class="form-group">
-                <label class="control-label">Tai anh moi</label>
+                <label class="control-label">Tải ảnh mới</label>
                 <input type="file" name="anhTep" class="form-control" accept=".jpg,.jpeg,.png,.webp,.gif" />
             </div>
             <div class="form-group">
@@ -47,34 +47,34 @@
                 <span asp-validation-for="DonGia" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MoTaCT" class="control-label">Mo ta chi tiet</label>
+                <label asp-for="MoTaCT" class="control-label">Mô tả chi tiết</label>
                 <textarea asp-for="MoTaCT" class="form-control" rows="4"></textarea>
-                <div class="admin-form-hint">Nen nhap mo ta ngan gon bang tieng Viet.</div>
+                <div class="admin-form-hint">Nên nhập mô tả ngắn gọn bằng tiếng Việt.</div>
                 <span asp-validation-for="MoTaCT" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MaLSP" class="control-label"></label>
                 <select asp-for="MaLSP" asp-items="ViewBag.MaLSPOptions" class="form-select">
-                    <option value="">-- Chon loai san pham --</option>
+                    <option value="">-- Chọn loại sản phẩm --</option>
                 </select>
                 <span asp-validation-for="MaLSP" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MaDVT" class="control-label"></label>
                 <select asp-for="MaDVT" asp-items="ViewBag.MaDVTOptions" class="form-select">
-                    <option value="">-- Chon don vi tinh --</option>
+                    <option value="">-- Chọn đơn vị tính --</option>
                 </select>
                 <span asp-validation-for="MaDVT" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Quay lại danh sách</a>
 </div>
 
 @section Scripts {

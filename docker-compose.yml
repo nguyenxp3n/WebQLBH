@@ -5,7 +5,7 @@ services:
     user: root
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:-Password@123}
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:?MSSQL_SA_PASSWORD environment variable is required}
       - MSSQL_PID=Developer
     ports:
       - "127.0.0.1:${SQL_HOST_PORT:-14333}:1433"
@@ -28,7 +28,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:-Password@123}
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:?MSSQL_SA_PASSWORD environment variable is required}
     volumes:
       - ./database:/database
     entrypoint: ["/bin/bash", "/database/init-db.sh"]
@@ -46,9 +46,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__DbQLBH_65132292Connection=Server=db,1433;Database=DbQLBH_65132292;User Id=sa;Password=${MSSQL_SA_PASSWORD:-Password@123};TrustServerCertificate=True;Encrypt=False;
+      - ConnectionStrings__DbQLBH_65132292Connection=Server=db,1433;Database=DbQLBH_65132292;User Id=sa;Password=${MSSQL_SA_PASSWORD:?MSSQL_SA_PASSWORD environment variable is required};TrustServerCertificate=True;Encrypt=False;
       - AdminAuth__Username=${ADMIN_USERNAME:-admin}
-      - AdminAuth__PasswordHash=${ADMIN_PASSWORD_HASH:-AQAAAAEAACcQAAAAEBSiF1LsxocmGshIPeSaQ+6gIXxu9QE3CnLtG+2IhgW4PF7FFOwryhn7BMeCMx6VVA==}
+      - AdminAuth__PasswordHash=${ADMIN_PASSWORD_HASH:?ADMIN_PASSWORD_HASH environment variable is required}
     ports:
       - "${WEB_HOST_PORT:-8080}:8080"
     volumes:

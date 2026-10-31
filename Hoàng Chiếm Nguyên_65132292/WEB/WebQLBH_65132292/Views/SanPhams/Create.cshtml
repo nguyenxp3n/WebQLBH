@@ -1,7 +1,7 @@
 ﻿@model DbQLBH_65132292.Models.SanPham
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm mới";
 
     var nhomOptions = ViewBag.NhomOptions as IEnumerable<DbQLBH_65132292.Models.NhomSP>
         ?? Enumerable.Empty<DbQLBH_65132292.Models.NhomSP>();
@@ -28,11 +28,11 @@
         <div class="page-title-group">
             <span class="icon-chip" aria-hidden="true">SP</span>
             <div>
-                <h1 class="page-title">Them san pham</h1>
-                <p class="page-subtitle">Giao dien theo mau admin Stitch, chi thay doi phan trinh bay.</p>
+                <h1 class="page-title">Thêm mới sản phẩm</h1>
+                <p class="page-subtitle">Nhập thông tin sản phẩm mới vào hệ thống quản lý kho hàng.</p>
             </div>
         </div>
-        <a asp-action="Index" class="btn btn-outline-secondary">Quay lai danh sach</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
     </div>
 
     <div class="app-card admin-form-card">
@@ -41,9 +41,9 @@
 
             <div class="col-12 col-lg-6">
                 <div class="form-group">
-                    <label class="control-label">MaSP (du kien)</label>
+                    <label class="control-label">Mã SP (dự kiến)</label>
                     <input class="form-control" value="@nextMaSpPreview" readonly />
-                    <div class="admin-form-hint">MaSP chinh thuc se do SQL cap khi luu.</div>
+                    <div class="admin-form-hint">Mã SP chính thức sẽ do SQL cấp khi lưu.</div>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
 
             <div class="col-12 col-lg-6">
                 <div class="form-group">
-                    <label class="control-label">Tai anh tu may</label>
+                    <label class="control-label">Tải ảnh từ máy</label>
                     <input type="file" name="anhTep" class="form-control" accept=".jpg,.jpeg,.png,.webp,.gif" />
                     <span asp-validation-for="AnhSP" class="text-danger"></span>
                 </div>
@@ -73,18 +73,18 @@
 
             <div class="col-12">
                 <div class="form-group">
-                    <label asp-for="MoTaCT" class="control-label">Mo ta chi tiet</label>
+                    <label asp-for="MoTaCT" class="control-label">Mô tả chi tiết</label>
                     <textarea asp-for="MoTaCT" class="form-control" rows="4"></textarea>
-                    <div class="admin-form-hint">Nen nhap mo ta ngan gon bang tieng Viet.</div>
+                    <div class="admin-form-hint">Nên nhập mô tả ngắn gọn bằng tiếng Việt.</div>
                     <span asp-validation-for="MoTaCT" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="col-12 col-lg-6">
                 <div class="form-group">
-                    <label class="control-label">Nhom SP</label>
+                    <label class="control-label">Nhóm SP</label>
                     <select id="maNsp" name="maNsp" class="form-select">
-                        <option value="">-- Chon nhom san pham --</option>
+                        <option value="">-- Chọn nhóm sản phẩm --</option>
                         @foreach (var nsp in nhomOptions)
                         {
                             if (selectedMaNsp == nsp.MaNSP)
@@ -104,7 +104,7 @@
                 <div class="form-group">
                     <label asp-for="MaLSP" class="control-label"></label>
                     <select asp-for="MaLSP" id="maLsp" class="form-select">
-                        <option value="">-- Chon loai san pham --</option>
+                        <option value="">-- Chọn loại sản phẩm --</option>
                         @foreach (var lsp in loaiOptions)
                         {
                             if (Model != null && Model.MaLSP == lsp.MaLSP)
@@ -125,15 +125,15 @@
                 <div class="form-group">
                     <label asp-for="MaDVT" class="control-label"></label>
                     <select asp-for="MaDVT" asp-items="ViewBag.MaDVTOptions" class="form-select">
-                        <option value="">-- Chon don vi tinh --</option>
+                        <option value="">-- Chọn đơn vị tính --</option>
                     </select>
                     <span asp-validation-for="MaDVT" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="col-12 admin-form-actions">
-                <a asp-action="Index" class="btn btn-outline-secondary">Huy</a>
-                <button type="submit" class="primary-btn">Luu san pham</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="primary-btn">Lưu sản phẩm</button>
             </div>
         </form>
     </div>
@@ -165,7 +165,7 @@
 
                 const defaultOption = document.createElement("option");
                 defaultOption.value = "";
-                defaultOption.text = "-- Chon loai san pham --";
+                defaultOption.text = "-- Chọn loại sản phẩm --";
                 loaiSelect.appendChild(defaultOption);
 
                 allLoaiOptions

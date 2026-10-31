@@ -9,100 +9,243 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dang nhap - QL Ban Hang</title>
+    <title>Đăng nhập - Quản lý Bán Hàng</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <style>
-            body {
-                min-height: 100vh;
-                margin: 0;
-                display: grid;
-                place-items: center;
-                background: linear-gradient(145deg, #edf2f7, #dfe7ec);
-                font-family: "Be Vietnam Pro", sans-serif;
-            }
+        :root {
+            --color-primary: #0F172A;
+            --color-accent: #059669;
+            --color-accent-hover: #047857;
+            --color-bg: #F8FAFC;
+            --color-card: #FFFFFF;
+            --color-border: #E2E8F0;
+            --color-text-main: #0F172A;
+            --color-text-muted: #64748B;
+        }
 
-            .login-card {
-                width: min(420px, calc(100vw - 32px));
-                background: #f2f5f7;
-                border-radius: 14px;
-                padding: 24px;
-                box-shadow: 10px 10px 22px rgba(148, 158, 163, 0.25), -10px -10px 22px rgba(255, 255, 255, 0.92);
-            }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
 
-            .login-title {
-                margin: 0 0 8px;
-                font-size: 26px;
-                font-weight: 700;
-                color: #173049;
-            }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0F172A;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(5, 150, 105, 0.18) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(30, 41, 59, 0.8) 0px, transparent 50%);
+            font-family: "Be Vietnam Pro", sans-serif;
+            color: var(--color-text-main);
+            padding: 24px;
+        }
 
-            .login-subtitle {
-                margin-bottom: 18px;
-                color: #5f7187;
-                font-size: 14px;
-            }
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--color-card);
+            border-radius: 16px;
+            padding: 38px 34px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
 
-            .form-control {
-                min-height: 42px;
-                border: 0;
-                background: #edf1ef;
-                box-shadow: inset 2px 2px 6px rgba(151, 163, 168, 0.28), inset -2px -2px 6px rgba(255, 255, 255, 0.95);
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
             }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-            .form-control:focus {
-                box-shadow: inset 2px 2px 6px rgba(151, 163, 168, 0.28), inset -2px -2px 6px rgba(255, 255, 255, 0.95), 0 0 0 3px rgba(0, 102, 102, 0.18);
-            }
+        .enterprise-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #ECFDF5;
+            color: #047857;
+            border: 1px solid #A7F3D0;
+            margin-bottom: 20px;
+        }
 
-            .btn-login {
-                width: 100%;
-                min-height: 42px;
-                border: 0;
-                border-radius: 10px;
-                background: linear-gradient(145deg, #007d80, #005f62);
-                color: #f4ffff;
-                font-weight: 700;
-            }
+        .brand-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #FFFFFF;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            margin-bottom: 16px;
+        }
+
+        .login-title {
+            margin: 0 0 6px;
+            font-size: 23px;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .login-subtitle {
+            margin: 0;
+            color: var(--color-text-muted);
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            color: #475569;
+        }
+
+        .form-control {
+            min-height: 44px;
+            border-radius: 9px;
+            border: 1px solid var(--color-border);
+            padding: 10px 14px;
+            font-size: 14px;
+            color: var(--color-text-main);
+            transition: all 150ms ease;
+            background: #FFFFFF;
+        }
+
+        .form-control:focus {
+            border-color: var(--color-accent) !important;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.16) !important;
+            outline: none;
+        }
+
+        /* Tactile Submit Button */
+        .btn-submit {
+            width: 100%;
+            min-height: 44px;
+            border-radius: 9px;
+            background: var(--color-accent);
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 14.5px;
+            border: 1px solid #047857;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-1px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 6px 16px rgba(5, 150, 105, 0.28);
+        }
+
+        .btn-submit:active {
+            transform: translateY(1px);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.18);
+        }
+
+        .login-footer-meta {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #F1F5F9;
+            font-size: 12px;
+            color: #94A3B8;
+        }
     </style>
 </head>
 
 <body>
-    <main class="login-card">
-        <h1 class="login-title">Dang nhap Admin</h1>
-        <p class="login-subtitle">Nhap tai khoan de truy cap he thong quan tri.</p>
+    <div class="login-card">
+        <div class="brand-header">
+            <div>
+                <span class="enterprise-badge"><i class="bi bi-shield-check"></i> Hệ thống Quản trị Doanh nghiệp</span>
+            </div>
+            <div class="brand-logo">
+                <i class="bi bi-grid-1x2-fill"></i>
+            </div>
+            <h1 class="login-title">Đăng nhập Quản trị</h1>
+            <p class="login-subtitle">Nhập thông tin xác thực để truy cập hệ thống Quản lý Bán hàng.</p>
+        </div>
 
-        <form asp-action="Login" method="post">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        }
+
+        <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@returnUrl" method="post" autocomplete="on">
             @Html.AntiForgeryToken()
-            @if (!string.IsNullOrWhiteSpace(returnUrl))
-            {
-                <input type="hidden" name="returnUrl" value="@returnUrl" />
-            }
-
-            <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
 
             <div class="mb-3">
-                <label asp-for="Username" class="form-label">Ten dang nhap</label>
-                <input asp-for="Username" class="form-control" autocomplete="username" />
-                <span asp-validation-for="Username" class="text-danger small"></span>
+                <label class="form-label" for="Username">Tên đăng nhập</label>
+                <div class="input-group">
+                    <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập (ví dụ: admin)" autocomplete="username" autofocus />
+                </div>
+                <span asp-validation-for="Username" class="text-danger small mt-1 d-block"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Password" class="form-label">Mat khau</label>
-                <input asp-for="Password" class="form-control" autocomplete="current-password" />
-                <span asp-validation-for="Password" class="text-danger small"></span>
+                <label class="form-label" for="Password">Mật khẩu</label>
+                <div class="input-group">
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu quản trị" autocomplete="current-password" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
             </div>
 
-            <div class="form-check mb-3">
-                <input asp-for="RememberMe" class="form-check-input" />
-                <label asp-for="RememberMe" class="form-check-label">Ghi nho dang nhap</label>
+            <div class="form-check mb-4">
+                <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMeCheck" />
+                <label class="form-check-label text-muted small" for="rememberMeCheck">Ghi nhớ đăng nhập trên thiết bị này</label>
             </div>
 
-            <button type="submit" class="btn btn-login">Dang nhap</button>
+            <button type="submit" class="btn-submit">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Đăng nhập hệ thống</span>
+            </button>
         </form>
-    </main>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+        <div class="login-footer-meta">
+            <span>WebQLBH Enterprise &copy; 2026 • Hoàng Chiếm Nguyên_65132292</span>
+        </div>
+    </div>
 </body>
 
 </html>

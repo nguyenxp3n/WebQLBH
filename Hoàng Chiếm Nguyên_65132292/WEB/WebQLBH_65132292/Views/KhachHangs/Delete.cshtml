@@ -1,29 +1,29 @@
 @model DbQLBH_65132292.Models.KhachHang
 
 @{
-    ViewData["Title"] = "Xoa khach hang";
+    ViewData["Title"] = "Xóa khách hàng";
 }
 
-<h1>Xoa khach hang</h1>
-<h3>Ban co chac chan muon xoa khach hang nay?</h3>
+<h1 class="page-title h4 mb-1">Xóa khách hàng</h1>
+<h3>Bạn có chắc chắn muốn xóa khách hàng này không?</h3>
 <div>
     <hr />
     <dl class="row">
-        <dt class="col-sm-3">Ma KH</dt>
+        <dt class="col-sm-3">Mã KH</dt>
         <dd class="col-sm-9">@Model.MaKH</dd>
-        <dt class="col-sm-3">Ten khach hang</dt>
+        <dt class="col-sm-3">Tên khách hàng</dt>
         <dd class="col-sm-9">@Model.TenKH</dd>
-        <dt class="col-sm-3">Dien thoai</dt>
+        <dt class="col-sm-3">Điện thoại</dt>
         <dd class="col-sm-9">@Model.DienThoai</dd>
         <dt class="col-sm-3">Email</dt>
         <dd class="col-sm-9">@Model.Email</dd>
-        <dt class="col-sm-3">Dia chi</dt>
+        <dt class="col-sm-3">Địa chỉ</dt>
         <dd class="col-sm-9">@(ViewBag.DiaChiAnToan ?? Model.DiaChi)</dd>
     </dl>
 
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="MaKH" />
-        <button type="submit" class="btn btn-danger">Xoa</button>
-        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Huy</a>
+        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Hủy</a>
     </form>
 </div>

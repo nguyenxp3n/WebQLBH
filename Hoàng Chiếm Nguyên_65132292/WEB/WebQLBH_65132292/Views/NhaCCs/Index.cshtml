@@ -1,7 +1,7 @@
 @model DbQLBH_65132292.Models.ViewModels.NhaCCIndexViewModel
 
 @{
-    ViewData["Title"] = "Nha cung cap";
+    ViewData["Title"] = "Nhà cung cấp";
     var fromPage = Math.Max(1, Model.Page - 2);
     var toPage = Math.Min(Model.TotalPages, Model.Page + 2);
 }
@@ -9,27 +9,28 @@
 <section class="inventory-page list-page">
     <div class="inventory-header page-header page-header-split">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title page-title">Quan ly Nha cung cap</h1>
-            <p class="inventory-subtitle page-subtitle">CRUD nha cung cap co phan trang va tim kiem tren server.</p>
+            <h1 class="inventory-title page-title">Quản lý Nhà cung cấp</h1>
+            <p class="inventory-subtitle page-subtitle">Quản lý thông tin nhà cung cấp với tìm kiếm và phân trang.</p>
         </div>
         <div class="inventory-toolbar">
-            <a asp-action="Create" class="inventory-add-btn">Them nha cung cap</a>
+            <a asp-action="Create" class="inventory-add-btn">Thêm nhà cung cấp mới</a>
         </div>
     </div>
 
-    <div class="inventory-card inventory-filter-card search-card p-3 p-md-4 mb-4">
-        <form method="get" asp-action="Index" class="row g-3 align-items-xl-end">
-            <div class="col-12 col-md-10">
-                <label class="form-label">Tu khoa</label>
-                <input type="text" name="tuKhoa" value="@Model.TuKhoa" class="form-control"
-                       placeholder="Ma, ten, dien thoai, email..." />
+    <div class="inventory-card inventory-filter-card search-card mb-4">
+        <form method="get" asp-action="Index" class="row g-3 align-items-end">
+            <div class="col-12 col-md-8 col-xl-9">
+                <label class="form-label" for="tuKhoaNcc">Từ khóa</label>
+                <div class="inventory-search-wrap">
+                    <i class="bi bi-search inventory-search-icon" aria-hidden="true"></i>
+                    <input id="tuKhoaNcc" type="text" name="tuKhoa" value="@Model.TuKhoa" class="inventory-search"
+                           placeholder="Mã, tên, số điện thoại, email..." />
+                </div>
             </div>
             <input type="hidden" name="pageSize" value="@Model.PageSize" />
-            <div class="col-6 col-md-1 d-flex align-items-end">
-                <button type="submit" class="inventory-add-btn w-100 justify-content-center">Loc</button>
-            </div>
-            <div class="col-6 col-md-1 d-flex align-items-end">
-                <a asp-action="Index" class="btn btn-outline-secondary w-100">Reset</a>
+            <div class="col-12 col-md-4 col-xl-3 d-flex gap-2 align-items-end">
+                <button type="submit" class="inventory-add-btn flex-fill justify-content-center">Lọc</button>
+                <a asp-action="Index" class="btn btn-outline-secondary flex-fill text-center">Đặt lại</a>
             </div>
         </form>
     </div>
@@ -39,19 +40,19 @@
             <table class="inventory-table">
                 <thead>
                     <tr>
-                        <th style="width: 120px;">Ma NCC</th>
-                        <th>Ten nha cung cap</th>
-                        <th style="width: 140px;">Dien thoai</th>
+                        <th style="width: 120px;">Mã NCC</th>
+                        <th>Tên nhà cung cấp</th>
+                        <th style="width: 140px;">Điện thoại</th>
                         <th style="width: 220px;">Email</th>
-                        <th>Khu vuc</th>
-                        <th style="width: 220px; text-align: right;">Thao tac</th>
+                        <th>Khu vực</th>
+                        <th style="width: 240px; text-align: right;">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (!Model.Items.Any())
                     {
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Khong co du lieu nha cung cap.</td>
+                            <td colspan="6" class="text-center text-muted">Không có dữ liệu nhà cung cấp.</td>
                         </tr>
                     }
                     else
@@ -67,12 +68,12 @@
                                 <td><span class="inventory-value">@item.DienThoai</span></td>
                                 <td><span class="inventory-value">@item.Email</span></td>
                                 <td><span class="inventory-value">@item.TenPX - @item.TenTinh</span></td>
-                                <td>
+                                <td class="text-end">
                                     <div class="inventory-actions">
-                                        <a asp-action="Details" asp-route-id="@item.MaNCC" class="inventory-action">Chi tiet</a>
-                                        <a asp-action="Edit" asp-route-id="@item.MaNCC" class="inventory-action">Sua</a>
+                                        <a asp-action="Details" asp-route-id="@item.MaNCC" class="inventory-action">Chi tiết</a>
+                                        <a asp-action="Edit" asp-route-id="@item.MaNCC" class="inventory-action">Sửa</a>
                                         <a asp-action="Delete" asp-route-id="@item.MaNCC"
-                                           class="inventory-action delete">Xoa</a>
+                                           class="inventory-action delete">Xóa</a>
                                     </div>
                                 </td>
                             </tr>
@@ -82,8 +83,8 @@
             </table>
         </div>
         <div class="inventory-footer">
-            <p class="inventory-stats">Trang <strong>@Model.Page</strong>/<strong>@Model.TotalPages</strong> - Tong
-                <strong>@Model.TotalItems</strong> nha cung cap
+            <p class="inventory-stats">Trang <strong>@Model.Page</strong>/<strong>@Model.TotalPages</strong> — Tổng cộng
+                <strong>@Model.TotalItems</strong> nhà cung cấp
             </p>
             <div class="inventory-pagination">
                 @if (Model.Page > 1)

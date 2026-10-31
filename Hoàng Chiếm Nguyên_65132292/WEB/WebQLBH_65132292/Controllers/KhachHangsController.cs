@@ -119,12 +119,12 @@ namespace DbQLBH_65132292.Controllers
 
             if (HumanTextGuard.LooksLikeMachinePayload(khachHang.DiaChi))
             {
-                ModelState.AddModelError(nameof(KhachHang.DiaChi), "Dia chi khong hop le. Vui long nhap dia chi ngan gon, de doc.");
+                ModelState.AddModelError(nameof(KhachHang.DiaChi), "Địa chỉ không hợp lệ. Vui lòng nhập địa chỉ ngắn gọn, dễ đọc.");
             }
 
             if (!await IsValidPhuongXaAsync(khachHang.MaPX, maTinh))
             {
-                ModelState.AddModelError(nameof(KhachHang.MaPX), "Phuong xa khong hop le voi tinh da chon.");
+                ModelState.AddModelError(nameof(KhachHang.MaPX), "Phường/Xã không hợp lệ với tỉnh/thành đã chọn.");
             }
 
             if (!ModelState.IsValid)
@@ -141,7 +141,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the tao khach hang. Vui long kiem tra ma khach hang da ton tai chua.");
+                ModelState.AddModelError(string.Empty, "Không thể tạo khách hàng. Vui lòng kiểm tra mã khách hàng đã tồn tại chưa.");
                 await PopulateLocationOptionsAsync(maTinh, khachHang.MaPX);
                 return View(khachHang);
             }
@@ -183,12 +183,12 @@ namespace DbQLBH_65132292.Controllers
 
             if (HumanTextGuard.LooksLikeMachinePayload(khachHang.DiaChi))
             {
-                ModelState.AddModelError(nameof(KhachHang.DiaChi), "Dia chi khong hop le. Vui long nhap dia chi ngan gon, de doc.");
+                ModelState.AddModelError(nameof(KhachHang.DiaChi), "Địa chỉ không hợp lệ. Vui lòng nhập địa chỉ ngắn gọn, dễ đọc.");
             }
 
             if (!await IsValidPhuongXaAsync(khachHang.MaPX, maTinh))
             {
-                ModelState.AddModelError(nameof(KhachHang.MaPX), "Phuong xa khong hop le voi tinh da chon.");
+                ModelState.AddModelError(nameof(KhachHang.MaPX), "Phường/Xã không hợp lệ với tỉnh/thành đã chọn.");
             }
 
             if (!ModelState.IsValid)
@@ -248,11 +248,11 @@ namespace DbQLBH_65132292.Controllers
             try
             {
                 await _context.SaveChangesAsync();
-                TempData["WorkflowSuccess"] = "Da xoa khach hang.";
+                TempData["WorkflowSuccess"] = "Đã xóa khách hàng thành công.";
             }
             catch (DbUpdateException)
             {
-                TempData["WorkflowError"] = "Khong the xoa khach hang vi con du lieu lien ket (don ban, hoac rang buoc lien quan).";
+                TempData["WorkflowError"] = "Không thể xóa khách hàng vì còn dữ liệu liên kết (đơn bán, hoặc ràng buộc liên quan).";
             }
 
             return RedirectToAction(nameof(Index));

@@ -320,12 +320,12 @@ namespace DbQLBH_65132292.Controllers
 
             using var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("DonMua");
-            worksheet.Cell(1, 1).Value = "MaDMH";
-            worksheet.Cell(1, 2).Value = "NgayMua";
-            worksheet.Cell(1, 3).Value = "MaNCC";
-            worksheet.Cell(1, 4).Value = "TenNCC";
-            worksheet.Cell(1, 5).Value = "SoMatHang";
-            worksheet.Cell(1, 6).Value = "TongTien";
+            worksheet.Cell(1, 1).Value = "Mã ĐMH";
+            worksheet.Cell(1, 2).Value = "Ngày mua";
+            worksheet.Cell(1, 3).Value = "Mã NCC";
+            worksheet.Cell(1, 4).Value = "Tên NCC";
+            worksheet.Cell(1, 5).Value = "Số mặt hàng";
+            worksheet.Cell(1, 6).Value = "Tổng tiền";
 
             for (var i = 0; i < rows.Count; i++)
             {
@@ -359,13 +359,13 @@ namespace DbQLBH_65132292.Controllers
 
             using var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("DonBan");
-            worksheet.Cell(1, 1).Value = "MaDBH";
-            worksheet.Cell(1, 2).Value = "NgayBan";
-            worksheet.Cell(1, 3).Value = "MaKH";
-            worksheet.Cell(1, 4).Value = "TenKH";
-            worksheet.Cell(1, 5).Value = "DiaChiGiao";
-            worksheet.Cell(1, 6).Value = "SoMatHang";
-            worksheet.Cell(1, 7).Value = "TongTien";
+            worksheet.Cell(1, 1).Value = "Mã ĐBH";
+            worksheet.Cell(1, 2).Value = "Ngày bán";
+            worksheet.Cell(1, 3).Value = "Mã KH";
+            worksheet.Cell(1, 4).Value = "Tên KH";
+            worksheet.Cell(1, 5).Value = "Địa chỉ giao hàng";
+            worksheet.Cell(1, 6).Value = "Số mặt hàng";
+            worksheet.Cell(1, 7).Value = "Tổng tiền";
 
             for (var i = 0; i < rows.Count; i++)
             {
@@ -398,8 +398,8 @@ namespace DbQLBH_65132292.Controllers
         {
             var rows = await LoadDonMuaRowsAsync();
             var pdfBytes = BuildOrderPdf(
-                title: "Don mua",
-                headers: new[] { "MaDMH", "Ngay", "MaNCC", "Ten NCC", "SL", "Tong tien" },
+                title: "Đơn mua",
+                headers: new[] { "Mã ĐMH", "Ngày", "Mã NCC", "Tên NCC", "SL", "Tổng tiền" },
                 columns: new[] { 2.2f, 1.7f, 1.4f, 3.1f, 1.0f, 2.2f },
                 rows: rows.Select(x => new[]
                 {
@@ -419,8 +419,8 @@ namespace DbQLBH_65132292.Controllers
         {
             var rows = await LoadDonBanRowsAsync();
             var pdfBytes = BuildOrderPdf(
-                title: "Don ban",
-                headers: new[] { "MaDBH", "Ngay", "MaKH", "Ten KH", "Dia chi giao", "SL", "Tong tien" },
+                title: "Đơn bán",
+                headers: new[] { "Mã ĐBH", "Ngày", "Mã KH", "Tên KH", "Địa chỉ giao", "SL", "Tổng tiền" },
                 columns: new[] { 2.2f, 1.7f, 1.4f, 2.5f, 3.4f, 1.0f, 2.2f },
                 rows: rows.Select(x => new[]
                 {
@@ -453,8 +453,8 @@ namespace DbQLBH_65132292.Controllers
                     page.Header()
                         .Column(column =>
                         {
-                            column.Item().Text($"Bao cao {title}").SemiBold().FontSize(16);
-                            column.Item().Text($"Xuat luc: {DateTime.Now:dd/MM/yyyy HH:mm:ss}").FontSize(9).FontColor(Colors.Grey.Darken1);
+                            column.Item().Text($"Báo cáo {title}").SemiBold().FontSize(16);
+                            column.Item().Text($"Xuất lúc: {DateTime.Now:dd/MM/yyyy HH:mm:ss}").FontSize(9).FontColor(Colors.Grey.Darken1);
                         });
 
                     page.Content()

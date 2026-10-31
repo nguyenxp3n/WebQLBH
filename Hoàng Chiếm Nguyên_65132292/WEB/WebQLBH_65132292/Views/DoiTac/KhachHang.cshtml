@@ -1,51 +1,64 @@
 @model DbQLBH_65132292.Models.ViewModels.KhachHangTraCuuViewModel
 
 @{
-    ViewData["Title"] = "Tra cuu khach hang";
+    ViewData["Title"] = "Tra cứu khách hàng";
     var fromPage = Math.Max(1, Model.Page - 2);
     var toPage = Math.Min(Model.TotalPages, Model.Page + 2);
 }
 
 <section class="inventory-page">
-    <div class="inventory-header">
+    <div class="inventory-header d-flex justify-content-between align-items-center mb-4">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title">Tra cuu khach hang</h1>
-            <p class="inventory-subtitle">Tim theo ma, ten, dien thoai, email, phuong xa, tinh.</p>
+            <h1 class="inventory-title h4 mb-1">Tra cứu danh bạ khách hàng</h1>
+            <p class="inventory-subtitle text-muted mb-0">Tìm nhanh khách hàng theo mã, họ tên, số điện thoại, email hoặc khu vực tỉnh/thành.</p>
+        </div>
+        <div>
+            <a asp-controller="KhachHangs" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-person-plus me-1"></i> Thêm khách hàng mới
+            </a>
         </div>
     </div>
 
     <div class="inventory-card p-3 p-md-4 mb-4">
         <form method="get" asp-action="KhachHang" class="row g-3">
             <div class="col-12 col-md-9">
-                <label class="form-label">Tu khoa</label>
+                <label class="form-label">Từ khóa tìm kiếm</label>
                 <input type="text" name="tuKhoa" value="@Model.TuKhoa" class="form-control"
-                       placeholder="Nhap thong tin can tim..." />
+                       placeholder="Nhập mã KH, họ tên, số điện thoại, email hoặc địa chỉ..." />
             </div>
             <input type="hidden" name="pageSize" value="@Model.PageSize" />
             <div class="col-12 col-md-3 d-flex align-items-end">
-                <button class="inventory-add-btn w-100 justify-content-center" type="submit">Tim kiem</button>
+                <button class="btn btn-primary w-100" type="submit">
+                    <i class="bi bi-search me-1"></i> Tìm kiếm
+                </button>
             </div>
         </form>
     </div>
 
     <div class="inventory-card">
         <div class="inventory-table-wrap table-responsive">
-            <table class="inventory-table">
+            <table class="inventory-table table align-middle mb-0">
                 <thead>
                     <tr>
-                        <th style="width: 120px;">Ma KH</th>
-                        <th>Ten khach hang</th>
-                        <th style="width: 140px;">Dien thoai</th>
-                        <th style="width: 220px;">Email</th>
-                        <th>Dia chi</th>
-                        <th style="width: 200px;">Khu vuc</th>
+                        <th style="width: 120px;">Mã KH</th>
+                        <th>Tên khách hàng</th>
+                        <th style="width: 140px;">Số điện thoại</th>
+                        <th style="width: 220px;">Email liên hệ</th>
+                        <th>Địa chỉ</th>
+                        <th style="width: 220px;">Khu vực / Tỉnh thành</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (Model.KetQua.Count == 0)
                     {
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Khong co du lieu phu hop.</td>
+                            <td colspan="6">
+                                <div class="empty-state-card my-3 py-4">
+                                    <i class="bi bi-people empty-state-icon mb-2"></i>
+                                    <p class="empty-state-title mb-1">Không tìm thấy khách hàng phù hợp</p>
+                                    <p class="empty-state-text mb-0 small">Thử kiểm tra lại chính tả số điện thoại hoặc từ khóa tìm kiếm.</p>
+                                </div>
+                            </td>
                         </tr>
                     }
                     else
@@ -53,41 +66,42 @@
                         foreach (var item in Model.KetQua)
                         {
                             <tr>
-                                <td><span class="inventory-code">@item.MaKH</span></td>
-                                <td><span class="inventory-name">@item.TenKH</span></td>
-                                <td><span class="inventory-value">@item.DienThoai</span></td>
-                                <td><span class="inventory-value">@item.Email</span></td>
-                                <td><span class="inventory-value">@item.DiaChi</span></td>
-                                <td><span class="inventory-value">@item.TenPhuongXa - @item.TenTinh</span></td>
+                                <td><span class="code-badge">@item.MaKH</span></td>
+                                <td class="fw-semibold text-dark">@item.TenKH</td>
+                                <td><span class="font-monospace text-secondary">@item.DienThoai</span></td>
+                                <td><span class="text-secondary small">@item.Email</span></td>
+                                <td class="text-secondary small">@item.DiaChi</td>
+                                <td><span class="badge-status badge-new">@item.TenPhuongXa - @item.TenTinh</span></td>
                             </tr>
                         }
                     }
                 </tbody>
             </table>
         </div>
-        <div class="inventory-footer">
-            <p class="inventory-stats">Trang <strong>@Model.Page</strong>/<strong>@Model.TotalPages</strong> - Tong
-                <strong>@Model.TotalItems</strong> ket qua</p>
-                <div class="inventory-pagination">
-                    @if (Model.Page > 1)
-                    {
-                        <a class="inventory-page-btn" asp-action="KhachHang" asp-route-page="@(Model.Page - 1)"
-                           asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">&lt;</a>
-                    }
+        <div class="inventory-footer d-flex flex-wrap justify-content-between align-items-center p-3 border-top">
+            <p class="inventory-stats text-muted mb-0 small">Trang <strong>@Model.Page</strong>/<strong>@Model.TotalPages</strong> — Tổng cộng <strong>@Model.TotalItems</strong> khách hàng</p>
+            <div class="inventory-pagination d-flex gap-1">
+                @if (Model.Page > 1)
+                {
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="KhachHang" asp-route-page="@(Model.Page - 1)"
+                       asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">&laquo;</a>
+                }
 
-                    @for (var i = fromPage; i <= toPage; i++)
-                    {
-                        <a class="inventory-page-btn @(i == Model.Page ? "active" : string.Empty)" asp-action="KhachHang"
-                           asp-route-page="@i" asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">@i</a>
-                    }
+                @for (var i = fromPage; i <= toPage; i++)
+                {
+                    <a class="btn btn-sm @(i == Model.Page ? "btn-primary" : "btn-outline-secondary")" asp-action="KhachHang"
+                       asp-route-page="@i" asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">@i</a>
+                }
 
-                    @if (Model.Page < Model.TotalPages)
-                    {
-                        <a class="inventory-page-btn" asp-action="KhachHang" asp-route-page="@(Model.Page + 1)"
-                           asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">&gt;</a>
-                    }
-                </div>
-                <a href="/doi-tac" class="btn btn-outline-secondary btn-sm">Quay ve tong quan doi tac</a>
+                @if (Model.Page < Model.TotalPages)
+                {
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="KhachHang" asp-route-page="@(Model.Page + 1)"
+                       asp-route-pageSize="@Model.PageSize" asp-route-tuKhoa="@Model.TuKhoa">&raquo;</a>
+                }
             </div>
+            <a href="/doi-tac" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại tổng quan đối tác
+            </a>
         </div>
-    </section>
+    </div>
+</section>

@@ -1,7 +1,7 @@
 @model IEnumerable<DbQLBH_65132292.Models.LoaiSP>
 
 @{
-    ViewData["Title"] = "Loai san pham";
+    ViewData["Title"] = "Loại sản phẩm";
     var items = Model?.ToList() ?? new List<DbQLBH_65132292.Models.LoaiSP>();
     var tuKhoa = ViewBag.TuKhoa as string ?? string.Empty;
     var selectedMaNsp = ViewBag.SelectedMaNSP as short?;
@@ -16,27 +16,26 @@
 <section class="inventory-page list-page">
     <div class="inventory-header page-header page-header-split">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title page-title">Quan ly Loai san pham</h1>
-            <p class="inventory-subtitle page-subtitle">Phan loai danh muc luu kho va dieu huong thao tac nhanh cho
-                nguoi quan tri.</p>
+            <h1 class="inventory-title page-title">Quản lý Loại sản phẩm</h1>
+            <p class="inventory-subtitle page-subtitle">Phân loại danh mục lưu kho và điều hướng thao tác nhanh cho người quản trị.</p>
             </div>
             <div class="inventory-toolbar">
-                <a asp-action="Create" class="inventory-add-btn">Them loai</a>
+                <a asp-action="Create" class="inventory-add-btn">Thêm loại mới</a>
             </div>
         </div>
 
         <div class="inventory-card inventory-filter-card search-card p-3 p-md-4 mb-4">
             <form method="get" asp-action="Index" class="row g-3 align-items-xl-end">
                 <div class="col-12 col-xl-3">
-                    <label class="form-label" for="tuKhoa">Tu khoa</label>
+                    <label class="form-label" for="tuKhoa">Từ khóa</label>
                     <input id="tuKhoa" name="tuKhoa" class="form-control" type="search" value="@tuKhoa"
-                           placeholder="MaLSP, TenLSP..." />
+                           placeholder="Mã loại, tên loại sản phẩm..." />
                 </div>
 
                 <div class="col-6 col-xl-2">
-                    <label class="form-label" for="maNsp">Nhom SP</label>
+                    <label class="form-label" for="maNsp">Nhóm SP</label>
                     <select id="maNsp" name="maNsp" class="form-select">
-                        <option value="">Tat ca</option>
+                        <option value="">Tất cả</option>
                         @foreach (var nhom in nhomOptions)
                         {
                             if (selectedMaNsp == nhom.MaNSP)
@@ -52,9 +51,9 @@
                 </div>
 
                 <div class="col-6 col-xl-2">
-                    <label class="form-label" for="maLsp">Loai SP</label>
+                    <label class="form-label" for="maLsp">Loại SP</label>
                     <select id="maLsp" name="maLsp" class="form-select">
-                        <option value="">Tat ca</option>
+                        <option value="">Tất cả</option>
                         @foreach (var loai in loaiOptions)
                         {
                             if (selectedMaLsp == loai.MaLSP)
@@ -70,49 +69,49 @@
                 </div>
 
                 <div class="col-6 col-xl-2">
-                    <label class="form-label" for="sapXep">Sap xep</label>
+                    <label class="form-label" for="sapXep">Sắp xếp</label>
                     <select id="sapXep" name="sapXep" class="form-select">
                         @if (sapXep == "maLspAsc")
                         {
-                            <option value="maLspAsc" selected>Ma loai tang dan</option>
+                            <option value="maLspAsc" selected>Mã loại tăng dần</option>
                         }
                         else
                         {
-                            <option value="maLspAsc">Ma loai tang dan</option>
+                            <option value="maLspAsc">Mã loại tăng dần</option>
                         }
 
                         @if (sapXep == "maLspDesc")
                         {
-                            <option value="maLspDesc" selected>Ma loai giam dan</option>
+                            <option value="maLspDesc" selected>Mã loại giảm dần</option>
                         }
                         else
                         {
-                            <option value="maLspDesc">Ma loai giam dan</option>
+                            <option value="maLspDesc">Mã loại giảm dần</option>
                         }
 
                         @if (sapXep == "tenAsc")
                         {
-                            <option value="tenAsc" selected>Ten loai A-Z</option>
+                            <option value="tenAsc" selected>Tên loại A-Z</option>
                         }
                         else
                         {
-                            <option value="tenAsc">Ten loai A-Z</option>
+                            <option value="tenAsc">Tên loại A-Z</option>
                         }
 
                         @if (sapXep == "tenDesc")
                         {
-                            <option value="tenDesc" selected>Ten loai Z-A</option>
+                            <option value="tenDesc" selected>Tên loại Z-A</option>
                         }
                         else
                         {
-                            <option value="tenDesc">Ten loai Z-A</option>
+                            <option value="tenDesc">Tên loại Z-A</option>
                         }
                     </select>
                 </div>
 
                 <div class="col-12 col-xl-3 d-flex gap-2 justify-content-xl-end">
-                    <button type="submit" class="inventory-add-btn w-100">Loc</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Reset</a>
+                    <button type="submit" class="inventory-add-btn w-100">Lọc</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Đặt lại</a>
                 </div>
             </form>
         </div>
@@ -122,17 +121,17 @@
                 <table class="inventory-table">
                     <thead>
                         <tr>
-                            <th style="width: 130px;">Ma loai</th>
-                            <th>Ten loai</th>
-                            <th style="width: 120px;">Ma nhom</th>
-                            <th style="width: 220px; text-align: right;">Thao tac</th>
+                            <th style="width: 130px;">Mã loại</th>
+                            <th>Tên loại</th>
+                            <th style="width: 120px;">Mã nhóm</th>
+                            <th style="width: 240px; text-align: right;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (items.Count == 0)
                         {
                             <tr>
-                                <td colspan="4" class="text-center text-muted">Khong co du lieu de hien thi.</td>
+                                <td colspan="4" class="text-center text-muted">Không có dữ liệu để hiển thị.</td>
                             </tr>
                         }
                         else
@@ -143,12 +142,12 @@
                                     <td><span class="inventory-code">@item.MaLSP</span></td>
                                     <td><span class="inventory-name">@item.TenLSP</span></td>
                                     <td><span class="inventory-value">@item.MaNSP</span></td>
-                                    <td>
+                                    <td class="text-end">
                                         <div class="inventory-actions">
-                                            <a asp-action="Details" asp-route-id="@item.MaLSP" class="inventory-action">Chi tiet</a>
-                                            <a asp-action="Edit" asp-route-id="@item.MaLSP" class="inventory-action">Sua</a>
+                                            <a asp-action="Details" asp-route-id="@item.MaLSP" class="inventory-action">Chi tiết</a>
+                                            <a asp-action="Edit" asp-route-id="@item.MaLSP" class="inventory-action">Sửa</a>
                                             <a asp-action="Delete" asp-route-id="@item.MaLSP"
-                                               class="inventory-action delete">Xoa</a>
+                                               class="inventory-action delete">Xóa</a>
                                         </div>
                                     </td>
                                 </tr>
@@ -158,7 +157,7 @@
                 </table>
             </div>
             <div class="inventory-footer">
-                <p class="inventory-stats">Dang hien thi <strong>@items.Count</strong> loai san pham</p>
+                <p class="inventory-stats">Đang hiển thị <strong>@items.Count</strong> loại sản phẩm</p>
             </div>
         </div>
     </section>

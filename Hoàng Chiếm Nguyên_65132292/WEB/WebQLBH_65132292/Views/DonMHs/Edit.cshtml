@@ -1,10 +1,10 @@
 @model DbQLBH_65132292.Models.DonMH
 
 @{
-    ViewData["Title"] = "Sua don mua";
+    ViewData["Title"] = "Sửa đơn mua";
 }
 
-<h1>Sua don mua</h1>
+<h1 class="page-title">Sửa đơn mua</h1>
 <hr />
 <div class="row">
     <div class="col-md-6 col-lg-5">
@@ -17,15 +17,15 @@
                 <span asp-validation-for="NgayMua" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="MaNCC" class="form-label">Nha cung cap</label>
+                <label asp-for="MaNCC" class="form-label">Nhà cung cấp</label>
                 <select asp-for="MaNCC" class="form-select" asp-items="ViewBag.NhaCCOptions">
-                    <option value="">-- Chon nha cung cap --</option>
+                    <option value="">-- Chọn nhà cung cấp --</option>
                 </select>
                 <span asp-validation-for="MaNCC" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Luu</button>
-            <a asp-action="Details" asp-route-id="@Model.MaDMH" class="btn btn-outline-secondary ms-2">Quay lai</a>
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            <a asp-action="Details" asp-route-id="@Model.MaDMH" class="btn btn-outline-secondary ms-2">Quay lại</a>
         </form>
     </div>
 </div>

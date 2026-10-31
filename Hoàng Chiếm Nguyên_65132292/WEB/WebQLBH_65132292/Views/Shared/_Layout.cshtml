@@ -4,13 +4,13 @@
     var pageTitle = ViewData["Title"]?.ToString() ?? controller;
     var currentUserName = User.Identity?.IsAuthenticated == true
         ? (User.FindFirst("display_name")?.Value ?? User.Identity?.Name ?? "Admin")
-        : "Khach";
+        : "Khách";
     var userInitial = string.IsNullOrWhiteSpace(currentUserName)
         ? "A"
         : currentUserName.Trim().Substring(0, 1).ToUpperInvariant();
 
     var crudControllers = new[] { "NhomSPs", "LoaiSPs", "SanPhams", "KhachHangs", "NhaCCs", "DonMHs", "DonBHs" };
-    var crudActions = new[] { "Create", "Edit", "Details", "Delete" };
+    var crudActions = new[] { "Create", "Edit", "Delete" };
 
     var isCrudShell = Array.Exists(crudControllers, name => string.Equals(name, controller,
 StringComparison.OrdinalIgnoreCase))
@@ -30,7 +30,6 @@ StringComparison.OrdinalIgnoreCase))
     href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
@@ -92,14 +91,14 @@ StringComparison.OrdinalIgnoreCase))
                     <p class="nav-group-label">ĐỐI TÁC</p>
                     <ul class="sidebar-nav">
                         <li
-                            class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "KhachHangs" ? "active" : "")">
+                            class="nav-item @(controller == "KhachHangs" || (controller == "DoiTac" && action == "KhachHang") ? "active" : "")">
                             <a class="nav-item-link" asp-controller="KhachHangs" asp-action="Index" title="Khách hàng">
                                 <span class="nav-item-icon" aria-hidden="true"><i class="bi bi-people"></i></span>
                                 <span class="nav-item-label">Khách hàng</span>
                             </a>
                         </li>
                         <li
-                            class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "NhaCCs" ? "active" : "")">
+                            class="nav-item @(controller == "NhaCCs" || (controller == "DoiTac" && action == "NhaCungCap") ? "active" : "")">
                             <a class="nav-item-link" asp-controller="NhaCCs" asp-action="Index" title="Nhà cung cấp">
                                 <span class="nav-item-icon" aria-hidden="true"><i class="bi bi-building"></i></span>
                                 <span class="nav-item-label">Nhà cung cấp</span>
@@ -112,14 +111,14 @@ StringComparison.OrdinalIgnoreCase))
                     <p class="nav-group-label">GIAO DỊCH</p>
                     <ul class="sidebar-nav">
                         <li
-                            class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "DonMHs" ? "active" : "")">
+                            class="nav-item @(controller == "DonMHs" || (controller == "GiaoDich" && action.StartsWith("DonMua")) ? "active" : "")">
                             <a class="nav-item-link" asp-controller="DonMHs" asp-action="Index" title="Đơn mua">
                                 <span class="nav-item-icon" aria-hidden="true"><i class="bi bi-cart3"></i></span>
                                 <span class="nav-item-label">Đơn mua</span>
                             </a>
                         </li>
                         <li
-                            class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "DonBHs" ? "active" : "")">
+                            class="nav-item @(controller == "DonBHs" || (controller == "GiaoDich" && action.StartsWith("DonBan")) ? "active" : "")">
                             <a class="nav-item-link" asp-controller="DonBHs" asp-action="Index" title="Đơn bán">
                                 <span class="nav-item-icon" aria-hidden="true"><i class="bi bi-receipt"></i></span>
                                 <span class="nav-item-label">Đơn bán</span>
@@ -183,14 +182,14 @@ StringComparison.OrdinalIgnoreCase))
                                 <button type="button" class="user-dropdown-btn" aria-label="Tài khoản">
                                     <span class="user-dot">@userInitial</span>
                                     <span class="user-name">@currentUserName</span>
-                                    <span class="user-caret">▾</span>
+                                    <span class="user-caret"><i class="bi bi-chevron-down" style="font-size: 11px;"></i></span>
                                 </button>
                                 <div class="user-dropdown-menu">
-                                    <a asp-controller="Home" asp-action="Index">Ho so</a>
-                                    <a asp-controller="Home" asp-action="Privacy">Cai dat</a>
+                                    <a asp-controller="Home" asp-action="Index">Hồ sơ</a>
+                                    <a asp-controller="Home" asp-action="Privacy">Cài đặt</a>
                                     <form asp-controller="Account" asp-action="Logout" method="post" class="user-logout-form">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="user-logout-btn">Dang xuat</button>
+                                        <button type="submit" class="user-logout-btn">Đăng xuất</button>
                                     </form>
                                 </div>
                             </div>

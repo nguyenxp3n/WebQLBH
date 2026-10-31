@@ -68,7 +68,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the tao nhom san pham. Vui long thu lai.");
+                ModelState.AddModelError(string.Empty, "Không thể tạo nhóm sản phẩm. Vui lòng thử lại.");
                 return View(nhomSP);
             }
         }
@@ -114,7 +114,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the cap nhat nhom san pham. Vui long thu lai voi du lieu hop le.");
+                ModelState.AddModelError(string.Empty, "Không thể cập nhật nhóm sản phẩm. Vui lòng thử lại với dữ liệu hợp lệ.");
                 return View(nhomSP);
             }
         }
@@ -147,7 +147,7 @@ namespace DbQLBH_65132292.Controllers
 
             if (hasLinkedLoaiSp)
             {
-                TempData["WorkflowError"] = "Khong the xoa nhom san pham vi con loai san pham lien ket.";
+                TempData["WorkflowError"] = "Không thể xóa nhóm sản phẩm vì còn loại sản phẩm liên kết.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -155,16 +155,16 @@ namespace DbQLBH_65132292.Controllers
             {
                 var affectedRows = await _context.NhomSP_Xoa(id);
                 TempData["WorkflowSuccess"] = affectedRows > 0
-                    ? "Da xoa nhom san pham."
-                    : "Nhom san pham khong ton tai hoac da duoc xoa truoc do.";
+                    ? "Đã xóa nhóm sản phẩm thành công."
+                    : "Nhóm sản phẩm không tồn tại hoặc đã được xóa trước đó.";
             }
             catch (SqlException ex) when (ex.Number == 547)
             {
-                TempData["WorkflowError"] = "Khong the xoa nhom san pham vi con loai san pham lien ket.";
+                TempData["WorkflowError"] = "Không thể xóa nhóm sản phẩm vì còn loại sản phẩm liên kết.";
             }
             catch (DbUpdateException)
             {
-                TempData["WorkflowError"] = "Khong the xoa nhom san pham vi con loai san pham lien ket.";
+                TempData["WorkflowError"] = "Không thể xóa nhóm sản phẩm vì còn loại sản phẩm liên kết.";
             }
 
             return RedirectToAction(nameof(Index));

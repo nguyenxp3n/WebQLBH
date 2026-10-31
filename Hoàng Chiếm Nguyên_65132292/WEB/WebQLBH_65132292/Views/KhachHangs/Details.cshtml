@@ -1,30 +1,30 @@
 @model DbQLBH_65132292.Models.KhachHang
 
 @{
-    ViewData["Title"] = "Chi tiet khach hang";
+    ViewData["Title"] = "Chi tiết khách hàng";
 }
 
-<h1>Chi tiet khach hang</h1>
+<h1 class="page-title h4 mb-1">Chi tiết khách hàng</h1>
 <div>
     <hr />
     <dl class="row">
-        <dt class="col-sm-3">Ma KH</dt>
+        <dt class="col-sm-3">Mã KH</dt>
         <dd class="col-sm-9">@Model.MaKH</dd>
-        <dt class="col-sm-3">Ten khach hang</dt>
+        <dt class="col-sm-3">Tên khách hàng</dt>
         <dd class="col-sm-9">@Model.TenKH</dd>
-        <dt class="col-sm-3">Dien thoai</dt>
+        <dt class="col-sm-3">Điện thoại</dt>
         <dd class="col-sm-9">@Model.DienThoai</dd>
         <dt class="col-sm-3">Email</dt>
         <dd class="col-sm-9">@Model.Email</dd>
-        <dt class="col-sm-3">Dia chi</dt>
+        <dt class="col-sm-3">Địa chỉ</dt>
         <dd class="col-sm-9">@(ViewBag.DiaChiAnToan ?? Model.DiaChi)</dd>
-        <dt class="col-sm-3">Phuong xa</dt>
+        <dt class="col-sm-3">Phường/Xã</dt>
         <dd class="col-sm-9">@ViewBag.TenPX</dd>
-        <dt class="col-sm-3">Tinh</dt>
+        <dt class="col-sm-3">Tỉnh/Thành</dt>
         <dd class="col-sm-9">@ViewBag.TenTinh</dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.MaKH" class="btn btn-primary">Sua</a>
-    <a asp-action="Index" class="btn btn-outline-secondary ms-2">Quay lai</a>
+    <a asp-action="Edit" asp-route-id="@Model.MaKH" class="btn btn-primary">Sửa</a>
+    <a asp-action="Index" class="btn btn-outline-secondary ms-2">Quay lại</a>
 </div>

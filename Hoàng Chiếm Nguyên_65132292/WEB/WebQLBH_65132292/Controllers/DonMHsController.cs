@@ -102,7 +102,7 @@ namespace DbQLBH_65132292.Controllers
 
             if (!await _context.NhaCC.AnyAsync(x => x.MaNCC == donMH.MaNCC))
             {
-                ModelState.AddModelError(nameof(DonMH.MaNCC), "Nha cung cap khong ton tai.");
+                ModelState.AddModelError(nameof(DonMH.MaNCC), "Nhà cung cấp không tồn tại.");
             }
 
             if (!ModelState.IsValid)
@@ -119,7 +119,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the tao don mua. Vui long kiem tra ma don co bi trung khong.");
+                ModelState.AddModelError(string.Empty, "Không thể tạo đơn mua. Vui lòng kiểm tra mã đơn có bị trùng không.");
                 await PopulateNhaCCOptionsAsync(donMH.MaNCC);
                 return View(donMH);
             }
@@ -157,7 +157,7 @@ namespace DbQLBH_65132292.Controllers
 
             if (!await _context.NhaCC.AnyAsync(x => x.MaNCC == donMH.MaNCC))
             {
-                ModelState.AddModelError(nameof(DonMH.MaNCC), "Nha cung cap khong ton tai.");
+                ModelState.AddModelError(nameof(DonMH.MaNCC), "Nhà cung cấp không tồn tại.");
             }
 
             if (!ModelState.IsValid)
@@ -181,7 +181,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the cap nhat don mua. Vui long thu lai.");
+                ModelState.AddModelError(string.Empty, "Không thể cập nhật đơn mua. Vui lòng thử lại.");
                 await PopulateNhaCCOptionsAsync(donMH.MaNCC);
                 return View(donMH);
             }
@@ -246,7 +246,7 @@ namespace DbQLBH_65132292.Controllers
 
             if (string.IsNullOrWhiteSpace(maDMH) || string.IsNullOrWhiteSpace(maSP) || slm <= 0 || dgm <= 0)
             {
-                TempData["WorkflowError"] = "Thong tin dong chi tiet khong hop le.";
+                TempData["WorkflowError"] = "Thông tin dòng chi tiết không hợp lệ.";
                 return RedirectToAction(nameof(Details), new { id = maDMH });
             }
 
@@ -259,7 +259,7 @@ namespace DbQLBH_65132292.Controllers
             var spTonTai = await _context.SanPham.AnyAsync(x => x.MaSP == maSP);
             if (!spTonTai)
             {
-                TempData["WorkflowError"] = "San pham khong ton tai.";
+                TempData["WorkflowError"] = "Sản phẩm không tồn tại.";
                 return RedirectToAction(nameof(Details), new { id = maDMH });
             }
 
@@ -279,7 +279,7 @@ namespace DbQLBH_65132292.Controllers
             {
                 if (line.SLM > short.MaxValue - slm)
                 {
-                    TempData["WorkflowError"] = "Tong so luong vuot qua gioi han cho phep.";
+                    TempData["WorkflowError"] = "Tổng số lượng vượt quá giới hạn cho phép.";
                     return RedirectToAction(nameof(Details), new { id = maDMH });
                 }
 
@@ -357,12 +357,12 @@ namespace DbQLBH_65132292.Controllers
                 _context.DonMH.Remove(donMH);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                TempData["WorkflowSuccess"] = "Da xoa don mua.";
+                TempData["WorkflowSuccess"] = "Đã xóa đơn mua thành công.";
             }
             catch (DbUpdateException)
             {
                 await transaction.RollbackAsync();
-                TempData["WorkflowError"] = "Khong the xoa don mua vi con rang buoc du lieu lien quan.";
+                TempData["WorkflowError"] = "Không thể xóa đơn mua vì còn ràng buộc dữ liệu liên quan.";
             }
 
             return RedirectToAction(nameof(Index));

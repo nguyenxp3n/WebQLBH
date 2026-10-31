@@ -1,49 +1,71 @@
 @model DbQLBH_65132292.Models.ViewModels.DoiTacDashboardViewModel
 
 @{
-    ViewData["Title"] = "Doi tac";
+    ViewData["Title"] = "Tổng quan đối tác";
 }
 
 <section class="inventory-page doi-tac-page">
-    <div class="inventory-header">
+    <div class="inventory-header mb-4">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title">Tong quan doi tac</h1>
-            <p class="inventory-subtitle">Thong ke nhanh khach hang va nha cung cap hien co.</p>
+            <h1 class="inventory-title h4 mb-1">Tổng quan đối tác & Mạng lưới</h1>
+            <p class="inventory-subtitle text-muted mb-0">Thống kê đối tác khách hàng và mạng lưới nhà cung cấp liên kết.</p>
         </div>
     </div>
 
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong khach hang</p>
-                <p class="bao-cao-kpi-value">@Model.TongKhachHang</p>
+            <article class="kpi-card kpi-card-products p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tổng khách hàng</span>
+                    <span class="badge-status badge-new"><i class="bi bi-people"></i></span>
+                </div>
+                <p class="kpi-value mb-0">@Model.TongKhachHang</p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tong nha cung cap</p>
-                <p class="bao-cao-kpi-value">@Model.TongNhaCungCap</p>
+            <article class="kpi-card kpi-card-orders p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tổng nhà cung cấp</span>
+                    <span class="badge-status badge-done"><i class="bi bi-building"></i></span>
+                </div>
+                <p class="kpi-value mb-0">@Model.TongNhaCungCap</p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tinh co khach hang</p>
-                <p class="bao-cao-kpi-value">@Model.SoTinhCoKhachHang</p>
+            <article class="kpi-card kpi-card-partners p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tỉnh/Thành có KH</span>
+                    <span class="badge-status badge-new"><i class="bi bi-geo-alt"></i></span>
+                </div>
+                <p class="kpi-value mb-0">@Model.SoTinhCoKhachHang</p>
             </article>
         </div>
         <div class="col-12 col-md-6 col-xl-3">
-            <article class="bao-cao-kpi">
-                <p class="bao-cao-kpi-label">Tinh co nha cung cap</p>
-                <p class="bao-cao-kpi-value">@Model.SoTinhCoNhaCungCap</p>
+            <article class="kpi-card kpi-card-revenue p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tỉnh/Thành có NCC</span>
+                    <span class="badge-status badge-proc"><i class="bi bi-pin-map"></i></span>
+                </div>
+                <p class="kpi-value mb-0">@Model.SoTinhCoNhaCungCap</p>
             </article>
         </div>
     </div>
 
     <div class="inventory-card p-4">
-        <h2 class="h4 mb-3">Tac vu</h2>
-        <div class="d-flex flex-wrap gap-2">
-            <a class="inventory-add-btn" href="/doi-tac/khach-hang">Tra cuu khach hang</a>
-            <a class="inventory-add-btn" href="/doi-tac/nha-cung-cap">Tra cuu nha cung cap</a>
+        <h2 class="h5 mb-3 fw-bold text-dark">Tác vụ tra cứu và liên kết</h2>
+        <div class="d-flex flex-wrap gap-3">
+            <a class="btn btn-primary" href="/doi-tac/khach-hang">
+                <i class="bi bi-search me-1"></i> Tra cứu danh bạ khách hàng
+            </a>
+            <a class="btn btn-outline-secondary" href="/doi-tac/nha-cung-cap">
+                <i class="bi bi-building-check me-1"></i> Tra cứu danh mục nhà cung cấp
+            </a>
+            <a class="btn btn-outline-secondary" href="/KhachHangs">
+                <i class="bi bi-person-lines-fill me-1"></i> Quản lý khách hàng (CRUD)
+            </a>
+            <a class="btn btn-outline-secondary" href="/NhaCCs">
+                <i class="bi bi-truck me-1"></i> Quản lý nhà cung ứng (CRUD)
+            </a>
         </div>
     </div>
 </section>

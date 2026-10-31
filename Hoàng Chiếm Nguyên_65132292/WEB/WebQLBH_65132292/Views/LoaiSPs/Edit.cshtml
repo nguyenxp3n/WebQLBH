@@ -1,12 +1,12 @@
 ﻿@model DbQLBH_65132292.Models.LoaiSP
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa";
 }
 
-<h1>Edit</h1>
+<h1 class="page-title">Chỉnh sửa</h1>
 
-<h4>LoaiSP</h4>
+<h4>Thông tin Loại sản phẩm</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -21,19 +21,19 @@
             <div class="form-group">
                 <label asp-for="MaNSP" class="control-label"></label>
                 <select asp-for="MaNSP" asp-items="ViewBag.MaNSPOptions" class="form-select">
-                    <option value="">-- Chon nhom san pham --</option>
+                    <option value="">-- Chọn nhóm sản phẩm --</option>
                 </select>
                 <span asp-validation-for="MaNSP" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Quay lại danh sách</a>
 </div>
 
 @section Scripts {

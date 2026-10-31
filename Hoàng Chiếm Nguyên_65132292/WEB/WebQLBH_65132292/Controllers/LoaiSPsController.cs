@@ -109,7 +109,7 @@ namespace DbQLBH_65132292.Controllers
             var nhomExists = await _context.NhomSPs.AsNoTracking().AnyAsync(x => x.MaNSP == loaiSP.MaNSP);
             if (!nhomExists)
             {
-                ModelState.AddModelError(nameof(LoaiSP.MaNSP), "Nhom san pham khong ton tai.");
+                ModelState.AddModelError(nameof(LoaiSP.MaNSP), "Nhóm sản phẩm không tồn tại.");
             }
 
             if (!ModelState.IsValid)
@@ -125,7 +125,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the tao loai san pham. Vui long kiem tra du lieu nhom.");
+                ModelState.AddModelError(string.Empty, "Không thể tạo loại sản phẩm. Vui lòng kiểm tra dữ liệu nhóm.");
                 await PopulateNhomOptionsAsync(loaiSP.MaNSP);
                 return View(loaiSP);
             }
@@ -162,7 +162,7 @@ namespace DbQLBH_65132292.Controllers
             var nhomExists = await _context.NhomSPs.AsNoTracking().AnyAsync(x => x.MaNSP == loaiSP.MaNSP);
             if (!nhomExists)
             {
-                ModelState.AddModelError(nameof(LoaiSP.MaNSP), "Nhom san pham khong ton tai.");
+                ModelState.AddModelError(nameof(LoaiSP.MaNSP), "Nhóm sản phẩm không tồn tại.");
             }
 
             if (!ModelState.IsValid)
@@ -178,7 +178,7 @@ namespace DbQLBH_65132292.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError(string.Empty, "Khong the cap nhat loai san pham. Vui long thu lai voi du lieu hop le.");
+                ModelState.AddModelError(string.Empty, "Không thể cập nhật loại sản phẩm. Vui lòng thử lại với dữ liệu hợp lệ.");
                 await PopulateNhomOptionsAsync(loaiSP.MaNSP);
                 return View(loaiSP);
             }
@@ -212,7 +212,7 @@ namespace DbQLBH_65132292.Controllers
 
             if (hasLinkedProducts)
             {
-                TempData["WorkflowError"] = "Khong the xoa loai san pham vi con san pham lien ket.";
+                TempData["WorkflowError"] = "Không thể xóa loại sản phẩm vì còn sản phẩm liên kết.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -220,16 +220,16 @@ namespace DbQLBH_65132292.Controllers
             {
                 var affectedRows = await _context.LoaiSP_Xoa(id);
                 TempData["WorkflowSuccess"] = affectedRows > 0
-                    ? "Da xoa loai san pham."
-                    : "Loai san pham khong ton tai hoac da duoc xoa truoc do.";
+                    ? "Đã xóa loại sản phẩm thành công."
+                    : "Loại sản phẩm không tồn tại hoặc đã được xóa trước đó.";
             }
             catch (SqlException ex) when (ex.Number == 547)
             {
-                TempData["WorkflowError"] = "Khong the xoa loai san pham vi con san pham lien ket.";
+                TempData["WorkflowError"] = "Không thể xóa loại sản phẩm vì còn sản phẩm liên kết.";
             }
             catch (DbUpdateException)
             {
-                TempData["WorkflowError"] = "Khong the xoa loai san pham vi con san pham lien ket.";
+                TempData["WorkflowError"] = "Không thể xóa loại sản phẩm vì còn sản phẩm liên kết.";
             }
 
             return RedirectToAction(nameof(Index));

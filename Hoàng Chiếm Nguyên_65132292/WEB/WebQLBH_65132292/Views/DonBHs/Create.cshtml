@@ -1,7 +1,7 @@
 @model DbQLBH_65132292.Models.DonBH
 
 @{
-    ViewData["Title"] = "Tao don ban";
+    ViewData["Title"] = "Tạo đơn bán";
 }
 
 <section class="admin-form-page">
@@ -9,11 +9,11 @@
         <div class="page-title-group">
             <span class="icon-chip" aria-hidden="true"><i class="bi bi-receipt"></i></span>
             <div>
-                <h1 class="page-title">Tao don ban moi</h1>
-                <p class="page-subtitle">Nhap thong tin header don ban truoc khi them dong san pham.</p>
+                <h1 class="page-title">Tạo đơn bán mới</h1>
+                <p class="page-subtitle">Nhập thông tin đơn bán hàng trước khi thêm chi tiết sản phẩm.</p>
             </div>
         </div>
-        <a asp-action="Index" class="btn btn-outline-secondary">Quay lai danh sach</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
     </div>
 
     <div class="app-card admin-form-card">
@@ -33,9 +33,9 @@
             </div>
 
             <div class="col-12 col-lg-4">
-                <label asp-for="MaKH" class="control-label">Khach hang</label>
+                <label asp-for="MaKH" class="control-label">Khách hàng</label>
                 <select asp-for="MaKH" class="form-select" asp-items="ViewBag.KhachHangOptions">
-                    <option value="">-- Chon khach hang --</option>
+                    <option value="">-- Chọn khách hàng --</option>
                 </select>
                 <span asp-validation-for="MaKH" class="text-danger"></span>
             </div>
@@ -43,28 +43,28 @@
             <div class="col-12 col-lg-6">
                 <label asp-for="DCGH" class="control-label"></label>
                 <input asp-for="DCGH" class="form-control" />
-                <p class="admin-form-hint">Nhap dia chi giao hang ngan gon, de doc. Khong dan payload/mau JSON.</p>
+                <p class="admin-form-hint">Nhập địa chỉ giao hàng ngắn gọn, dễ đọc. Không dán payload/mẫu JSON.</p>
                 <span asp-validation-for="DCGH" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-3">
-                <label class="control-label">Tinh giao hang</label>
+                <label class="form-label">Tỉnh giao hàng</label>
                 <select id="maTinh" name="maTinh" class="form-select" asp-items="ViewBag.TinhOptions">
-                    <option value="">-- Chon tinh --</option>
+                    <option value="">-- Chọn Tỉnh/Thành phố --</option>
                 </select>
             </div>
 
             <div class="col-12 col-lg-3">
-                <label asp-for="MaPX" class="control-label">Phuong xa giao hang</label>
+                <label asp-for="MaPX" class="control-label">Phường/Xã giao hàng</label>
                 <select asp-for="MaPX" id="maPX" class="form-select" asp-items="ViewBag.PhuongXaOptions">
-                    <option value="">-- Chon phuong xa --</option>
+                    <option value="">-- Chọn Phường/Xã --</option>
                 </select>
                 <span asp-validation-for="MaPX" class="text-danger"></span>
             </div>
 
             <div class="col-12 admin-form-actions">
-                <a asp-action="Index" class="btn btn-outline-secondary">Huy</a>
-                <button type="submit" class="primary-btn">Tao don</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="primary-btn">Tạo đơn</button>
             </div>
         </form>
     </div>
@@ -81,7 +81,7 @@
             const getPhuongXaUrl = '@Url.Action("GetPhuongXa", "DonBHs")';
 
             async function loadPhuongXa(maTinh, selectedValue) {
-                phuongXaSelect.innerHTML = '<option value="">-- Chon phuong xa --</option>';
+                phuongXaSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
                 if (!maTinh) {
                     return;
                 }

@@ -1,4 +1,4 @@
-﻿@model DbQLBH_65132292.Models.ViewModels.HomeDashboardViewModel
+@model DbQLBH_65132292.Models.ViewModels.HomeDashboardViewModel
 
 @{
     ViewData["Title"] = "Trang chủ";
@@ -9,142 +9,202 @@
 }
 
 <section class="dashboard-page">
-    <div class="page-header">
+    <div class="page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="page-title">Trang chủ - QL Bán Hàng</h1>
-            <p class="page-subtitle">Theo dõi hiệu suất kinh doanh, đơn hàng gần đây và sản phẩm bán chạy theo thời gian
-                thực.</p>
-                <p id="dashboardRealtimeStatus" class="page-subtitle">Realtime: dang ket noi...</p>
+            <h1 class="page-title mb-1">Tổng quan hoạt động kinh doanh</h1>
+            <p class="page-subtitle text-muted mb-0">Theo dõi hiệu suất bán hàng, đơn hàng mới nhất và biến động doanh thu theo thời gian thực.</p>
+        </div>
+        <div class="mt-2 mt-md-0">
+            <span id="dashboardRealtimeStatus" class="badge-status badge-done shadow-sm">
+                <span class="badge-dot badge-pulse"></span>
+                <span>Realtime: Đang đồng bộ...</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- 4 Bento KPI Cards with Distinct Accent Stripes -->
+    <div class="kpi-grid mb-4">
+        <article class="kpi-card kpi-card-products">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="kpi-label">Tổng sản phẩm</span>
+                <span class="badge-status badge-new"><i class="bi bi-box-seam"></i></span>
             </div>
-        </div>
+            <p class="kpi-value">@Model.TongSanPham</p>
+            <span class="kpi-trend kpi-trend-positive"><i class="bi bi-graph-up-arrow me-1"></i>@topProducts.Count mặt hàng bán chạy</span>
+        </article>
 
-        <div class="kpi-grid">
-            <article class="kpi-card">
-                <p class="kpi-label">Sản phẩm</p>
-                <p class="kpi-value">@Model.TongSanPham</p>
-                <span class="kpi-trend kpi-trend-positive">@topProducts.Count nhóm đang bán tốt</span>
-            </article>
-            <article class="kpi-card">
-                <p class="kpi-label">Đơn bán</p>
-                <p class="kpi-value">@Model.TongDonBan</p>
-                <span class="kpi-trend kpi-trend-neutral">@Model.TongDonMua đơn mua đối ứng</span>
-            </article>
-            <article class="kpi-card">
-                <p class="kpi-label">Khách hàng</p>
-                <p class="kpi-value">@Model.TongKhachHang</p>
-                <span class="kpi-trend kpi-trend-neutral">@Model.TongNhaCungCap nhà cung cấp kết nối</span>
-            </article>
-            <article class="kpi-card">
-                <p class="kpi-label">Doanh thu</p>
-                <p class="kpi-value">@Model.TongDoanhThu.ToString("N0")</p>
-                <span class="kpi-trend kpi-trend-positive">VNĐ</span>
-            </article>
-        </div>
+        <article class="kpi-card kpi-card-orders">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="kpi-label">Đơn bán xuất kho</span>
+                <span class="badge-status badge-done"><i class="bi bi-receipt"></i></span>
+            </div>
+            <p class="kpi-value">@Model.TongDonBan</p>
+            <span class="kpi-trend text-muted"><i class="bi bi-arrow-left-right me-1"></i>@Model.TongDonMua đơn nhập kho</span>
+        </article>
 
-        <div class="dashboard-grid">
-            <section class="app-card chart-card">
-                <div class="card-head">
-                    <h2 class="card-title">Doanh thu 7 ngày</h2>
-                    <span class="card-meta">Dữ liệu từ toàn bộ đơn trong 7 ngày gần nhất</span>
+        <article class="kpi-card kpi-card-partners">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="kpi-label">Khách hàng kết nối</span>
+                <span class="badge-status badge-proc"><i class="bi bi-people"></i></span>
+            </div>
+            <p class="kpi-value">@Model.TongKhachHang</p>
+            <span class="kpi-trend text-muted"><i class="bi bi-building me-1"></i>@Model.TongNhaCungCap nhà cung cấp</span>
+        </article>
+
+        <article class="kpi-card kpi-card-revenue">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="kpi-label">Tổng doanh thu</span>
+                <span class="badge-status badge-done"><i class="bi bi-cash-stack"></i></span>
+            </div>
+            <p class="kpi-value" style="color: var(--accent-emerald);">@Model.TongDoanhThu.ToString("N0")</p>
+            <span class="kpi-trend kpi-trend-positive">Đơn vị: VNĐ</span>
+        </article>
+    </div>
+
+    <!-- Chart & Recent Orders Bento -->
+    <div class="dashboard-grid mb-4">
+        <section class="app-card chart-card">
+            <div class="card-head d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="card-title">Biểu đồ doanh thu 7 ngày</h2>
+                    <span class="card-meta">Dòng tiền bán hàng ghi nhận thực tế từ hệ thống</span>
                 </div>
-                <div class="chart-wrap">
-                    <canvas id="revenue7dChart" class="chart-canvas" aria-label="Biểu đồ doanh thu 7 ngày"
-                            role="img"></canvas>
-                </div>
-            </section>
+                <span class="badge-status badge-done"><span class="badge-dot badge-pulse"></span> SignalR Sync</span>
+            </div>
+            <div class="chart-wrap" style="height: 290px;">
+                <canvas id="revenue7dChart" class="chart-canvas" aria-label="Biểu đồ doanh thu 7 ngày" role="img"></canvas>
+            </div>
+        </section>
 
-            <section class="app-card table-card">
-                <div class="card-head">
+        <section class="app-card table-card">
+            <div class="card-head d-flex justify-content-between align-items-center">
+                <div>
                     <h2 class="card-title">Đơn hàng gần đây</h2>
-                    <span class="card-meta">@recentOrders.Count bản ghi</span>
+                    <span class="card-meta">@recentOrders.Count giao dịch mới nhất</span>
                 </div>
-                <div class="table-wrap">
-                    <table class="app-table compact">
-                        <thead>
+                <a asp-controller="DonBHs" asp-action="Index" class="btn btn-sm btn-outline-secondary">Xem tất cả</a>
+            </div>
+            <div class="table-wrap table-responsive">
+                <table class="app-table compact align-middle">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th class="text-end">Tổng tiền (VNĐ)</th>
+                            <th class="text-center">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!recentOrders.Any())
+                        {
                             <tr>
-                                <th>Mã đơn</th>
-                                <th>Khách hàng</th>
-                                <th>Ngày</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
+                                <td colspan="5">
+                                    <div class="empty-state-card my-2 py-4">
+                                        <i class="bi bi-receipt empty-state-icon mb-2"></i>
+                                        <p class="empty-state-title mb-1">Chưa có giao dịch gần đây</p>
+                                        <p class="empty-state-text mb-0 small">Các đơn xuất kho mới sẽ xuất hiện tại đây.</p>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @if (!recentOrders.Any())
+                        }
+                        else
+                        {
+                            for (var i = 0; i < recentOrders.Count; i++)
                             {
+                                var item = recentOrders[i];
+                                var rawStatus = item.TrangThai ?? "";
+                                var statusText = rawStatus.ToLower() switch
+                                {
+                                    "moi" or "mới" => "Mới",
+                                    "dang xu ly" or "đang xử lý" => "Đang xử lý",
+                                    "hoan tat" or "hoàn tất" => "Hoàn tất",
+                                    "huy" or "hủy" or "da huy" or "đã hủy" => "Đã hủy",
+                                    _ => string.IsNullOrWhiteSpace(rawStatus) ? "Mới" : rawStatus
+                                };
+                                var statusClass = statusText switch
+                                {
+                                    "Mới" => "badge-new",
+                                    "Đang xử lý" => "badge-proc",
+                                    "Hoàn tất" => "badge-done",
+                                    "Đã hủy" => "badge-cancel",
+                                    _ => "badge-new"
+                                };
+                                var isPulse = statusText == "Hoàn tất" ? "badge-pulse" : "";
                                 <tr>
-                                    <td colspan="5" class="text-center">Không có đơn bán gần đây.</td>
+                                    <td><span class="code-badge">@item.MaDBH</span></td>
+                                    <td class="fw-medium">@item.TenKH</td>
+                                    <td class="text-muted small">@item.NgayBan.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-end font-monospace fw-semibold">@item.TongTien.ToString("N0")</td>
+                                    <td class="text-center">
+                                        <span class="badge-status @statusClass">
+                                            <span class="badge-dot @isPulse"></span>
+                                            <span>@statusText</span>
+                                        </span>
+                                    </td>
                                 </tr>
                             }
-                            else
-                            {
-                                for (var i = 0; i < recentOrders.Count; i++)
-                                {
-                                    var item = recentOrders[i];
-                                    var statusClass = string.IsNullOrWhiteSpace(item.TrangThaiCss)
-                                        ? "status-info"
-                                        : item.TrangThaiCss;
-                                    var statusText = string.IsNullOrWhiteSpace(item.TrangThai)
-                                        ? "Moi"
-                                        : item.TrangThai;
-                                    <tr>
-                                        <td><span class="code-pill">@item.MaDBH</span></td>
-                                        <td>@item.TenKH</td>
-                                        <td>@item.NgayBan.ToString("dd/MM/yyyy")</td>
-                                        <td><span class="money-value">@item.TongTien.ToString("N0")</span></td>
-                                        <td><span class="status-badge @statusClass">@statusText</span></td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-
-        <section class="app-card rank-card">
-            <h2 class="rank-title">Top sản phẩm bán chạy</h2>
-            <ol class="rank-list">
-                @if (!topProducts.Any())
-                {
-                    <li class="rank-item">
-                        <div class="rank-content">
-                            <p class="rank-name">Chưa có dữ liệu sản phẩm bán chạy.</p>
-                        </div>
-                    </li>
-                }
-                else
-                {
-                    for (var i = 0; i < topProducts.Count; i++)
-                    {
-                        var item = topProducts[i];
-                        <li class="rank-item">
-                            <span class="rank-index">@(i + 1)</span>
-                            <div class="rank-content">
-                                <p class="rank-name">@item.TenSP</p>
-                                <p class="rank-meta">Mã: @item.MaSP</p>
-                            </div>
-                            <div class="rank-values">
-                                <span class="rank-qty">@item.TongSoLuong sp</span>
-                                <span class="rank-money">@item.TongTien.ToString("N0") VNĐ</span>
-                            </div>
-                        </li>
-                    }
-                }
-            </ol>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </section>
-    </section>
+    </div>
 
-    @section Scripts {
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-        <script>
-            (() => {
-            const revenueMap = new Map([
-            @foreach (var point in dailyRevenue)
+    <!-- Top Selling Products Rank Section -->
+    <section class="app-card rank-card">
+        <div class="card-head d-flex justify-content-between align-items-center p-0 mb-3">
+            <div>
+                <h2 class="card-title">Top sản phẩm bán chạy nhất</h2>
+                <span class="card-meta">Danh sách các mặt hàng có lượng tiêu thụ dẫn đầu kho hàng</span>
+            </div>
+            <a asp-controller="SanPhams" asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-box-seam me-1"></i> Quản lý kho hàng
+            </a>
+        </div>
+        <div class="rank-list">
+            @if (!topProducts.Any())
             {
-                <text>["@point.Ngay.ToString("yyyy-MM-dd")", @point.DoanhThu.ToString(System.Globalization.CultureInfo.InvariantCulture)],</text>
+                <div class="empty-state-card my-2 py-4">
+                    <i class="bi bi-box-seam empty-state-icon mb-2"></i>
+                    <p class="empty-state-title mb-1">Chưa có dữ liệu sản phẩm bán chạy</p>
+                    <p class="empty-state-text mb-0 small">Dữ liệu sẽ được cập nhật tự động khi phát sinh giao dịch đơn bán.</p>
+                </div>
             }
+            else
+            {
+                for (var i = 0; i < topProducts.Count; i++)
+                {
+                    var item = topProducts[i];
+                    <div class="rank-item">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="rank-badge">@(i + 1)</span>
+                            <div class="rank-content">
+                                <p class="mb-0 fw-semibold text-dark">@item.TenSP</p>
+                                <span class="rank-meta text-muted small">Mã SP: <span class="code-badge py-0 px-1">@item.MaSP</span></span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge-status badge-new me-2 font-monospace">@item.TongSoLuong sản phẩm</span>
+                            <span class="font-monospace fw-semibold" style="color: var(--accent-emerald);">@item.TongTien.ToString("N0") VNĐ</span>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script>
+        (() => {
+            const revenueMap = new Map([
+                @foreach (var point in dailyRevenue)
+                {
+                    <text>["@point.Ngay.ToString("yyyy-MM-dd")", @point.DoanhThu.ToString(System.Globalization.CultureInfo.InvariantCulture)],</text>
+                }
             ]);
 
             const labels = [];
@@ -152,85 +212,99 @@
             const now = new Date();
 
             for (let i = 6; i >= 0; i -= 1) {
-            const d = new Date(now);
-            d.setDate(now.getDate() - i);
+                const d = new Date(now);
+                d.setDate(now.getDate() - i);
 
-            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-            const label = `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                const label = `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
 
-            labels.push(label);
-            values.push(Number(revenueMap.get(key) || 0));
+                labels.push(label);
+                values.push(Number(revenueMap.get(key) || 0));
             }
 
             const canvas = document.getElementById("revenue7dChart");
-            if (!canvas) {
-            return;
-            }
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+                gradient.addColorStop(0, 'rgba(5, 150, 105, 0.20)');
+                gradient.addColorStop(1, 'rgba(5, 150, 105, 0.00)');
 
-            new Chart(canvas, {
-            type: "line",
-            data: {
-            labels,
-            datasets: [
-            {
-            label: "Doanh thu (VNĐ)",
-            data: values,
-            borderColor: "#2563EB",
-            backgroundColor: "rgba(37, 99, 235, 0.14)",
-            fill: true,
-            tension: 0.35,
-            pointRadius: 3,
-            pointHoverRadius: 4
+                new Chart(canvas, {
+                    type: "line",
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: "Doanh thu (VNĐ)",
+                                data: values,
+                                borderColor: "#059669",
+                                borderWidth: 2.5,
+                                backgroundColor: gradient,
+                                fill: true,
+                                tension: 0.35,
+                                pointBackgroundColor: "#059669",
+                                pointBorderColor: "#FFFFFF",
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                padding: 10,
+                                cornerRadius: 8,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y.toLocaleString('vi-VN') + ' VNĐ';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback(value) {
+                                        return Number(value).toLocaleString("vi-VN");
+                                    },
+                                    font: { family: "'JetBrains Mono', monospace", size: 11 }
+                                },
+                                grid: { color: "#F1F5F9" }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { family: "'Be Vietnam Pro', sans-serif", size: 12 } }
+                            }
+                        }
+                    }
+                });
             }
-            ]
-            },
-            options: {
-            maintainAspectRatio: false,
-            plugins: {
-            legend: {
-            display: false
-            }
-            },
-            scales: {
-            y: {
-            ticks: {
-            callback(value) {
-            return Number(value).toLocaleString("vi-VN");
-            }
-            },
-            grid: {
-            color: "#E2E7FF"
-            }
-            },
-            x: {
-            grid: {
-            display: false
-            }
-            }
-            }
-            }
-            });
 
             const realtimeStatus = document.getElementById("dashboardRealtimeStatus");
             if (window.signalR && realtimeStatus) {
-            const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/hubs/dashboard")
-            .withAutomaticReconnect()
-            .build();
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl("/hubs/dashboard")
+                    .withAutomaticReconnect()
+                    .build();
 
-            connection.on("dashboardPulse", (utcTimestamp) => {
-            const ts = new Date(utcTimestamp);
-            realtimeStatus.textContent = `Realtime: cap nhat ${ts.toLocaleTimeString("vi-VN")}`;
-            });
+                connection.on("dashboardPulse", (utcTimestamp) => {
+                    const ts = new Date(utcTimestamp);
+                    realtimeStatus.innerHTML = `<span class="badge-dot badge-pulse"></span><span>Đồng bộ lúc ${ts.toLocaleTimeString("vi-VN")}</span>`;
+                });
 
-            connection.start()
-            .then(() => {
-            realtimeStatus.textContent = "Realtime: da ket noi";
-            })
-            .catch(() => {
-            realtimeStatus.textContent = "Realtime: khong the ket noi";
-            });
+                connection.start()
+                    .then(() => {
+                        realtimeStatus.innerHTML = `<span class="badge-dot badge-pulse"></span><span>Realtime: Sẵn sàng</span>`;
+                    })
+                    .catch(() => {
+                        realtimeStatus.className = "badge-status badge-cancel shadow-sm";
+                        realtimeStatus.innerHTML = `<span class="badge-dot"></span><span>Realtime: Gián đoạn</span>`;
+                    });
             }
-            })();
-        </script>
-    }
+        })();
+    </script>
+}

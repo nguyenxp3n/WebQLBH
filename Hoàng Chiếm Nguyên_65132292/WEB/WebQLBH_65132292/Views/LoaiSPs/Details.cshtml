@@ -1,13 +1,13 @@
 ﻿@model DbQLBH_65132292.Models.LoaiSP
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết";
 }
 
-<h1>Details</h1>
+<h1 class="page-title">Thông tin chi tiết</h1>
 
 <div>
-    <h4>LoaiSP</h4>
+    <h4>Thông tin Loại sản phẩm</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -25,6 +25,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.MaLSP">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.MaLSP">Chỉnh sửa</a> |
+    <a asp-action="Index">Quay lại danh sách</a>
 </div>

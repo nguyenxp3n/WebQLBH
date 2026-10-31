@@ -1,59 +1,69 @@
 @model DbQLBH_65132292.Models.ViewModels.DonMuaChiTietViewModel
 
 @{
-    ViewData["Title"] = "Chi tiet don mua";
+    ViewData["Title"] = "Chi tiết đơn mua";
 }
 
 <section class="inventory-page">
-    <div class="inventory-header">
+    <div class="inventory-header d-flex justify-content-between align-items-center mb-4">
         <div class="inventory-title-wrap">
-            <h1 class="inventory-title">Chi tiet don mua @Model.MaDMH</h1>
-            <p class="inventory-subtitle">Nha cung cap: @Model.TenNCC (Ma @Model.MaNCC) - Ngay mua:
-                @Model.NgayMua.ToString("dd/MM/yyyy")</p>
-            </div>
-            <div class="inventory-toolbar">
-                <a class="btn btn-outline-secondary" href="/giao-dich/don-mua">Quay lai danh sach</a>
-            </div>
+            <h1 class="inventory-title h4 mb-1">Chi tiết đơn mua hàng @Model.MaDMH</h1>
+            <p class="inventory-subtitle text-muted mb-0">
+                Nhà cung cấp: <strong>@Model.TenNCC</strong> (Mã NCC: <span class="code-badge py-0 px-1">@Model.MaNCC</span>) — Ngày nhập mua: <strong>@Model.NgayMua.ToString("dd/MM/yyyy")</strong>
+            </p>
         </div>
+        <div class="inventory-toolbar">
+            <a class="btn btn-outline-secondary" href="/giao-dich/don-mua">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+            </a>
+        </div>
+    </div>
 
-        <div class="inventory-card">
-            <div class="inventory-table-wrap table-responsive">
-                <table class="inventory-table">
-                    <thead>
+    <div class="inventory-card">
+        <div class="inventory-table-wrap table-responsive">
+            <table class="inventory-table table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Mã SP</th>
+                        <th>Tên sản phẩm</th>
+                        <th style="width: 120px;" class="text-center">Số lượng</th>
+                        <th style="width: 170px;" class="text-end">Đơn giá nhập</th>
+                        <th style="width: 180px;" class="text-end">Thành tiền (VNĐ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ChiTiet.Count == 0)
+                    {
                         <tr>
-                            <th style="width: 140px;">Ma SP</th>
-                            <th>Ten san pham</th>
-                            <th style="width: 120px;">So luong</th>
-                            <th style="width: 150px;">Don gia mua</th>
-                            <th style="width: 150px;">Thanh tien</th>
+                            <td colspan="5">
+                                <div class="empty-state-card my-3 py-4">
+                                    <i class="bi bi-box-seam empty-state-icon mb-2"></i>
+                                    <p class="empty-state-title mb-1">Chưa có mặt hàng chi tiết</p>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.ChiTiet.Count == 0)
+                    }
+                    else
+                    {
+                        foreach (var item in Model.ChiTiet)
                         {
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Don mua chua co mat hang.</td>
+                                <td><span class="code-badge">@item.MaSP</span></td>
+                                <td class="fw-semibold text-dark">@item.TenSP</td>
+                                <td class="text-center"><span class="badge-status badge-new font-monospace">@item.SoLuong</span></td>
+                                <td class="text-end"><span class="font-monospace text-secondary">@item.DonGiaMua.ToString("N0")</span></td>
+                                <td class="text-end"><span class="font-monospace fw-semibold text-dark">@item.ThanhTien.ToString("N0")</span></td>
                             </tr>
                         }
-                        else
-                        {
-                            foreach (var item in Model.ChiTiet)
-                            {
-                                <tr>
-                                    <td><span class="inventory-code">@item.MaSP</span></td>
-                                    <td><span class="inventory-name">@item.TenSP</span></td>
-                                    <td><span class="inventory-value">@item.SoLuong</span></td>
-                                    <td><span class="inventory-value">@item.DonGiaMua.ToString("N0") đ</span></td>
-                                    <td><span class="inventory-value">@item.ThanhTien.ToString("N0") đ</span></td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <div class="inventory-footer">
-                <p class="inventory-stats">Tong gia tri don mua: <strong>@Model.TongTien.ToString("N0") đ</strong></p>
-                <a class="btn btn-sm btn-outline-primary" href="/xuat-du-lieu/don-mua-csv">Tai CSV don mua</a>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
-    </section>
+        <div class="inventory-footer d-flex flex-wrap justify-content-between align-items-center p-3 border-top">
+            <p class="inventory-stats text-muted mb-0">Tổng giá trị đơn mua: <strong class="text-dark font-monospace h5 mb-0">@Model.TongTien.ToString("N0") VNĐ</strong></p>
+            <a class="btn btn-sm btn-outline-secondary" href="/xuat-du-lieu/don-mua-csv">
+                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Xuất CSV đơn mua
+            </a>
+        </div>
+    </div>
+</section>

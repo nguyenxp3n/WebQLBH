@@ -1,98 +1,129 @@
 # 🛒 WebQLBH — Hệ Thống Quản Lý Bán Hàng & Phân Tích Doanh Thu Realtime
 
+<div align="center">
+
 [![.NET Version](https://img.shields.io/badge/.NET-10.0%20Preview-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Multi--Container-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Database](https://img.shields.io/badge/SQL%20Server-2022-CC292B?logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/sql-server)
 [![SignalR](https://img.shields.io/badge/Realtime-SignalR-blue)](https://dotnet.microsoft.com/apps/aspnet/signalr)
+[![UI/UX](https://img.shields.io/badge/UI%2FUX-Enterprise%20Slate%20%26%20Emerald-059669)](Hoàng%20Chiếm%20Nguyên_65132292/WEB/WebQLBH_65132292/wwwroot/css/app.css)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-> Hệ thống Quản lý Bán hàng & Chuỗi cung ứng toàn diện được xây dựng trên nền tảng **ASP.NET Core MVC** (.NET 10) và **Microsoft SQL Server 2022**, tích hợp giám sát số liệu thời gian thực (Realtime Dashboard) qua **SignalR**, quy trình xử lý hình ảnh tự động và xuất báo cáo đa định dạng (Excel / PDF).
+<br/>
+
+**Language:** [English](README_en.md) | [العربية](README_ar.md) | [Português (Brasil)](README_pt.md) | [简体中文](README_zh.md) | [繁體中文](README_zh_tw.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Türkçe](README_tr.md) | [Русский](README_ru.md) | **[Tiếng Việt](README.md)** | [ไทย](README_th.md) | [Deutsch](README_de.md) | [Español](README_es.md) | [Українська](README_uk.md) | [Polski](README_pl.md) | [বাংলা](README_bn.md)
+
+</div>
+
+> Hệ thống Quản lý Bán hàng & Chuỗi cung ứng toàn diện được xây dựng trên nền tảng **ASP.NET Core MVC** (.NET 10) và **Microsoft SQL Server 2022**, tích hợp giám sát số liệu thời gian thực (Realtime Dashboard) qua **SignalR**, giao diện chuẩn **Enterprise Slate & Emerald (100% Tiếng Việt có dấu)**, quy trình bảo mật ảnh chuyên sâu và xuất báo cáo đa định dạng (Excel / PDF / CSV).
 >
-> 🚀 **Sẵn sàng triển khai 1-click**: Đã được đóng gói hoàn chỉnh bằng **Docker & Docker Compose** (Multi-container gồm Web Application chạy chế độ Production an toàn + SQL Server Linux tự động khởi tạo và nạp dữ liệu từ `init.sql`).
+> 🚀 **Sẵn sàng triển khai 1-click**: Đã được đóng gói hoàn chỉnh bằng **Docker & Docker Compose** (Multi-container gồm Web Application + SQL Server Linux tự động khởi tạo dữ liệu).
+
+---
+
+> [!IMPORTANT]
+> ### 🔑 THÔNG TIN ĐĂNG NHẬP & TRUY CẬP KIỂM THỬ (DEMO CREDENTIALS)
+> Bất kỳ ai clone mã nguồn đều có thể khởi chạy và đăng nhập trải nghiệm hệ thống ngay lập tức:
+>
+> | Thông số truy cập | Giá trị kiểm thử mặc định | Ghi chú & Quyền hạn |
+> | :--- | :--- | :--- |
+> | **🌐 Địa chỉ Web** | [http://localhost:8080](http://localhost:8080) | Chạy qua Docker Container (`webqlbh-web`) |
+> | **👤 Tên đăng nhập (Username)** | `admin` | Tài khoản Quản trị viên cấp cao |
+> | **🔑 Mật khẩu (Password)** | `Admin@2026!Secure` | Đã cấu hình sẵn trong Docker |
+> | **🩺 Kiểm tra sức khỏe (Health)** | [http://localhost:8080/health](http://localhost:8080/health) | Trả về `HTTP 200 OK` |
+> | **🗄️ SQL Server Port** | `127.0.0.1:14333` | Tài khoản: `sa` / Mật khẩu: `Password@123` |
+>
+> **Lệnh khởi chạy nhanh 1-Click qua Docker:**
+> ```bash
+> docker compose up -d
+> ```
 
 ---
 
 ## 🌟 Tính Năng Nổi Bật (Key Features)
 
 ### 1. 📊 Dashboard Giám Sát Thời Gian Thực (Realtime Analytics)
-- Theo dõi KPI kinh doanh tức thời: Tổng doanh thu, đơn mua, đơn bán, khách hàng, nhà cung cấp.
-- Biểu đồ biến động doanh thu 7 ngày gần nhất và top sản phẩm bán chạy.
-- Tự động đồng bộ số liệu giữa các máy trạm qua **SignalR Hub** (`/hubs/dashboard`) và Hosted Background Service.
+- **KPI kinh doanh tức thời:** Tổng doanh thu, đơn mua, đơn bán, khách hàng, nhà cung cấp được cập nhật động.
+- **Biến động 7 ngày gần nhất:** Biểu đồ doanh thu Chart.js với gradient màu ngọc lục bảo (Emerald) dịu mắt.
+- **Đồng bộ đa máy trạm:** Tự động đồng bộ số liệu qua **SignalR Hub** (`/hubs/dashboard`) và Hosted Background Service.
 
-### 2. 📦 Quản Lý Danh Mục Hàng Hóa & Chuỗi Cung Ứng
+### 2. 🎨 Giao Diện Doanh Nghiệp Hiện Đại (Enterprise Slate & Emerald)
+- **Chuẩn hóa 100% Tiếng Việt có dấu:** Toàn bộ menu, nhãn biểu mẫu, placeholder, thông báo lỗi validation và modal đều được chuẩn hóa chính xác tiếng Việt ngữ pháp.
+- **Bảng màu & Typography:** Sử dụng tone Slate `#0F172A` kết hợp điểm nhấn Emerald `#059669`; phông chữ chuẩn *Be Vietnam Pro* và số liệu tiền tệ monospace *JetBrains Mono*.
+- **Bộ lọc thông minh:** Hỗ trợ tìm kiếm từ khóa, chọn danh mục nhóm/loại và popover lọc mức giá trực quan không che khuất dữ liệu.
+
+### 3. 📦 Quản Lý Chuỗi Cung Ứng & Danh Mục Hàng Hóa
 - **3 Cấp phân loại:** Quản lý theo Nhóm sản phẩm ➔ Loại sản phẩm ➔ Sản phẩm chi tiết.
-- Tối ưu hóa truy vấn kết hợp linh hoạt giữa **Entity Framework Core 10** và **15 Stored Procedures** chuyên dụng:
-  - Tự động sinh mã sản phẩm theo định dạng chuẩn ngày tháng `yyMMdd0001` (độ dài 10 ký tự `CHAR(10)`), kiểm soát khóa an toàn chống race-condition bằng `(UPDLOCK, HOLDLOCK)`.
-  - Đồng bộ kiểu dữ liệu `CHAR(10)` cho `MaSP` và `SMALLINT` cho `MaNSP` trong toàn bộ hệ thống.
-- Tìm kiếm đa tiêu chí: Từ khóa thông minh, lọc khoảng giá (Min - Max), phân trang động.
+- **Tối ưu hóa cơ sở dữ liệu:** Kết hợp Entity Framework Core 10 và **15 Stored Procedures** chuyên dụng:
+  - Tự động sinh mã sản phẩm theo định dạng ngày tháng `yyMMdd0001` (độ dài 10 ký tự `CHAR(10)`), khóa an toàn `(UPDLOCK, HOLDLOCK)`.
+  - Đồng bộ kiểu dữ liệu `CHAR(10)` cho `MaSP` và `SMALLINT` cho `MaNSP`.
 
-### 3. 🖼️ Quy Trình Tối Ưu & Xác Thực Hình Ảnh Chuyên Sâu (Deep Image Security)
+### 4. 🖼️ Xác Thực & Tối Ưu Hóa Hình Ảnh Chuyên Sâu (Deep Image Security)
 - Tích hợp thư viện xử lý ảnh cao cấp **SixLabors.ImageSharp**:
   - Kiểm tra **Magic Bytes** thực tế của tệp tải lên (JPEG, PNG, GIF, WebP), ngăn chặn tuyệt đối các cuộc tấn công giả mạo đuôi tệp.
   - Tự động nén, chuẩn hóa và tái mã hóa ảnh với kích thước tối đa 1600px, chất lượng 82%, không lưu file thô chưa qua kiểm duyệt vào máy chủ.
   - Volume lưu ảnh được ánh xạ chính xác vào `/app/wwwroot/uploads/san-pham`, bảo toàn dữ liệu khi tái tạo container.
 
-### 4. 🧾 Quản Lý Giao Dịch & Quy Trình Đơn Hàng (Orders Workflow)
+### 5. 🧾 Quản Lý Giao Dịch & Quy Trình Đơn Hàng (Orders Workflow)
 - **Đơn Mua Hàng (DonMH) & Đơn Bán Hàng (DonBH):**
-  - Quản lý chi tiết từng dòng hàng (số lượng, đơn giá, thành tiền tự động).
+  - Quản lý chi tiết từng dòng hàng (số lượng, đơn giá, tự động tính thành tiền).
   - Phân loại trạng thái đơn hàng động (`Mới`, `Đang xử lý`, `Hoàn tất`).
   - Chuẩn hóa địa chỉ giao hàng tiếng Việt an toàn (`HumanTextGuard`).
 
-### 5. 📑 Báo Cáo & Xuất Dữ Liệu Chuyên Nghiệp (Multi-Format Export)
-- **Xuất Excel:** Định dạng bảng biểu chuẩn kế toán sử dụng **ClosedXML**.
-- **Xuất PDF:** Tạo tệp hóa đơn/báo cáo định dạng vector phân giải cao bằng **QuestPDF**.
+### 6. 📑 Báo Cáo & Xuất Dữ Liệu Đa Định Dạng (Multi-Format Export)
+- **Xuất Excel:** Định dạng bảng biểu chuẩn kế toán sử dụng **ClosedXML** với tiêu đề cột tiếng Việt rõ ràng.
+- **Xuất PDF:** Tạo hóa đơn vector phân giải cao bằng **QuestPDF**.
 - **Xuất CSV:** Chuẩn hóa UTF-8 mã hóa sẵn sàng cho việc phân tích dữ liệu ngoại tuyến.
 
-### 6. 🛡️ Bảo Mật Doanh Nghiệp (Enterprise Security Hardening)
-- **Xác thực Mật khẩu An toàn (Password Hashing):** Sử dụng `IPasswordHasher<string>` (PBKDF2 HMAC-SHA256 với Salt) chuẩn ASP.NET Core Identity; tuyệt đối không lưu hoặc so sánh mật khẩu dạng chuỗi trần.
+### 7. 🛡️ Bảo Mật Doanh Nghiệp (Enterprise Security Hardening)
+- **Xác thực Mật khẩu An toàn:** Sử dụng `IPasswordHasher<string>` (PBKDF2 HMAC-SHA256 với Salt ngẫu nhiên) chuẩn ASP.NET Core Identity; tuyệt đối không lưu hoặc so sánh mật khẩu dạng chuỗi trần.
 - **Rate Limiting Đa Tầng:**
   - `AuthPolicy`: Giới hạn tối đa **10 requests/phút** cho các endpoint tài khoản `/Account/Login`, chống dò quét mật khẩu (brute-force).
   - `ApiPolicy`: Giới hạn **120 requests/phút** theo IP cho toàn bộ ứng dụng.
-- **Môi trường & Biến bảo mật:** Hỗ trợ file cấu hình `.env` (gitignored) kèm mẫu `.env.example`.
-- **Cổng SQL Server:** Bind cổng `127.0.0.1:14333` nội bộ máy chủ, không mở ra mạng ngoài.
 - **CSRF / Anti-Forgery Token** được bảo vệ trên 100% các form tác vụ POST.
 
 ---
 
-## 🚀 Khởi Chạy Nhanh Bằng Docker (1-Command Run)
+## 🚀 Hướng Dẫn Khởi Chạy Nhanh (Quick Start)
 
-Dự án đã được container hóa hoàn chỉnh. Bạn **không cần cài đặt .NET SDK hay SQL Server**, chỉ cần máy có cài Docker:
+### Cách 1: Khởi chạy 1-Click bằng Docker (Khuyên Dùng)
 
-### 1. Clone mã nguồn
-```bash
-git clone https://github.com/nguyenxp3n/WebQLBH.git
-cd WebQLBH
-```
+Bạn **không cần cài đặt .NET SDK hay SQL Server**, chỉ cần cài Docker Desktop:
 
-### 2. Thiết lập biến môi trường (Tùy chọn)
-Sao chép tệp cấu hình mẫu `.env.example` thành `.env`:
-```bash
-cp .env.example .env
-```
-*(Nếu không tạo `.env`, Docker Compose sẽ sử dụng các giá trị mặc định an toàn được khai báo sẵn)*.
+1. **Clone mã nguồn:**
+   ```bash
+   git clone https://github.com/nguyenxp3n/WebQLBH.git
+   cd WebQLBH
+   ```
 
-### 3. Khởi chạy toàn bộ hệ thống
-```bash
-docker compose up --build -d
-```
-*Lần chạy đầu tiên sẽ tự động tải base image, build ứng dụng và khởi tạo database từ `database/init.sql` trong khoảng 1-2 phút.*
+2. **Thiết lập file cấu hình môi trường (.env):**
+   ```bash
+   # Sao chép từ mẫu cấu hình chuẩn bị sẵn
+   cp .env.example .env
+   ```
+   *(Tệp `.env.example` đã cấu hình sẵn thông tin đăng nhập kiểm thử và mật khẩu SQL Server)*.
 
-### 4. Truy cập ứng dụng & Tài khoản kiểm thử (Demo Credentials)
+3. **Khởi chạy hệ thống:**
+   ```bash
+   docker compose up -d --build
+   ```
 
-* **Địa chỉ Web Application:** `http://localhost:8080`
-* **Health Check Endpoint:** `http://localhost:8080/health`
-
-| Thông tin đăng nhập | Giá trị mặc định kiểm thử | Quyền hạn & Ghi chú |
-| :--- | :--- | :--- |
-| **Tên đăng nhập (Username)** | `admin` | Quản trị viên hệ thống (Admin) |
-| **Mật khẩu (Password)** | `Admin@2026!Secure` | Đã cấu hình sẵn trong Docker |
-| **Trang đăng nhập (URL)** | `http://localhost:8080/Account/Login` | Được bảo vệ Rate Limiting 10 req/phút |
-
-> 💡 **Ghi chú bảo mật**: Mật khẩu trên được mã hóa bằng thuật toán **PBKDF2 HMAC-SHA256 (với Salt ngẫu nhiên)** thông qua `IPasswordHasher<string>` của ASP.NET Core Identity; hệ thống tuyệt đối không lưu trữ hay so sánh mật khẩu dạng văn bản thô.
+4. **Truy cập ứng dụng:**
+   - Mở trình duyệt truy cập: [http://localhost:8080](http://localhost:8080)
+   - Đăng nhập với tài khoản: **`admin`** | Mật khẩu: **`Admin@2026!Secure`**
 
 ---
 
-## 🏗️ Cấu Trúc Mã Nguồn (Architecture)
+### Cách 2: Chạy cục bộ bằng Visual Studio (Local Development)
+
+1. Mở file giải pháp `Hoàng Chiếm Nguyên_65132292/WEB/WebQLBH_65132292.slnx` (hoặc `.csproj`) bằng Visual Studio 2022 / 2026.
+2. Đảm bảo SQL Server đang chạy và chạy script khởi tạo `database/init.sql` để tạo cơ sở dữ liệu `DbQLBH_65132292`.
+3. Kiểm tra chuỗi kết nối trong `appsettings.json`.
+4. Nhấn **F5** hoặc chạy lệnh `dotnet run` từ thư mục dự án.
+
+---
+
+## 🏗️ Cấu Trúc Mã Nguồn (Directory Structure)
 
 ```
 WebQLBH/
@@ -108,10 +139,16 @@ WebQLBH/
 │   └── WEB/WebQLBH_65132292/       # ASP.NET Core MVC Application
 │       ├── Controllers/            # 16 Controllers xử lý nghiệp vụ & API
 │       ├── Models/                 # Entity Data Models & ViewModels
-│       ├── Views/                  # Giao diện Razor Pages
+│       ├── Views/                  # Giao diện Razor Pages chuẩn Tiếng Việt
 │       ├── Services/               # DashboardService, GiaoDichLookupService
 │       ├── Hubs/                   # SignalR Realtime Hub
 │       ├── Infrastructure/         # RateLimiter, Guard, OrderCatalog
-│       ├── wwwroot/                # Tài nguyên tĩnh & Thư mục Upload ảnh
+│       ├── wwwroot/                # CSS (Enterprise Slate & Emerald), JS, Uploads
 │       └── Dockerfile              # Multi-stage build (Debian + Native Graphics Fonts)
 ```
+
+---
+
+## 📄 Bản Quyền & Giấy Phép (License)
+
+Dự án được phân phối dưới giấy phép [MIT License](LICENSE).

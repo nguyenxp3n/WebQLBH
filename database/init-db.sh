@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-SA_PASSWORD="${MSSQL_SA_PASSWORD:-Password@123}"
+: "${MSSQL_SA_PASSWORD:?MSSQL_SA_PASSWORD environment variable is required}"
+SA_PASSWORD="$MSSQL_SA_PASSWORD"
 
 echo "==> Waiting for SQL Server (db) to be ready..."
 for i in {1..60}; do

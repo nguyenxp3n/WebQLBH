@@ -1,12 +1,12 @@
 ﻿@model DbQLBH_65132292.Models.LoaiSP
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm mới";
 }
 
-<h1>Create</h1>
+<h1 class="page-title">Thêm mới</h1>
 
-<h4>LoaiSP</h4>
+<h4>Thông tin Loại sản phẩm</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -16,24 +16,24 @@
                 <label asp-for="TenLSP" class="control-label"></label>
                 <input asp-for="TenLSP" class="form-control" />
                 <span asp-validation-for="TenLSP" class="text-danger"></span>
-                <small class="form-text text-muted">MaLSP duoc SQL tu dong sinh.</small>
+                <small class="form-text text-muted">Mã loại sản phẩm được SQL tự động sinh.</small>
             </div>
             <div class="form-group">
                 <label asp-for="MaNSP" class="control-label"></label>
                 <select asp-for="MaNSP" asp-items="ViewBag.MaNSPOptions" class="form-select">
-                    <option value="">-- Chon nhom san pham --</option>
+                    <option value="">-- Chọn nhóm sản phẩm --</option>
                 </select>
                 <span asp-validation-for="MaNSP" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Thêm mới" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Quay lại danh sách</a>
 </div>
 
 @section Scripts {
