@@ -1,84 +1,11 @@
 ﻿USE [master]
 GO
-/****** Object:  Database [DbQLBH_65132292]    Script Date: 3/26/2026 8:37:15 PM ******/
-CREATE DATABASE [DbQLBH_65132292]
- CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'DbQLBH_65132292', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\DbQLBH_65132292\DbQLBH_65132292.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
- LOG ON 
-( NAME = N'DbQLBH_65132292_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\DbQLBH_65132292\DbQLBH_65132292_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
- WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'DbQLBH_65132292')
+BEGIN
+    CREATE DATABASE [DbQLBH_65132292];
+END
 GO
-ALTER DATABASE [DbQLBH_65132292] SET COMPATIBILITY_LEVEL = 160
-GO
-IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
-begin
-EXEC [DbQLBH_65132292].[dbo].[sp_fulltext_database] @action = 'enable'
-end
-GO
-ALTER DATABASE [DbQLBH_65132292] SET ANSI_NULL_DEFAULT OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET ANSI_NULLS OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET ANSI_PADDING OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET ANSI_WARNINGS OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET ARITHABORT OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET AUTO_CLOSE OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET AUTO_SHRINK OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET AUTO_UPDATE_STATISTICS ON 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET CURSOR_CLOSE_ON_COMMIT OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET CURSOR_DEFAULT  GLOBAL 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET CONCAT_NULL_YIELDS_NULL OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET NUMERIC_ROUNDABORT OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET QUOTED_IDENTIFIER OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET RECURSIVE_TRIGGERS OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET  DISABLE_BROKER 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET DATE_CORRELATION_OPTIMIZATION OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET TRUSTWORTHY OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET ALLOW_SNAPSHOT_ISOLATION OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET PARAMETERIZATION SIMPLE 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET READ_COMMITTED_SNAPSHOT OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET HONOR_BROKER_PRIORITY OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET RECOVERY SIMPLE 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET  MULTI_USER 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET PAGE_VERIFY CHECKSUM  
-GO
-ALTER DATABASE [DbQLBH_65132292] SET DB_CHAINING OFF 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET TARGET_RECOVERY_TIME = 60 SECONDS 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET DELAYED_DURABILITY = DISABLED 
-GO
-ALTER DATABASE [DbQLBH_65132292] SET ACCELERATED_DATABASE_RECOVERY = OFF  
-GO
-ALTER DATABASE [DbQLBH_65132292] SET QUERY_STORE = ON
-GO
-ALTER DATABASE [DbQLBH_65132292] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+USE [DbQLBH_65132292]
 GO
 USE [DbQLBH_65132292]
 GO
@@ -444,7 +371,7 @@ GO
 CREATE PROCEDURE [dbo].[LoaiSP_Sua]
     @MaLSP SMALLINT,
     @TenLSP NVARCHAR(100),
-    @MaNSP TINYINT
+    @MaNSP SMALLINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -462,7 +389,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[LoaiSP_Them]
     @TenLSP NVARCHAR(100),
-    @MaNSP TINYINT
+    @MaNSP SMALLINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -492,7 +419,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[NhomSP_CT]
-    @MaNSP TINYINT = NULL
+    @MaNSP SMALLINT = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -523,7 +450,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[NhomSP_Sua]
-    @MaNSP TINYINT,
+    @MaNSP SMALLINT,
     @TenNSP NVARCHAR(100)
 AS
 BEGIN
@@ -555,7 +482,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[NhomSP_Xoa]
-    @MaNSP TINYINT
+    @MaNSP SMALLINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -570,7 +497,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SanPham_CT]
-    @MaSP VARCHAR(9) = NULL
+    @MaSP CHAR(10) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -601,7 +528,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SanPham_Sua]
-    @MaSP VARCHAR(9),
+    @MaSP CHAR(10),
     @TenSP NVARCHAR(100),
     @DonGia MONEY,
     @MaLSP SMALLINT,
@@ -624,17 +551,40 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SanPham_Them]
-    @MaSP VARCHAR(9),
-    @TenSP NVARCHAR(100),
+    @TenSP NVARCHAR(200),
     @DonGia MONEY,
     @MaLSP SMALLINT,
-    @MaDVT TINYINT
+    @MaDVT TINYINT,
+    @AnhSP NVARCHAR(255) = NULL,
+    @MoTaCT NVARCHAR(MAX) = NULL,
+    @MaSPMoi CHAR(10) OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
-    INSERT INTO dbo.SanPham(MaSP, TenSP, DonGia, MaLSP, MaDVT)
-    VALUES (@MaSP, @TenSP, @DonGia, @MaLSP, @MaDVT);
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @Prefix CHAR(6) = FORMAT(GETDATE(), 'yyMMdd');
+        DECLARE @MaxNum INT = 0;
+
+        SELECT @MaxNum = ISNULL(MAX(CAST(RIGHT(RTRIM(MaSP), 4) AS INT)), 0)
+        FROM dbo.SanPham WITH (UPDLOCK, HOLDLOCK)
+        WHERE MaSP LIKE @Prefix + '%';
+
+        SET @MaxNum = @MaxNum + 1;
+        SET @MaSPMoi = @Prefix + RIGHT('0000' + CAST(@MaxNum AS VARCHAR(4)), 4);
+
+        INSERT INTO dbo.SanPham(MaSP, TenSP, AnhSP, DonGia, MoTaCT, MaLSP, MaDVT)
+        VALUES (@MaSPMoi, @TenSP, @AnhSP, @DonGia, @MoTaCT, @MaLSP, @MaDVT);
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
 /****** Object:  StoredProcedure [dbo].[SanPham_Xoa]    Script Date: 3/26/2026 8:37:15 PM ******/
@@ -643,7 +593,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SanPham_Xoa]
-    @MaSP VARCHAR(9)
+    @MaSP CHAR(10)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -652,7 +602,143 @@ BEGIN
     WHERE MaSP = @MaSP;
 END
 GO
-USE [master]
+USE [DbQLBH_65132292]
 GO
-ALTER DATABASE [DbQLBH_65132292] SET  READ_WRITE 
+-- =============================================
+-- SEED DATA
+-- =============================================
+IF NOT EXISTS (SELECT 1 FROM dbo.DonViTinh)
+BEGIN
+    INSERT INTO dbo.DonViTinh (MaDVT, TenDVT) VALUES
+    (1, N'Cái'),
+    (2, N'Hộp'),
+    (3, N'Chai'),
+    (4, N'Thùng'),
+    (5, N'Gói'),
+    (6, N'Chiếc'),
+    (7, N'Đôi'),
+    (8, N'Bộ');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Tinh)
+BEGIN
+    INSERT INTO dbo.Tinh (MaTinh, TenTinh) VALUES
+    ('79', N'TP. Hồ Chí Minh'),
+    ('01', N'Hà Nội'),
+    ('48', N'Đà Nẵng'),
+    ('56', N'Khánh Hòa'),
+    ('77', N'Bà Rịa - Vũng Tàu');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.PhuongXa)
+BEGIN
+    INSERT INTO dbo.PhuongXa (MaPX, TenPX, MaTinh) VALUES
+    ('77001', N'Phường Bến Nghé', '79'),
+    ('77002', N'Phường Bến Thành', '79'),
+    ('01001', N'Phường Tràng Tiền', '01'),
+    ('48001', N'Phường Hải Châu 1', '48'),
+    ('56001', N'Phường Lộc Thọ', '56');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.NhomSP)
+BEGIN
+    INSERT INTO dbo.NhomSP (MaNSP, TenNSP) VALUES
+    (1, N'Điện tử & Công nghệ'),
+    (2, N'Gia dụng & Thiết bị'),
+    (3, N'Thời trang & Phụ kiện'),
+    (4, N'Thực phẩm & Tiêu dùng');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.LoaiSP)
+BEGIN
+    INSERT INTO dbo.LoaiSP (MaLSP, TenLSP, MaNSP) VALUES
+    (1, N'Điện thoại di động', 1),
+    (2, N'Laptop & Máy tính', 1),
+    (3, N'Phụ kiện công nghệ', 1),
+    (4, N'Thiết bị nhà bếp', 2),
+    (5, N'Điện máy gia dụng', 2),
+    (6, N'Thời trang nam nữ', 3),
+    (7, N'Bánh kẹo & Nước uống', 4);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.SanPham)
+BEGIN
+    INSERT INTO dbo.SanPham (MaSP, TenSP, AnhSP, DonGia, MoTaCT, MaLSP, MaDVT) VALUES
+    ('2604010001', N'iPhone 15 Pro Max 256GB Titan Tự Nhiên', NULL, 29990000, N'Điện thoại flagship Apple chính hãng VN/A, chip A17 Pro.', 1, 1),
+    ('2604010002', N'Samsung Galaxy S24 Ultra 12GB/256GB', NULL, 27490000, N'Điện thoại tích hợp Galaxy AI cao cấp, camera 200MP.', 1, 1),
+    ('2604010003', N'MacBook Air M3 13 inch 16GB/256GB', NULL, 27990000, N'Laptop siêu mỏng nhẹ, chip Apple M3 hiệu năng vượt trội.', 2, 6),
+    ('2604010004', N'Laptop ASUS ROG Zephyrus G14', NULL, 34500000, N'Laptop gaming đồ họa cao cấp, màn hình OLED 120Hz.', 2, 6),
+    ('2604010005', N'Tai nghe Bluetooth Apple AirPods Pro 2 MagSafe', NULL, 5390000, N'Chống ồn chủ động ANC thế hệ mới, âm thanh không gian.', 3, 8),
+    ('2604010006', N'Chuột không dây Logitech MX Master 3S', NULL, 2190000, N'Chuột công thái học cao cấp, cảm biến 8000 DPI êm ái.', 3, 1),
+    ('2604010007', N'Nồi chiên không dầu Philips XXL HD9280', NULL, 3290000, N'Dung tích 7.2L, công nghệ Rapid Air giảm 90% dầu mỡ.', 4, 1),
+    ('2604010008', N'Máy hút bụi cầm tay không dây Dyson V12 Slim', NULL, 15990000, N'Cảm biến laser phát hiện bụi mịn, công suất hút mạnh mẽ.', 5, 1),
+    ('2604010009', N'Áo khoác gió thể thao nam chống nước cao cấp', NULL, 450000, N'Chất liệu Gore-Tex cản gió, chống thấm nước tuyệt đối.', 6, 1),
+    ('2604010010', N'Cà phê rang xay nguyên chất Trung Nguyên Legend 500g', NULL, 125000, N'Hương vị cà phê Robusta và Arabica truyền thống đậm đà.', 7, 5);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.KhachHang)
+BEGIN
+    INSERT INTO dbo.KhachHang (MaKH, TenKH, DienThoai, Email, DiaChi, MaPX) VALUES
+    (1, N'Nguyễn Văn An', '0901234567', 'an.nguyen@example.com', N'123 Lê Lợi', '77001'),
+    (2, N'Trần Thị Mai', '0912345678', 'mai.tran@example.com', N'456 Nguyễn Huệ', '77002'),
+    (3, N'Lê Hoàng Long', '0987654321', 'long.le@example.com', N'789 Tràng Tiền', '01001'),
+    (4, N'Phạm Thu Trang', '0934567890', 'trang.pham@example.com', N'12 Quang Trung', '48001'),
+    (5, N'Vũ Đức Thịnh', '0945678901', 'thinh.vu@example.com', N'88 Trần Phú', '56001');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.NhaCC)
+BEGIN
+    INSERT INTO dbo.NhaCC (MaNCC, TenNCC, DienThoai, Email, DiaChi, MaPX) VALUES
+    (1, N'Công ty TNHH Apple Việt Nam', '02838221234', 'contact@apple.vn', N'Tòa nhà Deutsches Haus, Q1', '77001'),
+    (2, N'Công ty CP Samsung Vina Electronics', '02838225678', 'sales@samsung.vn', N'Tòa nhà Bitexco, Q1', '77002'),
+    (3, N'Tập đoàn Điện tử LG Electronics VN', '02437891234', 'support@lg.vn', N'Tòa nhà Keangnam, Hà Nội', '01001'),
+    (4, N'Công ty TNHH Philips Consumer Lifestyle', '02839998888', 'contact@philips.vn', N'Khu chế xuất Tân Thuận, Q7', '77001');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.DonMH)
+BEGIN
+    INSERT INTO dbo.DonMH (MaDMH, NgayMua, MaNCC) VALUES
+    ('DMH0001', '2026-10-20', 1),
+    ('DMH0002', '2026-10-22', 2),
+    ('DMH0003', '2026-10-25', 4);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.CTMH)
+BEGIN
+    INSERT INTO dbo.CTMH (MaDMH, MaSP, SLM, DGM) VALUES
+    ('DMH0001', '2604010001', 10, 26500000),
+    ('DMH0001', '2604010005', 20, 4600000),
+    ('DMH0002', '2604010002', 15, 24000000),
+    ('DMH0003', '2604010007', 30, 2600000);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.DonBH)
+BEGIN
+    INSERT INTO dbo.DonBH (MaDBH, NgayBan, DCGH, MaPX, MaKH) VALUES
+    ('DBH000001', '2026-10-28', N'123 Lê Lợi', '77001', 1),
+    ('DBH000002', '2026-10-29', N'456 Nguyễn Huệ', '77002', 2),
+    ('DBH000003', '2026-10-30', N'789 Tràng Tiền', '01001', 3),
+    ('DBH000004', '2026-10-31', N'12 Quang Trung', '48001', 4);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.CTBH)
+BEGIN
+    INSERT INTO dbo.CTBH (MaDBH, MaSP, SLB, DGB) VALUES
+    ('DBH000001', '2604010001', 1, 29990000),
+    ('DBH000001', '2604010005', 1, 5390000),
+    ('DBH000002', '2604010002', 1, 27490000),
+    ('DBH000003', '2604010003', 1, 27990000),
+    ('DBH000004', '2604010007', 2, 3290000);
+END
 GO

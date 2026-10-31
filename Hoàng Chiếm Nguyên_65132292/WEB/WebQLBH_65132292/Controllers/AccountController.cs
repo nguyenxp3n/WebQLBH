@@ -3,17 +3,27 @@ using DbQLBH_65132292.Models.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace DbQLBH_65132292.Controllers
 {
+    [EnableRateLimiting("AuthPolicy")]
     public class AccountController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly IPasswordHasher<string> _passwordHasher;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IConfiguration configuration)
+        public AccountController(
+            IConfiguration configuration,
+            IPasswordHasher<string> passwordHasher,
+            ILogger<AccountController> logger)
         {
             _configuration = configuration;
+            _passwordHasher = passwordHasher;
+            _logger = logger;
         }
 
         [AllowAnonymous]
@@ -32,6 +42,7 @@ namespace DbQLBH_65132292.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [EnableRateLimiting("AuthPolicy")]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -41,17 +52,31 @@ namespace DbQLBH_65132292.Controllers
                 return View(model);
             }
 
-            var configuredUsername = _configuration["AdminAuth:Username"] ?? "admin";
-            var configuredPassword = _configuration["AdminAuth:Password"] ?? "Admin@123";
+            var configuredUsername = _configuration["AdminAuth:Username"];
+            var configuredPasswordHash = _configuration["AdminAuth:PasswordHash"];
+
+            if (string.IsNullOrWhiteSpace(configuredUsername) || string.IsNullOrWhiteSpace(configuredPasswordHash))
+            {
+                _logger.LogError("Admin authentication credentials are not configured in system settings.");
+                ModelState.AddModelError(string.Empty, "Hệ thống chưa được cấu hình tài khoản quản trị.");
+                return View(model);
+            }
 
             var normalizedUsername = model.Username?.Trim() ?? string.Empty;
-            var isValidCredential =
-                string.Equals(normalizedUsername, configuredUsername, StringComparison.Ordinal)
-                && string.Equals(model.Password, configuredPassword, StringComparison.Ordinal);
-
-            if (!isValidCredential)
+            if (!string.Equals(normalizedUsername, configuredUsername, StringComparison.Ordinal))
             {
-                ModelState.AddModelError(string.Empty, "Thong tin dang nhap khong hop le.");
+                ModelState.AddModelError(string.Empty, "Thông tin đăng nhập không hợp lệ.");
+                return View(model);
+            }
+
+            var verifyResult = _passwordHasher.VerifyHashedPassword(
+                normalizedUsername,
+                configuredPasswordHash,
+                model.Password ?? string.Empty);
+
+            if (verifyResult == PasswordVerificationResult.Failed)
+            {
+                ModelState.AddModelError(string.Empty, "Thông tin đăng nhập không hợp lệ.");
                 return View(model);
             }
 

@@ -169,7 +169,7 @@ public class AppDbContext : DbContext
         return list.FirstOrDefault();
     }
 
-    public async Task<int> SanPham_Them(
+    public async Task<string> SanPham_Them(
         string tenSP,
         decimal donGia,
         short maLSP,
@@ -177,16 +177,26 @@ public class AppDbContext : DbContext
         string? anhSP = null,
         string? moTaCT = null)
     {
+        var outputParam = new SqlParameter
+        {
+            ParameterName = "@MaSPMoi",
+            SqlDbType = SqlDbType.Char,
+            Size = 10,
+            Direction = ParameterDirection.Output
+        };
+
         var p = new[]
         {
-            new SqlParameter("@TenSP", tenSP),
-            new SqlParameter("@DonGia", donGia),
-            new SqlParameter("@MaLSP", maLSP),
-            new SqlParameter("@MaDVT", maDVT),
-            new SqlParameter("@AnhSP", (object?)anhSP ?? DBNull.Value),
-            new SqlParameter("@MoTaCT", (object?)moTaCT ?? DBNull.Value)
+            new SqlParameter("@TenSP", SqlDbType.NVarChar, 200) { Value = tenSP },
+            new SqlParameter("@DonGia", SqlDbType.Money) { Value = donGia },
+            new SqlParameter("@MaLSP", SqlDbType.SmallInt) { Value = maLSP },
+            new SqlParameter("@MaDVT", SqlDbType.TinyInt) { Value = maDVT },
+            new SqlParameter("@AnhSP", SqlDbType.NVarChar, 255) { Value = (object?)anhSP ?? DBNull.Value },
+            new SqlParameter("@MoTaCT", SqlDbType.NVarChar, -1) { Value = (object?)moTaCT ?? DBNull.Value },
+            outputParam
         };
-        return await Database.ExecuteSqlRawAsync("EXEC SanPham_Them @TenSP, @DonGia, @MaLSP, @MaDVT, @AnhSP, @MoTaCT", p);
+        await Database.ExecuteSqlRawAsync("EXEC SanPham_Them @TenSP, @DonGia, @MaLSP, @MaDVT, @AnhSP, @MoTaCT, @MaSPMoi OUTPUT", p);
+        return outputParam.Value?.ToString()?.Trim() ?? string.Empty;
     }
 
     public async Task<int> SanPham_Sua(

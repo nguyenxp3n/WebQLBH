@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using System.Threading.RateLimiting;
 using DbQLBH_65132292.Data;
 using DbQLBH_65132292.Hubs;
@@ -26,6 +28,15 @@ builder.Logging.AddSimpleConsole(options =>
 });
 
 // Thêm EF Core & kết nối
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+builder.Services.AddScoped<IPasswordHasher<string>, PasswordHasher<string>>();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DbQLBH_65132292Connection")));
 
@@ -63,6 +74,21 @@ builder.Services.AddRateLimiter(options =>
         context.HttpContext.Response.ContentType = "application/json";
         await context.HttpContext.Response.WriteAsync("{\"message\":\"Too many requests\"}", token);
     };
+
+    options.AddPolicy("AuthPolicy", httpContext =>
+    {
+        var key = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: $"auth_{key}",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+    });
 
     options.AddPolicy("ApiPolicy", httpContext =>
     {
@@ -103,17 +129,25 @@ if (requestedUrls.Count > 0)
     }
 }
 
+// Forwarded Headers for reverse proxy / Docker container IP resolution
+app.UseForwardedHeaders();
+
 // Middleware mặc định
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-    app.UseHttpsRedirection();
-}
-else
+var enableSwagger = app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("EnableSwagger", false);
+if (enableSwagger)
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    if (app.Configuration.GetValue<bool>("UseHttpsRedirection", false))
+    {
+        app.UseHsts();
+        app.UseHttpsRedirection();
+    }
 }
 
 app.UseStaticFiles();
@@ -126,10 +160,18 @@ app.MapControllers().RequireRateLimiting("ApiPolicy");
 app.MapHealthChecks("/health").AllowAnonymous();
 app.MapHub<DashboardHub>("/hubs/dashboard");
 
+// Route bảo vệ tài khoản với AuthPolicy (10 req/phút)
+app.MapControllerRoute(
+    name: "account",
+    pattern: "Account/{action=Login}/{id?}",
+    defaults: new { controller = "Account" })
+    .RequireRateLimiting("AuthPolicy");
+
 // Route mặc định
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}")
+    .RequireRateLimiting("ApiPolicy");
 app.Run();
 
 static IReadOnlyList<string> ResolvePortConflicts(IEnumerable<string> requestedUrls, ILogger logger)

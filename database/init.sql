@@ -371,7 +371,7 @@ GO
 CREATE PROCEDURE [dbo].[LoaiSP_Sua]
     @MaLSP SMALLINT,
     @TenLSP NVARCHAR(100),
-    @MaNSP TINYINT
+    @MaNSP SMALLINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -389,7 +389,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[LoaiSP_Them]
     @TenLSP NVARCHAR(100),
-    @MaNSP TINYINT
+    @MaNSP SMALLINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -419,7 +419,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[NhomSP_CT]
-    @MaNSP TINYINT = NULL
+    @MaNSP SMALLINT = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -450,7 +450,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[NhomSP_Sua]
-    @MaNSP TINYINT,
+    @MaNSP SMALLINT,
     @TenNSP NVARCHAR(100)
 AS
 BEGIN
@@ -482,7 +482,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[NhomSP_Xoa]
-    @MaNSP TINYINT
+    @MaNSP SMALLINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -497,7 +497,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SanPham_CT]
-    @MaSP VARCHAR(9) = NULL
+    @MaSP CHAR(10) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -528,7 +528,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SanPham_Sua]
-    @MaSP VARCHAR(9),
+    @MaSP CHAR(10),
     @TenSP NVARCHAR(100),
     @DonGia MONEY,
     @MaLSP SMALLINT,
@@ -551,17 +551,40 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SanPham_Them]
-    @MaSP VARCHAR(9),
-    @TenSP NVARCHAR(100),
+    @TenSP NVARCHAR(200),
     @DonGia MONEY,
     @MaLSP SMALLINT,
-    @MaDVT TINYINT
+    @MaDVT TINYINT,
+    @AnhSP NVARCHAR(255) = NULL,
+    @MoTaCT NVARCHAR(MAX) = NULL,
+    @MaSPMoi CHAR(10) OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
-    INSERT INTO dbo.SanPham(MaSP, TenSP, DonGia, MaLSP, MaDVT)
-    VALUES (@MaSP, @TenSP, @DonGia, @MaLSP, @MaDVT);
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @Prefix CHAR(6) = FORMAT(GETDATE(), 'yyMMdd');
+        DECLARE @MaxNum INT = 0;
+
+        SELECT @MaxNum = ISNULL(MAX(CAST(RIGHT(RTRIM(MaSP), 4) AS INT)), 0)
+        FROM dbo.SanPham WITH (UPDLOCK, HOLDLOCK)
+        WHERE MaSP LIKE @Prefix + '%';
+
+        SET @MaxNum = @MaxNum + 1;
+        SET @MaSPMoi = @Prefix + RIGHT('0000' + CAST(@MaxNum AS VARCHAR(4)), 4);
+
+        INSERT INTO dbo.SanPham(MaSP, TenSP, AnhSP, DonGia, MoTaCT, MaLSP, MaDVT)
+        VALUES (@MaSPMoi, @TenSP, @AnhSP, @DonGia, @MoTaCT, @MaLSP, @MaDVT);
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
 /****** Object:  StoredProcedure [dbo].[SanPham_Xoa]    Script Date: 3/26/2026 8:37:15 PM ******/
@@ -570,7 +593,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SanPham_Xoa]
-    @MaSP VARCHAR(9)
+    @MaSP CHAR(10)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -579,7 +602,7 @@ BEGIN
     WHERE MaSP = @MaSP;
 END
 GO
-USE [master]
+USE [DbQLBH_65132292]
 GO
 -- =============================================
 -- SEED DATA

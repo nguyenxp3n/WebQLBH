@@ -29,6 +29,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 USER root
-RUN mkdir -p /app/wwwroot/images/sanpham && chown -R app:app /app
+RUN mkdir -p /app/wwwroot/uploads/san-pham /app/wwwroot/images/sanpham && chown -R app:app /app
 USER app
 ENTRYPOINT ["dotnet", "DbQLBH_65132292.dll"]

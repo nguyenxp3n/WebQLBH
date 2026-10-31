@@ -196,7 +196,7 @@ namespace DbQLBH_65132292.Controllers
 
             try
             {
-                await _context.SanPham_Them(
+                var newMaSP = await _context.SanPham_Them(
                     sanPham.TenSP,
                     sanPham.DonGia,
                     sanPham.MaLSP,
@@ -204,6 +204,7 @@ namespace DbQLBH_65132292.Controllers
                     sanPham.AnhSP,
                     sanPham.MoTaCT);
 
+                TempData["SuccessMessage"] = $"Thêm sản phẩm mới thành công. Mã sản phẩm: {newMaSP}";
                 return RedirectToAction(nameof(Index));
             }
             catch (SqlException)
@@ -535,47 +536,36 @@ namespace DbQLBH_65132292.Controllers
             var fileName = $"{Guid.NewGuid():N}{outputExtension}";
             var savePath = Path.Combine(uploadsFolder, fileName);
 
-            if (string.Equals(outputExtension, ".gif", StringComparison.OrdinalIgnoreCase))
+            await using var input = file.OpenReadStream();
+            using var image = await Image.LoadAsync(input);
+
+            if (image.Width > MaxImageDimension || image.Height > MaxImageDimension)
             {
-                await using var passthroughStream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                await file.CopyToAsync(passthroughStream);
-                return $"/uploads/san-pham/{fileName}";
+                image.Mutate(x => x.Resize(new ResizeOptions
+                {
+                    Mode = ResizeMode.Max,
+                    Size = new Size(MaxImageDimension, MaxImageDimension)
+                }));
             }
 
-            try
+            await using var output = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None);
+            if (string.Equals(outputExtension, ".png", StringComparison.OrdinalIgnoreCase))
             {
-                await using var input = file.OpenReadStream();
-                using var image = await Image.LoadAsync(input);
-
-                if (image.Width > MaxImageDimension || image.Height > MaxImageDimension)
+                await image.SaveAsPngAsync(output, new PngEncoder
                 {
-                    image.Mutate(x => x.Resize(new ResizeOptions
-                    {
-                        Mode = ResizeMode.Max,
-                        Size = new Size(MaxImageDimension, MaxImageDimension)
-                    }));
-                }
-
-                await using var output = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                if (string.Equals(outputExtension, ".png", StringComparison.OrdinalIgnoreCase))
-                {
-                    await image.SaveAsPngAsync(output, new PngEncoder
-                    {
-                        CompressionLevel = PngCompressionLevel.Level6
-                    });
-                }
-                else
-                {
-                    await image.SaveAsJpegAsync(output, new JpegEncoder
-                    {
-                        Quality = JpegQuality
-                    });
-                }
+                    CompressionLevel = PngCompressionLevel.Level6
+                });
             }
-            catch (UnknownImageFormatException)
+            else if (string.Equals(outputExtension, ".gif", StringComparison.OrdinalIgnoreCase))
             {
-                await using var fallbackOutput = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                await file.CopyToAsync(fallbackOutput);
+                await image.SaveAsGifAsync(output);
+            }
+            else
+            {
+                await image.SaveAsJpegAsync(output, new JpegEncoder
+                {
+                    Quality = JpegQuality
+                });
             }
 
             return $"/uploads/san-pham/{fileName}";
@@ -631,31 +621,65 @@ namespace DbQLBH_65132292.Controllers
         {
             if (file.Length <= 0)
             {
-                error = "Anh tai len khong hop le.";
+                error = "Ảnh tải lên không hợp lệ.";
                 return false;
             }
 
             if (file.Length > MaxImageSizeBytes)
             {
-                error = "Kich thuoc anh vuot qua gioi han 5MB.";
+                error = "Kích thước ảnh vượt quá giới hạn 5MB.";
                 return false;
             }
 
-            var extension = Path.GetExtension(file.FileName);
+            var extension = Path.GetExtension(file.FileName)?.ToLowerInvariant();
             if (string.IsNullOrWhiteSpace(extension) || !SupportedImageExtensions.Contains(extension))
             {
-                error = "Dinh dang anh khong ho tro. Chi chap nhan jpg, jpeg, png, webp, gif.";
+                error = "Định dạng ảnh không hỗ trợ. Chỉ chấp nhận jpg, jpeg, png, webp, gif.";
                 return false;
             }
 
             if (!string.IsNullOrWhiteSpace(file.ContentType) && !SupportedImageContentTypes.Contains(file.ContentType))
             {
-                error = "Content-Type cua tep anh khong hop le.";
+                error = "Content-Type của tệp ảnh không hợp lệ.";
+                return false;
+            }
+
+            try
+            {
+                using var stream = file.OpenReadStream();
+                var header = new byte[12];
+                var bytesRead = stream.Read(header, 0, header.Length);
+                if (bytesRead < 4 || !IsValidImageHeader(header))
+                {
+                    error = "Nội dung tệp không phải là hình ảnh hợp lệ.";
+                    return false;
+                }
+            }
+            catch
+            {
+                error = "Không thể đọc tệp ảnh tải lên.";
                 return false;
             }
 
             error = string.Empty;
             return true;
+        }
+
+        private static bool IsValidImageHeader(byte[] header)
+        {
+            if (header.Length < 4) return false;
+            // JPEG: FF D8 FF
+            if (header[0] == 0xFF && header[1] == 0xD8 && header[2] == 0xFF) return true;
+            // PNG: 89 50 4E 47
+            if (header[0] == 0x89 && header[1] == 0x50 && header[2] == 0x4E && header[3] == 0x47) return true;
+            // GIF: 47 49 46 38 ('GIF8')
+            if (header[0] == 0x47 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x38) return true;
+            // WEBP: RIFF....WEBP
+            if (header.Length >= 12 &&
+                header[0] == 0x52 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x46 &&
+                header[8] == 0x57 && header[9] == 0x45 && header[10] == 0x42 && header[11] == 0x50) return true;
+
+            return false;
         }
 
         private static string? NormalizeKeyword(string? tuKhoa)
